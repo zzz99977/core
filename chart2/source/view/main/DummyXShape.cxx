@@ -220,10 +220,9 @@ void DummyXShape::setParent( const uno::Reference< uno::XInterface >& xParent )
 
 namespace {
 
-void setProperties( uno::Reference< beans::XPropertySet > , const tPropertyNameMap& ,
-        std::map<OUString, uno::Any>& )
+void setProperties( uno::Reference< beans::XPropertySet > xPropSet, const tPropertyNameMap& rPropertyNameMap,
+        std::map<OUString, uno::Any>& rTargetMap)
 {
-/*
     tNameSequence aNames;
     tAnySequence aValues;
     PropertyMapper::getMultiPropertyLists( aNames, aValues,
@@ -234,7 +233,6 @@ void setProperties( uno::Reference< beans::XPropertySet > , const tPropertyNameM
     {
         rTargetMap[aNames[i]] = aValues[i];
     }
-*/
 }
 
 }

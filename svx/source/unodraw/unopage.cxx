@@ -432,7 +432,7 @@ void SAL_CALL SvxDrawPage::ungroup( const Reference< drawing::XShapeGroup >& aGr
 
 SdrObject *SvxDrawPage::_CreateSdrObject( const Reference< drawing::XShape > & xShape ) throw()
 {
-    sal_uInt16 nType;
+    sal_uInt16 nType = 0;
     sal_uInt32 nInventor;
 
     GetTypeAndInventor( nType, nInventor, xShape->getShapeType() );

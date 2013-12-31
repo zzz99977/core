@@ -673,8 +673,8 @@ int OpenGLRender::RenderLine2FBO(int wholeFlag)
         glDrawArrays(GL_LINE_STRIP, 0, pointList.bufLen / sizeof(float) / 2); // 12*3 indices starting at 0 -> 12 triangles
         glDisableVertexAttribArray(m_Line2DWholeVertexID);
         glUseProgram(0);
-        m_Line2DShapePointList.pop_front();
         free(pointList.pointBuf);
+        m_Line2DShapePointList.pop_front();
     }
     m_iPointNum = 0;
     GLenum status;

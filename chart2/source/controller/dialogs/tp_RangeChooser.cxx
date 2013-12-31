@@ -89,6 +89,7 @@ RangeChooserTabPage::RangeChooserTabPage( Window* pParent
         , m_aRB_Columns( this, SchResId( RB_DATACOLS ) )
         , m_aCB_FirstRowAsLabel( this, SchResId( CB_FIRST_ROW_ASLABELS ) )
         , m_aCB_FirstColumnAsLabel( this, SchResId( CB_FIRST_COLUMN_ASLABELS ) )
+        , m_aCB_TimeBased( this, SchResId( CB_TIME_BASED ) )
         , m_nChangingControlCalls(0)
         , m_bIsDirty(false)
         , m_xDataProvider( 0 )
@@ -241,10 +242,19 @@ void RangeChooserTabPage::changeDialogModelAccordingToControls()
             || ( m_aCB_FirstRowAsLabel.IsChecked()    && !m_aRB_Rows.IsChecked() );
         sal_Bool bHasCategories = ( m_aCB_FirstColumnAsLabel.IsChecked() && m_aRB_Columns.IsChecked() )
             || ( m_aCB_FirstRowAsLabel.IsChecked()    && m_aRB_Rows.IsChecked() );
+        sal_Bool bTimeBased = m_aCB_TimeBased.IsChecked();
 
         Sequence< beans::PropertyValue > aArguments(
             DataSourceHelper::createArguments(
                 m_aRB_Columns.IsChecked(), bFirstCellAsLabel, bHasCategories ) );
+
+        if(bTimeBased)
+        {
+            aArguments.realloc( aArguments.getLength() + 1 );
+            aArguments[aArguments.getLength() - 1] =
+                beans::PropertyValue( "TimeBased", -1, uno::makeAny(bTimeBased),
+                        beans::PropertyState_DIRECT_VALUE );
+        }
 
         // only if range is valid
         if( m_aLastValidRangeString.equals(m_aED_Range.GetText()))

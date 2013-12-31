@@ -86,6 +86,12 @@ TabPage TP_RANGECHOOSER
         Size = MAP_APPFONT ( 236 , 10 ) ;
         Text [ en-US ] = "F~irst column as label" ;
     };
+    CheckBox CB_TIME_BASED
+    {
+        Pos = MAP_APPFONT ( 6, 112 );
+        Size = MAP_APPFONT( 236, 10 );
+        Text [ en-US ] = "Use time based charting";
+    };
 };
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

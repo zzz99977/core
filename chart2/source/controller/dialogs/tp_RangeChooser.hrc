@@ -31,4 +31,6 @@
 #define CB_FIRST_ROW_ASLABELS       1
 #define CB_FIRST_COLUMN_ASLABELS    2
 
+#define CB_TIME_BASED         3
+
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

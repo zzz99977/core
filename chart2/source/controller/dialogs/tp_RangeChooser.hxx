@@ -89,6 +89,8 @@ protected: //member
     CheckBox        m_aCB_FirstRowAsLabel;
     CheckBox        m_aCB_FirstColumnAsLabel;
 
+    CheckBox        m_aCB_TimeBased;
+
     sal_Int32       m_nChangingControlCalls;
     bool            m_bIsDirty;
 

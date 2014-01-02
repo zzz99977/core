@@ -90,6 +90,9 @@ RangeChooserTabPage::RangeChooserTabPage( Window* pParent
         , m_aCB_FirstRowAsLabel( this, SchResId( CB_FIRST_ROW_ASLABELS ) )
         , m_aCB_FirstColumnAsLabel( this, SchResId( CB_FIRST_COLUMN_ASLABELS ) )
         , m_aCB_TimeBased( this, SchResId( CB_TIME_BASED ) )
+        , m_aFt_TimeBased( this, SchResId(FT_TIME_BASED ) )
+        , m_aEd_TimeStart( this, SchResId( ED_TIME_START ) )
+        , m_aEd_TimeEnd( this, SchResId( ED_TIME_END ) )
         , m_nChangingControlCalls(0)
         , m_bIsDirty(false)
         , m_xDataProvider( 0 )
@@ -267,6 +270,13 @@ void RangeChooserTabPage::changeDialogModelAccordingToControls()
                                       beans::PropertyState_DIRECT_VALUE );
             m_rDialogModel.setData( aArguments );
             m_bIsDirty = false;
+
+            if(bTimeBased)
+            {
+                sal_Int32 nStart = m_aEd_TimeStart.GetText().toInt32();
+                sal_Int32 nEnd = m_aEd_TimeEnd.GetText().toInt32();
+                m_rDialogModel.setTimeBasedRange(nStart, nEnd);
+            }
         }
 
         //@todo warn user that the selected range is not valid

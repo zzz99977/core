@@ -90,6 +90,9 @@ protected: //member
     CheckBox        m_aCB_FirstColumnAsLabel;
 
     CheckBox        m_aCB_TimeBased;
+    FixedText       m_aFt_TimeBased;
+    Edit            m_aEd_TimeStart;
+    Edit            m_aEd_TimeEnd;
 
     sal_Int32       m_nChangingControlCalls;
     bool            m_bIsDirty;

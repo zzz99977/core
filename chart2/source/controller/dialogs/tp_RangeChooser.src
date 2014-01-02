@@ -28,7 +28,7 @@ TabPage TP_RANGECHOOSER
     HelpID = "chart2:TabPage:TP_RANGECHOOSER";
     Hide = TRUE ;
     SVLook = TRUE ;
-    Size = MAP_APPFONT ( 248, 140 ) ;
+    Size = MAP_APPFONT ( 248, 160 ) ;
 
     FixedText FT_CAPTION_FOR_WIZARD
     {
@@ -91,6 +91,24 @@ TabPage TP_RANGECHOOSER
         Pos = MAP_APPFONT ( 6, 112 );
         Size = MAP_APPFONT( 236, 10 );
         Text [ en-US ] = "Use time based charting";
+    };
+    FixedText FT_TIME_BASED
+    {
+        Pos = MAP_APPFONT( 6, 128 );
+        Size = MAP_APPFONT( 40, 10 );
+        Text[ en-US ] = "Start and End point";
+    };
+    Edit ED_TIME_START
+    {
+        Pos = MAP_APPFONT( 60, 128 );
+        Size = MAP_APPFONT( 40, 10 );
+        Text[ en-US ] = "Start";
+    };
+    Edit ED_TIME_END
+    {
+        Pos = MAP_APPFONT( 110, 128 );
+        Size = MAP_APPFONT( 40, 10 );
+        Text[ en-US ] = "End";
     };
 };
 

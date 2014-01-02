@@ -157,6 +157,9 @@ RangeChooserTabPage::RangeChooserTabPage( Window* pParent
     m_aRB_Rows.SetToggleHdl( LINK( this, RangeChooserTabPage, ControlChangedHdl ) );
     m_aCB_FirstRowAsLabel.SetToggleHdl( LINK( this, RangeChooserTabPage, ControlChangedHdl ) );
     m_aCB_FirstColumnAsLabel.SetToggleHdl( LINK( this, RangeChooserTabPage, ControlChangedHdl ) );
+    m_aCB_TimeBased.SetToggleHdl( LINK( this, RangeChooserTabPage, ControlChangedHdl ) );
+    m_aEd_TimeStart.SetModifyHdl( LINK( this, RangeChooserTabPage, ControlChangedHdl ) );
+    m_aEd_TimeEnd.SetModifyHdl( LINK( this, RangeChooserTabPage, ControlChangedHdl ) );
 }
 
 RangeChooserTabPage::~RangeChooserTabPage()

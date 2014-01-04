@@ -41,4 +41,6 @@
 #define BTN_UP            140
 #define BTN_DOWN          150
 
+#define BTN_ADDMAPPING    160
+
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

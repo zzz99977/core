@@ -97,7 +97,7 @@ TabPage TP_DATA_SOURCE
 
     FixedText FT_CATEGORIES
     {
-        Pos  = MAP_APPFONT ( 82 , 107  );
+        Pos  = MAP_APPFONT ( 82 , 104  );
         Size = MAP_APPFONT ( 160 , 8 );
 
         Text [ en-US ] = "~Categories";
@@ -105,7 +105,7 @@ TabPage TP_DATA_SOURCE
 
     FixedText FT_DATALABELS
     {
-        Pos  = MAP_APPFONT ( 82 , 107  );
+        Pos  = MAP_APPFONT ( 82 , 104  );
         Size = MAP_APPFONT ( 160 , 8 );
 
         Text [ en-US ] = "Data ~labels" ;
@@ -116,14 +116,14 @@ TabPage TP_DATA_SOURCE
         HelpID = "chart2:Edit:TP_DATA_SOURCE:EDT_CATEGORIES";
         Border = TRUE;
         TabStop = TRUE;
-        Pos  = MAP_APPFONT ( 82 , 117  );
+        Pos  = MAP_APPFONT ( 82 , 114  );
         Size = MAP_APPFONT ( 144 , 12 );
     };
     ImageButton IMB_RANGE_CAT
     {
         HelpID = "chart2:ImageButton:TP_DATA_SOURCE:IMB_RANGE_CAT";
         TabStop = TRUE;
-        Pos  = MAP_APPFONT ( 228 , 116  );
+        Pos  = MAP_APPFONT ( 228 , 113  );
         Size = MAP_APPFONT ( 14 , 14 );
     };
 
@@ -168,6 +168,14 @@ TabPage TP_DATA_SOURCE
         Disable = TRUE;
         Pos  = MAP_APPFONT ( 64 , 121  );
         Size = MAP_APPFONT ( 14 , 14 );
+    };
+    PushButton BTN_ADDMAPPING
+    {
+        TabStop = TRUE;
+        Pos = MAP_APPFONT( 82, 130 );
+        Size = MAP_APPFONT( 54, 14 );
+
+        Text [ en-US ] = "Add property mapping";
     };
 };
 

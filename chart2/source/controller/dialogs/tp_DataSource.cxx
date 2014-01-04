@@ -212,13 +212,10 @@ void lcl_increaseHeightOfControl( Control & rControl, long nYOffset )
 namespace chart
 {
 
-DataSourceTabPage::DataSourceTabPage(
-    Window * pParent,
-    DialogModel & rDialogModel,
-    ChartTypeTemplateProvider* pTemplateProvider,
-    Dialog * pParentDialog,
-    bool bHideDescription /* = false */ ) :
-        ::svt::OWizardPage( pParent, SchResId( TP_DATA_SOURCE )),
+DataSourceTabPage::DataSourceTabPage( Window * pParent,
+        DialogModel & rDialogModel, ChartTypeTemplateProvider* pTemplateProvider,
+    Dialog * pParentDialog, bool bHideDescription /* = false */ ) :
+    ::svt::OWizardPage( pParent, SchResId( TP_DATA_SOURCE )),
 
     m_aFT_CAPTION     ( this, SchResId( FT_CAPTION_FOR_WIZARD )),
     m_aFT_SERIES      ( this, SchResId( FT_SERIES      )),
@@ -236,6 +233,7 @@ DataSourceTabPage::DataSourceTabPage(
     m_aFT_DATALABELS  ( this, SchResId( FT_DATALABELS  )),
     m_aEDT_CATEGORIES ( this, SchResId( EDT_CATEGORIES )),
     m_aIMB_RANGE_CAT  ( this, SchResId( IMB_RANGE_CAT  )),
+    m_aBtn_AddMapping ( this, SchResId( BTN_ADDMAPPING )),
 
     m_pTemplateProvider( pTemplateProvider ),
     m_rDialogModel( rDialogModel ),
@@ -318,6 +316,9 @@ DataSourceTabPage::DataSourceTabPage(
     // #i75179# enable setting the background to a different color
     m_aEDT_RANGE.SetStyle( m_aEDT_RANGE.GetStyle() | WB_FORCECTRLBACKGROUND );
     m_aEDT_CATEGORIES.SetStyle( m_aEDT_CATEGORIES.GetStyle() | WB_FORCECTRLBACKGROUND );
+
+    // mapped properties
+    m_aBtn_AddMapping.SetClickHdl( LINK( this, DataSourceTabPage, AddMappingHdl ));
 
     // set symbol font for arrows
     // note: StarSymbol is substituted to OpenSymbol for OOo
@@ -820,6 +821,14 @@ IMPL_LINK( DataSourceTabPage, RangeUpdateDataHdl, Edit*, pEdit )
     }
     // enable/disable OK button
     isValid();
+
+    return 0;
+}
+
+IMPL_LINK_NOARG( DataSourceTabPage, AddMappingHdl )
+{
+    OUString aNewMappingName = "FillColor";
+    m_aLB_ROLE.InsertEntry( lcl_GetRoleLBEntry( aNewMappingName, OUString()));
 
     return 0;
 }

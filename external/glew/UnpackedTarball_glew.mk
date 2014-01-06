@@ -13,4 +13,8 @@ $(eval $(call gb_UnpackedTarball_set_tarball,glew,$(GLEW_TARBALL)))
 
 $(eval $(call gb_UnpackedTarball_set_patchlevel,glew,0))
 
+$(eval $(call gb_UnpackedTarball_add_patches,glew,\
+	external/glew/glew-fix-rc-error.patch.1 \
+))
+
 # vim: set noet sw=4 ts=4:

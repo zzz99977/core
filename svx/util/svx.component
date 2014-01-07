@@ -26,8 +26,7 @@
       constructor="com_sun_star_comp_gallery_GalleryThemeProvider_implementation_getFactory">
     <service name="com.sun.star.gallery.GalleryThemeProvider"/>
   </implementation>
-  <implementation name="com.sun.star.comp.svx.Impl.FindbarDispatcher"
-      constructor="com_sun_star_comp_svx_Impl_FindbarDispatcher_implementation_getFactory">
+  <implementation name="com.sun.star.comp.svx.Impl.FindbarDispatcher">
     <service name="com.sun.star.comp.svx.FindbarDispatcher"/>
     <service name="com.sun.star.frame.ProtocolHandler"/>
   </implementation>
@@ -43,31 +42,25 @@
   <implementation name="com.sun.star.drawing.SvxUnoColorTable">
     <service name="com.sun.star.drawing.ColorTable"/>
   </implementation>
-  <implementation name="com.sun.star.svx.DownSearchToolboxController"
-      constructor="com_sun_star_svx_DownSearchToolboxController_implementation_getFactory">
+  <implementation name="com.sun.star.svx.DownSearchToolboxController">
     <service name="com.sun.star.frame.ToolbarController"/>
   </implementation>
-  <implementation name="com.sun.star.svx.FindTextToolboxController"
-      constructor="com_sun_star_svx_FindTextToolboxController_implementation_getFactory">
+  <implementation name="com.sun.star.svx.FindTextToolboxController">
     <service name="com.sun.star.frame.ToolbarController"/>
   </implementation>
-  <implementation name="com.sun.star.svx.MatchCaseToolboxController"
-      constructor="com_sun_star_svx_MatchCaseToolboxController_implementation_getFactory">
+  <implementation name="com.sun.star.svx.MatchCaseToolboxController">
     <service name="com.sun.star.frame.ToolbarController"/>
   </implementation>
-  <implementation name="com.sun.star.svx.FindAllToolboxController"
-      constructor="com_sun_star_svx_FindAllToolboxController_implementation_getFactory">
+  <implementation name="com.sun.star.svx.FindAllToolboxController">
     <service name="com.sun.star.frame.ToolbarController"/>
   </implementation>
   <implementation name="com.sun.star.svx.FontHeightToolBoxController">
     <service name="com.sun.star.frame.ToolbarController"/>
   </implementation>
-  <implementation name="com.sun.star.svx.UpSearchToolboxController"
-      constructor="com_sun_star_svx_UpSearchToolboxController_implementation_getFactory">
+  <implementation name="com.sun.star.svx.UpSearchToolboxController">
     <service name="com.sun.star.frame.ToolbarController"/>
   </implementation>
-  <implementation name="com.sun.star.svx.ExitFindbarToolboxController"
-      constructor="com_sun_star_svx_ExitFindbarToolboxController_implementation_getFactory">
+  <implementation name="com.sun.star.svx.ExitFindbarToolboxController">
     <service name="com.sun.star.frame.ToolbarController"/>
   </implementation>
   <implementation name="org.apache.openoffice.comp.svx.sidebar.PanelFactory"

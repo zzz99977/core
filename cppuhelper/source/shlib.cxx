@@ -31,7 +31,9 @@
 
 #include <loadsharedlibcomponentfactory.hxx>
 
-#if defined DISABLE_DYNLOADING
+#if defined ANDROID
+#include <osl/detail/android-bootstrap.h>
+#elif defined IOS
 #include <osl/detail/component-mapping.h>
 #endif
 

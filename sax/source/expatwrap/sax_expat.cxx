@@ -129,11 +129,7 @@ OUString XmlChar2OUString( const XML_Char *p )
 
 class SaxExpatParser_Impl;
 
-OUString SaxExpatParser_getImplementationName() {
-    return OUString("com.sun.star.comp.extensions.xml.sax.ParserExpat");
-}
-
-Sequence< OUString > SaxExpatParser_getSupportedServiceNames(void)
+static Sequence< OUString > SaxExpatParser_getSupportedServiceNames(void)
 {
     Sequence<OUString> seq(1);
     seq[0] = OUString("com.sun.star.xml.sax.Parser");
@@ -598,7 +594,7 @@ void SaxExpatParser::setLocale( const Locale & locale ) throw (RuntimeException)
 // XServiceInfo
 OUString SaxExpatParser::getImplementationName() throw ()
 {
-    return SaxExpatParser_getImplementationName();
+    return OUString("com.sun.star.comp.extensions.xml.sax.ParserExpat");
 }
 
 // XServiceInfo
@@ -1023,25 +1019,27 @@ void SaxExpatParser_Impl::callbackEndCDATA( void *pvThis )
     CALL_ELEMENT_HANDLER_AND_CARE_FOR_EXCEPTIONS(pImpl,rExtendedDocumentHandler->endCDATA() );
 }
 
-Reference< XInterface > SAL_CALL SaxExpatParser_CreateInstance(
-    SAL_UNUSED_PARAMETER const Reference<css::uno::XComponentContext> & )
-    SAL_THROW((css::uno::Exception))
+} // namespace
+
+static Reference< XInterface > SaxExpatParser_CreateInstance(
+    SAL_UNUSED_PARAMETER const Reference< XMultiServiceFactory > & )
+    throw(Exception)
 {
     SaxExpatParser *p = new SaxExpatParser;
     return Reference< XInterface > ( (OWeakObject * ) p );
 }
 
-} // namespace
-
 extern "C" SAL_DLLPUBLIC_EXPORT void * SAL_CALL
 com_sun_star_comp_extensions_xml_sax_ParserExpat_component_getFactory(
-    const char *, void *, void * )
+    const char * , void *pServiceManager, void * )
 {
-    Reference<css::lang::XSingleComponentFactory> xFactory(
-        cppu::createSingleComponentFactory(
-            &SaxExpatParser_CreateInstance,
-            SaxExpatParser_getImplementationName(),
-            SaxExpatParser_getSupportedServiceNames()));
+    Reference< XSingleServiceFactory > xFactory;
+    Reference< XMultiServiceFactory > xSMgr =
+        reinterpret_cast< XMultiServiceFactory * >( pServiceManager );
+    xFactory = createSingleFactory( xSMgr,
+            "com.sun.star.comp.extensions.xml.sax.ParserExpat",
+            SaxExpatParser_CreateInstance,
+            SaxExpatParser_getSupportedServiceNames() );
     xFactory->acquire();
     return xFactory.get();
 }

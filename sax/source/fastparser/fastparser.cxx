@@ -55,18 +55,15 @@ using namespace ::com::sun::star::io;
 using namespace com::sun::star;
 using namespace sax_fastparser;
 
-namespace {
-
-OUString FastSaxParser_getImplementationName() {
-    return OUString("com.sun.star.comp.extensions.xml.sax.FastParser");
-}
-
-uno::Sequence<OUString> FastSaxParser_getSupportedServiceNames()
+static uno::Sequence<OUString> FastSaxParser_getSupportedServiceNames()
+    throw (uno::RuntimeException)
 {
     Sequence<OUString> seq(1);
     seq.getArray()[0] = OUString("com.sun.star.xml.sax.FastParser");
     return seq;
 }
+
+namespace {
 
 struct Event;
 class FastLocatorImpl;
@@ -1409,7 +1406,7 @@ void FastSaxParser::setLocale( const lang::Locale& rLocale )
 OUString FastSaxParser::getImplementationName()
     throw (uno::RuntimeException)
 {
-    return FastSaxParser_getImplementationName();
+    return OUString("com.sun.star.comp.extensions.xml.sax.FastParser");
 }
 
 sal_Bool FastSaxParser::supportsService( const OUString& ServiceName )
@@ -1431,9 +1428,9 @@ bool FastSaxParser::hasNamespaceURL( const OUString& rPrefix ) const
 
 } // namespace sax_fastparser
 
-static Reference< XInterface > SAL_CALL FastSaxParser_CreateInstance(
-    SAL_UNUSED_PARAMETER const Reference<css::uno::XComponentContext> & )
-    SAL_THROW((css::uno::Exception))
+static Reference< XInterface > FastSaxParser_CreateInstance(
+    SAL_UNUSED_PARAMETER const Reference< XMultiServiceFactory > & )
+    throw(Exception)
 {
     FastSaxParser *p = new FastSaxParser;
     return Reference< XInterface > ( (OWeakObject * ) p );
@@ -1441,13 +1438,15 @@ static Reference< XInterface > SAL_CALL FastSaxParser_CreateInstance(
 
 extern "C" SAL_DLLPUBLIC_EXPORT void * SAL_CALL
 com_sun_star_comp_extensions_xml_sax_FastParser_component_getFactory(
-    const char *, void *, void * )
+    const char * , void *pServiceManager, void * )
 {
-    Reference<css::lang::XSingleComponentFactory> xFactory(
-        cppu::createSingleComponentFactory(
-            &FastSaxParser_CreateInstance,
-            FastSaxParser_getImplementationName(),
-            FastSaxParser_getSupportedServiceNames()));
+    Reference< XSingleServiceFactory > xFactory;
+    Reference< XMultiServiceFactory > xSMgr =
+        reinterpret_cast< XMultiServiceFactory * >( pServiceManager );
+    xFactory = createSingleFactory( xSMgr,
+            "com.sun.star.comp.extensions.xml.sax.FastParser",
+            FastSaxParser_CreateInstance,
+            FastSaxParser_getSupportedServiceNames() );
     xFactory->acquire();
     return xFactory.get();
 }

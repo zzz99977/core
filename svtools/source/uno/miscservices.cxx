@@ -28,6 +28,7 @@
 #include <uno/mapping.hxx>
 #include "documentcloser.hxx"
 #include "hatchwindow.hxx"
+#include "provider.hxx"
 #include "unowizard.hxx"
 
 #include "comphelper/servicedecl.hxx"
@@ -38,6 +39,7 @@ using namespace ::com::sun::star;
 using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star::registry;
 using namespace ::com::sun::star::lang;
+using namespace unographic;
 
 
 namespace sdecl = comphelper::service_decl;
@@ -72,6 +74,7 @@ namespace
 
 DECLARE_CREATEINSTANCE_NAMESPACE( svt, OAddressBookSourceDialogUno )
 DECLARE_CREATEINSTANCE( SvFilterOptionsDialog )
+DECLARE_CREATEINSTANCE_NAMESPACE( unographic, GraphicProvider )
 
 extern "C"
 {
@@ -109,6 +112,13 @@ SAL_DLLPUBLIC_EXPORT void * SAL_CALL svt_component_getFactory (
                 SvFilterOptionsDialog_CreateInstance,
                 aServiceNames);
         }
+        else if( GraphicProvider::getImplementationName_Static().equalsAscii( pImplementationName ) )
+        {
+            xFactory =  ::cppu::createOneInstanceFactory(xSMgr,
+                GraphicProvider::getImplementationName_Static(),
+                GraphicProvider_CreateInstance,
+                GraphicProvider::getSupportedServiceNames_Static() );
+        }
         else if (rtl_str_compare (pImplementationName, "com.sun.star.comp.embed.DocumentCloser") == 0)
         {
             xFactory =  ::cppu::createOneInstanceFactory(xSMgr,
@@ -122,7 +132,7 @@ SAL_DLLPUBLIC_EXPORT void * SAL_CALL svt_component_getFactory (
                 pImplementationName,
                 static_cast<css::lang::XMultiServiceFactory *>(_pServiceManager),
                 static_cast<css::registry::XRegistryKey *>(pRegistryKey),
-                unographic::serviceDecl );
+                serviceDecl );
             if ( !pResult )
                 pResult = cppu::component_getFactoryHelper(pImplementationName,
                                                         _pServiceManager,

@@ -25,7 +25,11 @@
 #include <com/sun/star/graphic/XGraphicProvider.hpp>
 #include <com/sun/star/awt/XBitmap.hpp>
 
-namespace {
+namespace unographic {
+
+// -------------------
+// - GraphicProvider -
+// -------------------
 
 class GraphicProvider : public ::cppu::WeakImplHelper1< ::com::sun::star::graphic::XGraphicProvider >
 {
@@ -33,6 +37,9 @@ public:
 
     GraphicProvider();
     ~GraphicProvider();
+
+    static OUString getImplementationName_Static() throw();
+    static ::com::sun::star::uno::Sequence< OUString >  getSupportedServiceNames_Static() throw();
 
 protected:
 

@@ -60,6 +60,10 @@ class Graphic;
 
 namespace unographic {
 
+// -------------------
+// - GraphicProvider -
+// -------------------
+
 class GraphicDescriptor : public ::cppu::OWeakAggObject,
                           public ::com::sun::star::lang::XServiceInfo,
                           public ::com::sun::star::lang::XTypeProvider,

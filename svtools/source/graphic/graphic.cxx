@@ -31,6 +31,10 @@ using namespace com::sun::star;
 
 namespace unographic {
 
+// -------------------
+// - GraphicProvider -
+// -------------------
+
 Graphic::Graphic() :
     mpGraphic( NULL )
 {

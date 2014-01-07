@@ -228,8 +228,8 @@ public:
 
     void pushEntity( const Entity& rEntity );
     void popEntity();
-    Entity& getEntity()             { return *mpTop; }
-    const Entity& getEntity() const { return *mpTop; }
+    Entity& getEntity();
+    const Entity& getEntity() const;
     void parse();
     void produce( CallbackType aType );
 
@@ -260,8 +260,6 @@ private:
     NamespaceMap                            maNamespaceMap;
 
     ParserData maData;                      /// Cached parser configuration for next call of parseStream().
-
-    Entity *mpTop;                          /// std::stack::top() is amazingly slow => cache this.
     ::std::stack< Entity > maEntities;      /// Entity stack for each call of parseStream().
     FastTokenLookup maTokenLookup;
 };
@@ -625,9 +623,7 @@ void Entity::saveException( const Exception &e )
 
 namespace sax_fastparser {
 
-FastSaxParserImpl::FastSaxParserImpl( FastSaxParser* pFront ) :
-    mpFront(pFront),
-    mpTop(NULL)
+FastSaxParserImpl::FastSaxParserImpl( FastSaxParser* pFront ) : mpFront(pFront)
 {
     mxDocumentLocator.set( new FastLocatorImpl( this ) );
 }
@@ -1046,13 +1042,21 @@ bool FastSaxParserImpl::consume(EventList *pEventList)
 void FastSaxParserImpl::pushEntity( const Entity& rEntity )
 {
     maEntities.push( rEntity );
-    mpTop = &maEntities.top();
 }
 
 void FastSaxParserImpl::popEntity()
 {
     maEntities.pop();
-    mpTop = &maEntities.top();
+}
+
+Entity& FastSaxParserImpl::getEntity()
+{
+    return maEntities.top();
+}
+
+const Entity& FastSaxParserImpl::getEntity() const
+{
+    return maEntities.top();
 }
 
 // starts parsing with actual parser !

@@ -22,7 +22,6 @@
 #include <set>
 #include <comphelper/servicehelper.hxx>
 #include <com/sun/star/drawing/XShapes.hpp>
-#include <com/sun/star/xml/sax/FastShapeContextHandler.hpp>
 #include <resourcemodel/QNameToString.hxx>
 #include <resourcemodel/XPathLogger.hxx>
 #include <resourcemodel/util.hxx>
@@ -57,6 +56,7 @@ static const sal_uInt8 cFieldEnd = 0x15;
 namespace writerfilter {
 namespace ooxml
 {
+using ::com::sun::star::lang::XMultiComponentFactory;
 using namespace ::com::sun::star;
 using namespace ::std;
 
@@ -2033,26 +2033,47 @@ OOXMLFastContextHandlerShape::OOXMLFastContextHandlerShape
 : OOXMLFastContextHandlerProperties(pContext), m_bShapeSent( false ),
     m_bShapeStarted(false)
 {
-    mrShapeContext.set( getDocument( )->getShapeContext( ) );
-    if ( !mrShapeContext.is( ) )
+    uno::Reference<uno::XComponentContext> xContext(getComponentContext());
+    if (xContext.is())
     {
-        // Define the shape context for the whole document
-        mrShapeContext = css::xml::sax::FastShapeContextHandler::create(
-            getComponentContext());
-        getDocument()->setShapeContext( mrShapeContext );
-    }
+        uno::Reference<XMultiComponentFactory> rServiceManager
+            (xContext->getServiceManager());
 
-    mrShapeContext->setModel(getDocument()->getModel());
-    mrShapeContext->setDrawPage(getDocument()->getDrawPage());
-    mrShapeContext->setInputStream(getDocument()->getStorageStream());
+        mrShapeContext.set( getDocument( )->getShapeContext( ) );
+        if ( !mrShapeContext.is( ) )
+        {
+            // Define the shape context for the whole document
+            mrShapeContext.set
+                (rServiceManager->
+                  createInstanceWithContext
+                  ("com.sun.star.xml.sax.FastShapeContextHandler", xContext),
+                  uno::UNO_QUERY);
+            getDocument()->setShapeContext( mrShapeContext );
+        }
+
+        if (mrShapeContext.is())
+        {
+            mrShapeContext->setModel(getDocument()->getModel());
+            mrShapeContext->setDrawPage(getDocument()->getDrawPage());
+            mrShapeContext->setInputStream(getDocument()->getStorageStream());
 
 #ifdef DEBUG_ELEMENT
-    debug_logger->startElement("setRelationFragmentPath");
-    debug_logger->attribute("path", mpParserState->getTarget());
-    debug_logger->endElement();
+            debug_logger->startElement("setRelationFragmentPath");
+            debug_logger->attribute("path", mpParserState->getTarget());
+            debug_logger->endElement();
 #endif
-    mrShapeContext->setRelationFragmentPath
-        (mpParserState->getTarget());
+            mrShapeContext->setRelationFragmentPath
+                (mpParserState->getTarget());
+        }
+#ifdef DEBUG_CONTEXT_STACK
+        else
+        {
+            debug_logger->startElement("error");
+            debug_logger->chars(std::string("failed to get shape handler"));
+            debug_logger->endElement();
+        }
+#endif
+    }
 }
 
 OOXMLFastContextHandlerShape::~OOXMLFastContextHandlerShape()

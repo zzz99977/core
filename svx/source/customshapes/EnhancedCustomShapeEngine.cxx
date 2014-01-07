@@ -17,14 +17,7 @@
  *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
  */
 
-#include <com/sun/star/uno/Reference.h>
-#include <com/sun/star/uno/RuntimeException.hpp>
-#include <com/sun/star/awt/Rectangle.hpp>
-#include <com/sun/star/beans/PropertyValue.hpp>
-#include <com/sun/star/drawing/PolyPolygonBezierCoords.hpp>
-#include <com/sun/star/lang/XInitialization.hpp>
-#include <com/sun/star/lang/XServiceInfo.hpp>
-#include <com/sun/star/drawing/XCustomShapeEngine.hpp>
+#include "EnhancedCustomShapeEngine.hxx"
 #include "svx/EnhancedCustomShape2d.hxx"
 #include "EnhancedCustomShape3d.hxx"
 #include "EnhancedCustomShapeFontWork.hxx"
@@ -49,61 +42,29 @@
 #include <basegfx/polygon/b2dpolypolygontools.hxx>
 #include <basegfx/tools/unotools.hxx>
 #include <com/sun/star/document/XActionLockable.hpp>
-#include <cppuhelper/implbase3.hxx>
 #include <cppuhelper/supportsservice.hxx>
 
 using namespace css;
 using namespace css::uno;
 
-class SdrObject;
-class SdrObjCustomShape;
-
-namespace {
-
-class EnhancedCustomShapeEngine : public cppu::WeakImplHelper3
-<
-    css::lang::XInitialization,
-    css::lang::XServiceInfo,
-    css::drawing::XCustomShapeEngine
->
+// - EnhancedCustomShapeEngine -
+OUString EnhancedCustomShapeEngine_getImplementationName()
+    throw( RuntimeException )
 {
-    css::uno::Reference< css::drawing::XShape >      mxShape;
-    sal_Bool                                    mbForceGroupWithText;
+    return OUString( "com.sun.star.drawing.EnhancedCustomShapeEngine" );
+}
 
-    SdrObject* ImplForceGroupWithText( const SdrObjCustomShape* pCustoObj, SdrObject* pRenderedShape );
+Sequence< OUString > SAL_CALL EnhancedCustomShapeEngine_getSupportedServiceNames()
+    throw( RuntimeException )
+{
+    Sequence< OUString > aRet(1);
+    OUString* pArray = aRet.getArray();
+    pArray[0] = "com.sun.star.drawing.CustomShapeEngine";
+    return aRet;
+}
 
-public:
-                            EnhancedCustomShapeEngine();
-    virtual                 ~EnhancedCustomShapeEngine();
-
-    // XInterface
-    virtual void SAL_CALL   acquire() throw();
-    virtual void SAL_CALL   release() throw();
-
-    // XInitialization
-    virtual void SAL_CALL initialize( const css::uno::Sequence< css::uno::Any >& aArguments )
-        throw ( css::uno::Exception, css::uno::RuntimeException );
-
-    // XServiceInfo
-    virtual OUString SAL_CALL getImplementationName()
-        throw ( css::uno::RuntimeException );
-    virtual sal_Bool SAL_CALL supportsService( const OUString& rServiceName )
-        throw ( css::uno::RuntimeException );
-    virtual css::uno::Sequence< OUString > SAL_CALL getSupportedServiceNames()
-        throw ( css::uno::RuntimeException );
-
-    // XCustomShapeEngine
-    virtual css::uno::Reference< css::drawing::XShape > SAL_CALL render()
-        throw ( css::uno::RuntimeException );
-    virtual css::awt::Rectangle SAL_CALL getTextBounds()
-        throw ( css::uno::RuntimeException );
-    virtual css::drawing::PolyPolygonBezierCoords SAL_CALL getLineGeometry()
-        throw ( css::uno::RuntimeException );
-    virtual css::uno::Sequence< css::uno::Reference< css::drawing::XCustomShapeHandle > > SAL_CALL getInteraction()
-        throw ( css::uno::RuntimeException );
-};
-
-EnhancedCustomShapeEngine::EnhancedCustomShapeEngine() :
+EnhancedCustomShapeEngine::EnhancedCustomShapeEngine( const Reference< lang::XMultiServiceFactory >& rxMgr ) :
+    mxFact                  ( rxMgr ),
     mbForceGroupWithText    ( sal_False )
 {
 }
@@ -148,7 +109,7 @@ void SAL_CALL EnhancedCustomShapeEngine::initialize( const Sequence< Any >& aArg
 OUString SAL_CALL EnhancedCustomShapeEngine::getImplementationName()
     throw( RuntimeException )
 {
-    return OUString( "com.sun.star.drawing.EnhancedCustomShapeEngine" );
+    return EnhancedCustomShapeEngine_getImplementationName();
 }
 sal_Bool SAL_CALL EnhancedCustomShapeEngine::supportsService( const OUString& rServiceName )
     throw( RuntimeException )
@@ -158,10 +119,7 @@ sal_Bool SAL_CALL EnhancedCustomShapeEngine::supportsService( const OUString& rS
 Sequence< OUString > SAL_CALL EnhancedCustomShapeEngine::getSupportedServiceNames()
     throw ( RuntimeException )
 {
-    Sequence< OUString > aRet(1);
-    OUString* pArray = aRet.getArray();
-    pArray[0] = "com.sun.star.drawing.CustomShapeEngine";
-    return aRet;
+    return EnhancedCustomShapeEngine_getSupportedServiceNames();
 }
 
 // XCustomShapeEngine -----------------------------------------------------------
@@ -484,28 +442,6 @@ Sequence< Reference< drawing::XCustomShapeHandle > > SAL_CALL EnhancedCustomShap
     for ( i = 0; i < nHdlCount; i++ )
         aSeq[ i ] = new EnhancedCustomShapeHandle( mxShape, i );
     return aSeq;
-}
-
-}
-
-extern "C" SAL_DLLPUBLIC_EXPORT css::uno::XInterface * SAL_CALL
-com_sun_star_drawing_EnhancedCustomShapeEngine_implementation_getFactory(
-    SAL_UNUSED_PARAMETER css::uno::XComponentContext *,
-    uno_Sequence * arguments)
-{
-    assert(arguments != 0);
-    css::uno::Reference<css::uno::XInterface> x(
-        static_cast<cppu::OWeakObject *>(new EnhancedCustomShapeEngine));
-    x->acquire();
-    css::uno::Reference< css::lang::XInitialization > xx(x, css::uno::UNO_QUERY);
-    if (xx.is())
-    {
-        css::uno::Sequence<css::uno::Any> aArgs(
-                reinterpret_cast<css::uno::Any *>(arguments->elements),
-                arguments->nElements);
-        xx->initialize(aArgs);
-    }
-    return x.get();
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

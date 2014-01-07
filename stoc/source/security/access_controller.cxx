@@ -34,6 +34,7 @@
 
 #include <cppuhelper/implbase1.hxx>
 #include <cppuhelper/compbase3.hxx>
+#include <cppuhelper/factory.hxx>
 #include <cppuhelper/implementationentry.hxx>
 #include <cppuhelper/supportsservice.hxx>
 
@@ -51,6 +52,7 @@
 
 
 #define SERVICE_NAME "com.sun.star.security.AccessController"
+#define IMPL_NAME "com.sun.star.security.comp.stoc.AccessController"
 #define USER_CREDS "access-control.user-credentials"
 
 
@@ -960,7 +962,7 @@ Reference< security::XAccessControlContext > AccessController::getContext()
 OUString AccessController::getImplementationName()
     throw (RuntimeException)
 {
-    return OUString("com.sun.star.security.comp.stoc.AccessController");
+    return OUString(IMPL_NAME);
 }
 //__________________________________________________________________________________________________
 sal_Bool AccessController::supportsService( OUString const & serviceName )
@@ -969,25 +971,39 @@ sal_Bool AccessController::supportsService( OUString const & serviceName )
     return cppu::supportsService(this, serviceName);
 }
 //__________________________________________________________________________________________________
-Sequence< OUString > AccessController::getSupportedServiceNames()
-    throw (RuntimeException)
+static Sequence< OUString > AccessController_getSupportedServiceNames()
 {
     Sequence< OUString > aSNS( 1 );
-    aSNS[0] = OUString(SERVICE_NAME);
+    aSNS.getArray()[0] = OUString(SERVICE_NAME);
     return aSNS;
 }
 
+Sequence< OUString > AccessController::getSupportedServiceNames()
+    throw (RuntimeException)
+{
+    return AccessController_getSupportedServiceNames();
 }
 
-extern "C" SAL_DLLPUBLIC_EXPORT css::uno::XInterface * SAL_CALL
-com_sun_star_security_comp_stoc_AccessController(
-    css::uno::XComponentContext * context, uno_Sequence * arguments)
+}
+
+static Reference< XInterface > SAL_CALL AccessController_create(
+    Reference< XComponentContext > const & xComponentContext )
+    SAL_THROW( (Exception) )
 {
-    assert(arguments != 0 && arguments->nElements == 0); (void) arguments;
-    css::uno::Reference<css::uno::XInterface> x(
-        static_cast<cppu::OWeakObject *>(new AccessController(context)));
-    x->acquire();
-    return x.get();
+    return (OWeakObject *)new AccessController( xComponentContext );
+}
+
+extern "C" SAL_DLLPUBLIC_EXPORT void * SAL_CALL
+com_sun_star_security_comp_stoc_AccessController_component_getFactory(
+    const char * , void * , void * )
+{
+    Reference< css::lang::XSingleComponentFactory > xFactory;
+    xFactory = createSingleComponentFactory(
+            AccessController_create,
+            IMPL_NAME,
+            AccessController_getSupportedServiceNames() );
+    xFactory->acquire();
+    return xFactory.get();
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

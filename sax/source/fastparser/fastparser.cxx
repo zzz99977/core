@@ -27,6 +27,7 @@
 #include <com/sun/star/xml/sax/XFastContextHandler.hpp>
 #include <com/sun/star/xml/sax/XFastDocumentHandler.hpp>
 #include <com/sun/star/xml/sax/XFastTokenHandler.hpp>
+#include <cppuhelper/factory.hxx>
 #include <cppuhelper/supportsservice.hxx>
 #include <osl/conditn.hxx>
 #include <osl/diagnose.h>
@@ -41,13 +42,8 @@
 #include <stack>
 #include <vector>
 #include <queue>
-#include <cassert>
 #include <cstring>
 #include <expat.h>
-
-namespace com { namespace sun { namespace star { namespace uno {
-    class XComponentContext;
-} } } }
 
 using namespace ::std;
 using namespace ::osl;
@@ -60,6 +56,17 @@ using namespace com::sun::star;
 using namespace sax_fastparser;
 
 namespace {
+
+OUString FastSaxParser_getImplementationName() {
+    return OUString("com.sun.star.comp.extensions.xml.sax.FastParser");
+}
+
+uno::Sequence<OUString> FastSaxParser_getSupportedServiceNames()
+{
+    Sequence<OUString> seq(1);
+    seq.getArray()[0] = OUString("com.sun.star.xml.sax.FastParser");
+    return seq;
+}
 
 struct Event;
 class FastLocatorImpl;
@@ -1402,7 +1409,7 @@ void FastSaxParser::setLocale( const lang::Locale& rLocale )
 OUString FastSaxParser::getImplementationName()
     throw (uno::RuntimeException)
 {
-    return OUString("com.sun.star.comp.extensions.xml.sax.FastParser");
+    return FastSaxParser_getImplementationName();
 }
 
 sal_Bool FastSaxParser::supportsService( const OUString& ServiceName )
@@ -1414,9 +1421,7 @@ sal_Bool FastSaxParser::supportsService( const OUString& ServiceName )
 uno::Sequence<OUString> FastSaxParser::getSupportedServiceNames()
     throw (uno::RuntimeException)
 {
-    Sequence<OUString> seq(1);
-    seq[0] = OUString("com.sun.star.xml.sax.FastParser");
-    return seq;
+    return FastSaxParser_getSupportedServiceNames();
 }
 
 bool FastSaxParser::hasNamespaceURL( const OUString& rPrefix ) const
@@ -1426,16 +1431,25 @@ bool FastSaxParser::hasNamespaceURL( const OUString& rPrefix ) const
 
 } // namespace sax_fastparser
 
-extern "C" SAL_DLLPUBLIC_EXPORT css::uno::XInterface * SAL_CALL
-com_sun_star_comp_extensions_xml_sax_FastParser(
-    SAL_UNUSED_PARAMETER css::uno::XComponentContext *,
-    uno_Sequence * arguments)
+static Reference< XInterface > SAL_CALL FastSaxParser_CreateInstance(
+    SAL_UNUSED_PARAMETER const Reference<css::uno::XComponentContext> & )
+    SAL_THROW((css::uno::Exception))
 {
-    assert(arguments != 0 && arguments->nElements == 0); (void) arguments;
-    css::uno::Reference<css::uno::XInterface> x(
-        static_cast<cppu::OWeakObject *>(new FastSaxParser));
-    x->acquire();
-    return x.get();
+    FastSaxParser *p = new FastSaxParser;
+    return Reference< XInterface > ( (OWeakObject * ) p );
+}
+
+extern "C" SAL_DLLPUBLIC_EXPORT void * SAL_CALL
+com_sun_star_comp_extensions_xml_sax_FastParser_component_getFactory(
+    const char *, void *, void * )
+{
+    Reference<css::lang::XSingleComponentFactory> xFactory(
+        cppu::createSingleComponentFactory(
+            &FastSaxParser_CreateInstance,
+            FastSaxParser_getImplementationName(),
+            FastSaxParser_getSupportedServiceNames()));
+    xFactory->acquire();
+    return xFactory.get();
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

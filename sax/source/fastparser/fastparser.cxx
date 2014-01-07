@@ -282,7 +282,7 @@ private:
         {
             mpParser->parse();
         }
-        catch (const Exception &)
+        catch (const Exception &e)
         {
             Entity &rEntity = mpParser->getEntity();
             rEntity.getEvent( EXCEPTION );

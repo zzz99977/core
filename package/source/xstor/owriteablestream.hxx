@@ -51,10 +51,6 @@
 #include "ocompinstream.hxx"
 #include "mutexholder.hxx"
 
-namespace com { namespace sun { namespace star { namespace uno {
-    class XComponentContext;
-} } } }
-
 struct PreCreationStruct
 {
     SotMutexHolderRef m_rMutexRef;

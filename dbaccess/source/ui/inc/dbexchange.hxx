@@ -31,10 +31,6 @@
 
 #include <rtl/ref.hxx>
 
-namespace com { namespace sun { namespace star { namespace uno {
-    class XComponentContext;
-} } } }
-
 namespace dbaui
 {
 

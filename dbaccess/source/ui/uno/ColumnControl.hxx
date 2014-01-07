@@ -22,10 +22,6 @@
 #include <toolkit/controls/unocontrol.hxx>
 #include "apitools.hxx"
 
-namespace com { namespace sun { namespace star { namespace uno {
-    class XComponentContext;
-} } } }
-
 namespace dbaui
 {
     class OColumnControl :  public UnoControl

@@ -19,7 +19,6 @@
 
 #include <com/sun/star/container/XNameAccess.hpp>
 #include <com/sun/star/beans/PropertyValue.hpp>
-#include <com/sun/star/uno/XComponentContext.hpp>
 #include <tools/resid.hxx>
 #include <vcl/msgbox.hxx>
 #include <osl/file.hxx>

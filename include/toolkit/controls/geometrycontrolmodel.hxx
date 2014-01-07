@@ -40,9 +40,6 @@ namespace com { namespace sun { namespace star {
     namespace script {
         class XNameContainer;
     }
-    namespace uno {
-        class XComponentContext;
-    }
 }}}
 
 //........................................................................

@@ -28,10 +28,6 @@
 #define TRANSLITERATION_casemapping
 #include <transliteration_body.hxx>
 
-namespace com { namespace sun { namespace star { namespace uno {
-    class XComponentContext;
-} } } }
-
 namespace com { namespace sun { namespace star { namespace i18n {
 
 typedef sal_uInt32 UPT_FLAG_TYPE;

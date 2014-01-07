@@ -30,10 +30,6 @@
 #include <cppuhelper/compbase_ex.hxx>
 #include <comphelper/comphelperdllapi.h>
 
-namespace com { namespace sun { namespace star { namespace uno {
-    class XComponentContext;
-} } } }
-
 /* class hierarchy herein:
 
          +-------------------+          helper class for aggregating the proxy to another object

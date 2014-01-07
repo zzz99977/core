@@ -31,10 +31,6 @@
 #include <boost/function.hpp>
 #include <vector>
 
-namespace com { namespace sun { namespace star { namespace uno {
-    class XComponentContext;
-} } } }
-
 namespace sdext { namespace presenter {
 
 /** The timer allows tasks to be scheduled for execution at a specified time

@@ -32,10 +32,6 @@
 #include <cppuhelper/compbase3.hxx>
 #include <cppuhelper/implbase1.hxx>
 
-namespace com { namespace sun { namespace star { namespace uno {
-    class XComponentContext;
-} } } }
-
 //......................................................................................................................
 namespace toolkit
 {

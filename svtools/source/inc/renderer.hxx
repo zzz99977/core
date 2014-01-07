@@ -29,7 +29,11 @@
 
 class OutputDevice;
 
-namespace {
+namespace unographic {
+
+// -------------------
+// - GraphicRenderer -
+// -------------------
 
 class GraphicRendererVCL : public ::cppu::OWeakAggObject,
                            public ::com::sun::star::lang::XServiceInfo,
@@ -41,6 +45,9 @@ public:
 
     GraphicRendererVCL();
     ~GraphicRendererVCL() throw();
+
+    static OUString getImplementationName_Static() throw();
+    static ::com::sun::star::uno::Sequence< OUString >  getSupportedServiceNames_Static() throw();
 
 protected:
 

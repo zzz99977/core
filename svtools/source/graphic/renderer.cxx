@@ -38,7 +38,17 @@
 
 using namespace ::com::sun::star;
 
-namespace {
+namespace unographic {
+
+// ---------------------
+// - GraphicRendererVCL -
+// ---------------------
+
+uno::Reference< uno::XInterface > SAL_CALL GraphicRendererVCL_CreateInstance( const uno::Reference< lang::XMultiServiceFactory >& )
+{
+    return (static_cast< ::cppu::OWeakObject* >(new GraphicRendererVCL ));
+}
+
 
 GraphicRendererVCL::GraphicRendererVCL() :
     ::comphelper::PropertySetHelper( createPropertySetInfo() ),
@@ -51,6 +61,26 @@ GraphicRendererVCL::GraphicRendererVCL() :
 GraphicRendererVCL::~GraphicRendererVCL()
     throw()
 {
+}
+
+// ------------------------------------------------------------------------------
+
+OUString GraphicRendererVCL::getImplementationName_Static()
+    throw()
+{
+    return OUString( "com.sun.star.comp.graphic.GraphicRendererVCL" );
+}
+
+// ------------------------------------------------------------------------------
+
+uno::Sequence< OUString > GraphicRendererVCL::getSupportedServiceNames_Static()
+    throw(  )
+{
+    uno::Sequence< OUString > aSeq( 1 );
+
+    aSeq.getArray()[ 0 ] = "com.sun.star.graphic.GraphicRendererVCL";
+
+    return aSeq;
 }
 
 // ------------------------------------------------------------------------------
@@ -107,7 +137,7 @@ void SAL_CALL GraphicRendererVCL::release()
 OUString SAL_CALL GraphicRendererVCL::getImplementationName()
     throw( uno::RuntimeException )
 {
-    return OUString( "com.sun.star.comp.graphic.GraphicRendererVCL" );
+    return getImplementationName_Static();
 }
 
 sal_Bool SAL_CALL GraphicRendererVCL::supportsService( const OUString& ServiceName )
@@ -121,9 +151,7 @@ sal_Bool SAL_CALL GraphicRendererVCL::supportsService( const OUString& ServiceNa
 uno::Sequence< OUString > SAL_CALL GraphicRendererVCL::getSupportedServiceNames()
     throw( uno::RuntimeException )
 {
-    uno::Sequence< OUString > aSeq( 1 );
-    aSeq.getArray()[ 0 ] = "com.sun.star.graphic.GraphicRendererVCL";
-    return aSeq;
+    return getSupportedServiceNames_Static();
 }
 
 // ------------------------------------------------------------------------------
@@ -289,18 +317,6 @@ void SAL_CALL GraphicRendererVCL::render( const uno::Reference< graphic::XGraphi
     }
 }
 
-}
-
-extern "C" SAL_DLLPUBLIC_EXPORT css::uno::XInterface * SAL_CALL
-com_sun_star_comp_graphic_GraphicRendererVCL_get_implementation(
-        SAL_UNUSED_PARAMETER css::uno::XComponentContext *,
-        uno_Sequence * arguments)
-{
-    assert(arguments != 0 && arguments->nElements == 0); (void) arguments;
-    css::uno::Reference<css::uno::XInterface> x(
-            static_cast<cppu::OWeakObject *>(new GraphicRendererVCL));
-    x->acquire();
-    return x.get();
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

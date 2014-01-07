@@ -49,6 +49,7 @@
 
 #include "lru_cache.h"
 #include "permissions.h"
+#include "bootstrapservices.hxx"
 
 
 #define SERVICE_NAME "com.sun.star.security.AccessController"
@@ -61,10 +62,9 @@ using namespace ::osl;
 using namespace ::cppu;
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::uno;
-using namespace stoc_sec;
 
-namespace {
-
+namespace stoc_sec
+{
 // static stuff initialized when loading lib
 static OUString s_envType = CPPU_CURRENT_LANGUAGE_BINDING_NAME;
 const char s_acRestriction[] = "access-control.restriction";
@@ -962,7 +962,7 @@ Reference< security::XAccessControlContext > AccessController::getContext()
 OUString AccessController::getImplementationName()
     throw (RuntimeException)
 {
-    return OUString(IMPL_NAME);
+    return stoc_bootstrap::ac_getImplementationName();
 }
 //__________________________________________________________________________________________________
 sal_Bool AccessController::supportsService( OUString const & serviceName )
@@ -971,39 +971,41 @@ sal_Bool AccessController::supportsService( OUString const & serviceName )
     return cppu::supportsService(this, serviceName);
 }
 //__________________________________________________________________________________________________
-static Sequence< OUString > AccessController_getSupportedServiceNames()
+Sequence< OUString > AccessController::getSupportedServiceNames()
+    throw (RuntimeException)
+{
+    return stoc_bootstrap::ac_getSupportedServiceNames();
+}
+}
+//##################################################################################################
+namespace stoc_bootstrap {
+//--------------------------------------------------------------------------------------------------
+Reference< XInterface > SAL_CALL ac_create(
+    Reference< XComponentContext > const & xComponentContext )
+    SAL_THROW( (Exception) )
+{
+    return (OWeakObject *)new stoc_sec::AccessController( xComponentContext );
+}
+//--------------------------------------------------------------------------------------------------
+Sequence< OUString > ac_getSupportedServiceNames() SAL_THROW(())
 {
     Sequence< OUString > aSNS( 1 );
     aSNS.getArray()[0] = OUString(SERVICE_NAME);
     return aSNS;
 }
-
-Sequence< OUString > AccessController::getSupportedServiceNames()
-    throw (RuntimeException)
+//--------------------------------------------------------------------------------------------------
+OUString ac_getImplementationName() SAL_THROW(())
 {
-    return AccessController_getSupportedServiceNames();
+    return OUString(IMPL_NAME);
 }
-
-}
-
-static Reference< XInterface > SAL_CALL AccessController_create(
+//--------------------------------------------------------------------------------------------------
+Reference< XInterface > SAL_CALL filepolicy_create(
     Reference< XComponentContext > const & xComponentContext )
-    SAL_THROW( (Exception) )
-{
-    return (OWeakObject *)new AccessController( xComponentContext );
-}
-
-extern "C" SAL_DLLPUBLIC_EXPORT void * SAL_CALL
-com_sun_star_security_comp_stoc_AccessController_component_getFactory(
-    const char * , void * , void * )
-{
-    Reference< css::lang::XSingleComponentFactory > xFactory;
-    xFactory = createSingleComponentFactory(
-            AccessController_create,
-            IMPL_NAME,
-            AccessController_getSupportedServiceNames() );
-    xFactory->acquire();
-    return xFactory.get();
+    SAL_THROW( (Exception) );
+//--------------------------------------------------------------------------------------------------
+Sequence< OUString > filepolicy_getSupportedServiceNames() SAL_THROW(());
+//--------------------------------------------------------------------------------------------------
+OUString filepolicy_getImplementationName() SAL_THROW(());
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

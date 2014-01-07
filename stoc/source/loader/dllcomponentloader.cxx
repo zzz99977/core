@@ -54,15 +54,26 @@ using namespace com::sun::star::registry;
 using namespace cppu;
 using namespace osl;
 
-namespace {
-
-static Sequence< OUString > DllComponentLoader_getSupportedServiceNames()
+namespace stoc_bootstrap
+{
+Sequence< OUString > loader_getSupportedServiceNames()
 {
     Sequence< OUString > seqNames(1);
     seqNames.getArray()[0] = OUString(SERVICENAME);
     return seqNames;
 }
 
+OUString loader_getImplementationName()
+{
+    return OUString(IMPLNAME);
+}
+}
+
+namespace stoc_loader
+{
+//*************************************************************************
+// DllComponentLoader
+//*************************************************************************
 class DllComponentLoader
     : public WeakImplHelper3< XImplementationLoader,
                               XInitialization,
@@ -101,7 +112,7 @@ DllComponentLoader::~DllComponentLoader() {}
 OUString SAL_CALL DllComponentLoader::getImplementationName(  )
     throw(::com::sun::star::uno::RuntimeException)
 {
-    return OUString(IMPLNAME);
+    return stoc_bootstrap::loader_getImplementationName();
 }
 
 sal_Bool SAL_CALL DllComponentLoader::supportsService( const OUString& ServiceName )
@@ -113,7 +124,7 @@ sal_Bool SAL_CALL DllComponentLoader::supportsService( const OUString& ServiceNa
 Sequence<OUString> SAL_CALL DllComponentLoader::getSupportedServiceNames(  )
     throw(::com::sun::star::uno::RuntimeException)
 {
-    return DllComponentLoader_getSupportedServiceNames();
+    return stoc_bootstrap::loader_getSupportedServiceNames();
 }
 
 //*************************************************************************
@@ -171,15 +182,16 @@ sal_Bool SAL_CALL DllComponentLoader::writeRegistryInfo(
     return sal_True;
 #endif
 }
-
 }
 
-static Reference<XInterface> DllComponentLoader_CreateInstance(
-        const Reference<XComponentContext> & xCtx ) throw(Exception)
+namespace stoc_bootstrap
+{
+//*************************************************************************
+Reference<XInterface> SAL_CALL DllComponentLoader_CreateInstance( const Reference<XComponentContext> & xCtx ) throw(Exception)
 {
     Reference<XInterface> xRet;
 
-    XImplementationLoader *pXLoader = (XImplementationLoader *)new DllComponentLoader(xCtx);
+    XImplementationLoader *pXLoader = (XImplementationLoader *)new stoc_loader::DllComponentLoader(xCtx);
 
     if (pXLoader)
     {
@@ -189,17 +201,6 @@ static Reference<XInterface> DllComponentLoader_CreateInstance(
     return xRet;
 }
 
-extern "C" SAL_DLLPUBLIC_EXPORT void * SAL_CALL
-com_sun_star_comp_stoc_DLLComponentLoader_component_getFactory(
-    const char * , void * , void * )
-{
-    Reference< css::lang::XSingleComponentFactory > xFactory;
-    xFactory = createSingleComponentFactory(
-            DllComponentLoader_CreateInstance,
-            IMPLNAME,
-            DllComponentLoader_getSupportedServiceNames() );
-    xFactory->acquire();
-    return xFactory.get();
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

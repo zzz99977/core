@@ -55,6 +55,9 @@
 #include <com/sun/star/container/XHierarchicalNameAccess.hpp>
 #include <com/sun/star/uno/XUnloadingPreference.hpp>
 
+#include <bootstrapservices.hxx>
+
+
 using namespace com::sun::star;
 using namespace com::sun::star::uno;
 using namespace com::sun::star::beans;
@@ -65,9 +68,21 @@ using namespace cppu;
 using namespace osl;
 using namespace std;
 
-namespace {
+namespace stoc_bootstrap
+{
+Sequence< OUString > smgr_wrapper_getSupportedServiceNames()
+{
+    Sequence< OUString > seqNames(1);
+    seqNames.getArray()[0] = "com.sun.star.lang.MultiServiceFactory";
+    return seqNames;
+}
 
-Sequence< OUString > OServiceManager_getSupportedServiceNames()
+OUString smgr_wrapper_getImplementationName()
+{
+    return OUString("com.sun.star.comp.stoc.OServiceManagerWrapper");
+}
+
+Sequence< OUString > smgr_getSupportedServiceNames()
 {
     Sequence< OUString > seqNames(2);
     seqNames.getArray()[0] = "com.sun.star.lang.MultiServiceFactory";
@@ -75,7 +90,12 @@ Sequence< OUString > OServiceManager_getSupportedServiceNames()
     return seqNames;
 }
 
-Sequence< OUString > ORegistryServiceManager_getSupportedServiceNames()
+OUString smgr_getImplementationName()
+{
+    return OUString("com.sun.star.comp.stoc.OServiceManager");
+}
+
+Sequence< OUString > regsmgr_getSupportedServiceNames()
 {
     Sequence< OUString > seqNames(2);
     seqNames.getArray()[0] = "com.sun.star.lang.MultiServiceFactory";
@@ -83,12 +103,14 @@ Sequence< OUString > ORegistryServiceManager_getSupportedServiceNames()
     return seqNames;
 }
 
-Sequence< OUString > OServiceManagerWrapper_getSupportedServiceNames()
+OUString regsmgr_getImplementationName()
 {
-    Sequence< OUString > seqNames(1);
-    seqNames.getArray()[0] = "com.sun.star.lang.MultiServiceFactory";
-    return seqNames;
+    return OUString( "com.sun.star.comp.stoc.ORegistryServiceManager" );
 }
+}
+
+namespace stoc_smgr
+{
 
 static Sequence< OUString > retrieveAsciiValueList(
     const Reference< XSimpleRegistry > &xReg, const OUString &keyName )
@@ -415,6 +437,8 @@ public:
 
     // XServiceInfo
     virtual OUString SAL_CALL getImplementationName() throw(::com::sun::star::uno::RuntimeException);
+    static OUString getImplementationName_Static() throw(::com::sun::star::uno::RuntimeException)
+        { return stoc_bootstrap::smgr_getImplementationName(); }
     virtual sal_Bool SAL_CALL supportsService(const OUString& ServiceName) throw(::com::sun::star::uno::RuntimeException);
     virtual Sequence< OUString > SAL_CALL getSupportedServiceNames() throw(::com::sun::star::uno::RuntimeException);
 
@@ -1084,7 +1108,7 @@ OUString OServiceManager::getImplementationName()
     throw(::com::sun::star::uno::RuntimeException)
 {
     check_undisposed();
-    return OUString("com.sun.star.comp.stoc.OServiceManager");
+    return getImplementationName_Static();
 }
 
 // XServiceInfo
@@ -1099,7 +1123,7 @@ Sequence< OUString > OServiceManager::getSupportedServiceNames()
     throw(::com::sun::star::uno::RuntimeException)
 {
     check_undisposed();
-    return  OServiceManager_getSupportedServiceNames();
+    return stoc_bootstrap::smgr_getSupportedServiceNames();
 }
 
 
@@ -1363,7 +1387,7 @@ public:
 
     // XServiceInfo
     OUString SAL_CALL getImplementationName() throw(::com::sun::star::uno::RuntimeException)
-        { return OUString("com.sun.star.comp.stoc.ORegistryServiceManager"); }
+        { return stoc_bootstrap::regsmgr_getImplementationName(); }
 
     Sequence< OUString > SAL_CALL getSupportedServiceNames() throw(::com::sun::star::uno::RuntimeException);
 
@@ -1602,7 +1626,7 @@ Sequence< OUString > ORegistryServiceManager::getSupportedServiceNames()
     throw(::com::sun::star::uno::RuntimeException)
 {
     check_undisposed();
-    return ORegistryServiceManager_getSupportedServiceNames();
+    return stoc_bootstrap::regsmgr_getSupportedServiceNames();
 }
 
 
@@ -1691,67 +1715,37 @@ Any ORegistryServiceManager::getPropertyValue(const OUString& PropertyName)
 
 } // namespace
 
-static Reference<XInterface > OServiceManager_CreateInstance(
+namespace stoc_bootstrap
+{
+/**
+ * Create the ServiceManager
+ */
+Reference<XInterface > SAL_CALL OServiceManager_CreateInstance(
     const Reference< XComponentContext > & xContext )
 {
     return Reference<XInterface >(
         static_cast< XInterface * >(
-            static_cast< OWeakObject * >( new OServiceManager( xContext ) ) ) );
+            static_cast< OWeakObject * >( new stoc_smgr::OServiceManager( xContext ) ) ) );
 }
 
-extern "C" SAL_DLLPUBLIC_EXPORT void * SAL_CALL
-com_sun_star_comp_stoc_OServiceManager_component_getFactory(
-    const char * , void * , void * )
-{
-    Reference< css::lang::XSingleComponentFactory > xFactory;
-    xFactory = createSingleComponentFactory(
-            OServiceManager_CreateInstance,
-            "com.sun.star.comp.stoc.OServiceManager",
-            OServiceManager_getSupportedServiceNames() );
-    xFactory->acquire();
-    return xFactory.get();
-}
-
-static Reference<XInterface > ORegistryServiceManager_CreateInstance(
+/**
+ * Create the ServiceManager
+ */
+Reference<XInterface > SAL_CALL ORegistryServiceManager_CreateInstance(
     const Reference< XComponentContext > & xContext )
     throw(::com::sun::star::uno::Exception, ::com::sun::star::uno::RuntimeException)
 {
     return Reference<XInterface >(
         static_cast< XInterface * >(
-            static_cast< OWeakObject * >( new ORegistryServiceManager( xContext ) ) ) );
+            static_cast< OWeakObject * >( new stoc_smgr::ORegistryServiceManager( xContext ) ) ) );
 }
 
-extern "C" SAL_DLLPUBLIC_EXPORT void * SAL_CALL
-com_sun_star_comp_stoc_ORegistryServiceManager_component_getFactory(
-    const char * , void * , void * )
-{
-    Reference< css::lang::XSingleComponentFactory > xFactory;
-    xFactory = createSingleComponentFactory(
-            ORegistryServiceManager_CreateInstance,
-            "com.sun.star.comp.stoc.ORegistryServiceManager",
-            ORegistryServiceManager_getSupportedServiceNames() );
-    xFactory->acquire();
-    return xFactory.get();
-}
-
-static Reference<XInterface > OServiceManagerWrapper_CreateInstance(
+Reference<XInterface > SAL_CALL OServiceManagerWrapper_CreateInstance(
     const Reference< XComponentContext > & xContext )
     throw (Exception)
 {
-    return (OWeakObject *)new OServiceManagerWrapper( xContext );
+    return (OWeakObject *)new stoc_smgr::OServiceManagerWrapper( xContext );
 }
-
-extern "C" SAL_DLLPUBLIC_EXPORT void * SAL_CALL
-com_sun_star_comp_stoc_OServiceManagerWrapper_component_getFactory(
-    const char * , void * , void * )
-{
-    Reference< css::lang::XSingleComponentFactory > xFactory;
-    xFactory = createSingleComponentFactory(
-            OServiceManagerWrapper_CreateInstance,
-            "com.sun.star.comp.stoc.OServiceManagerWrapper",
-            OServiceManagerWrapper_getSupportedServiceNames() );
-    xFactory->acquire();
-    return xFactory.get();
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

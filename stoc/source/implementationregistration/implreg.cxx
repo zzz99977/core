@@ -65,11 +65,14 @@ using namespace osl;
 
 #define IMPLNAME "com.sun.star.comp.stoc.ImplementationRegistration"
 #define SERVICENAME         "com.sun.star.registry.ImplementationRegistration"
-
-namespace {
-
+namespace stoc_impreg
+{
 struct StringPool
 {
+    OUString sImplementationName;
+    OUString sServiceName;
+    OUString TMP;
+    OUString TEMP;
     OUString slash_UNO_slash_REGISTRY_LINKS;
     OUString slash_IMPLEMENTATIONS;
     OUString slash_UNO;
@@ -82,7 +85,11 @@ struct StringPool
     OUString com_sun_star_registry_SimpleRegistry;
     OUString Registry;
     StringPool()
-        : slash_UNO_slash_REGISTRY_LINKS( "/UNO/REGISTRY_LINKS")
+        : sImplementationName( IMPLNAME )
+        , sServiceName( SERVICENAME )
+        , TMP( "TMP" )
+        , TEMP( "TEMP" )
+        , slash_UNO_slash_REGISTRY_LINKS( "/UNO/REGISTRY_LINKS")
         , slash_IMPLEMENTATIONS( "/IMPLEMENTATIONS" )
         , slash_UNO( "/UNO")
         , slash_UNO_slash_SERVICES( "/UNO/SERVICES")
@@ -112,14 +119,25 @@ const StringPool &spool()
     }
     return *pPool;
 }
+}
 
-static Sequence< OUString > ImplementationRegistration_getSupportedServiceNames()
+namespace stoc_bootstrap
+{
+Sequence< OUString > impreg_getSupportedServiceNames()
 {
     Sequence< OUString > seqNames(1);
-    seqNames.getArray()[0] = SERVICENAME;
+    seqNames.getArray()[0] = stoc_impreg::spool().sServiceName;
     return seqNames;
 }
 
+OUString impreg_getImplementationName()
+{
+    return stoc_impreg::spool().sImplementationName;
+}
+}
+
+namespace stoc_impreg
+{
 //*************************************************************************
 //  static deleteAllLinkReferences()
 //
@@ -1309,7 +1327,7 @@ ImplementationRegistration::~ImplementationRegistration() {}
 // XServiceInfo
 OUString ImplementationRegistration::getImplementationName() throw(RuntimeException)
 {
-    return OUString(IMPLNAME);
+    return stoc_bootstrap::impreg_getImplementationName();
 }
 
 // XServiceInfo
@@ -1321,7 +1339,7 @@ sal_Bool ImplementationRegistration::supportsService(const OUString& ServiceName
 // XServiceInfo
 Sequence< OUString > ImplementationRegistration::getSupportedServiceNames(void) throw(RuntimeException)
 {
-    return ImplementationRegistration_getSupportedServiceNames();
+    return stoc_bootstrap::impreg_getSupportedServiceNames();
 }
 
 Reference< XSimpleRegistry > ImplementationRegistration::getRegistryFromServiceManager()
@@ -1783,7 +1801,7 @@ void ImplementationRegistration::doRegister(
 
                 xSourceKey = xReg->getRootKey();
                 Reference < XRegistryKey > xDestKey = xDest->getRootKey();
-                stoc_impreg::mergeKeys( xDestKey, xSourceKey );
+                mergeKeys( xDestKey, xSourceKey );
                 xDestKey->closeKey();
                 xSourceKey->closeKey();
             }
@@ -1822,26 +1840,17 @@ Reference< XSimpleRegistry > ImplementationRegistration::createTemporarySimpleRe
     OSL_ASSERT( xReg.is() );
     return xReg;
 }
-
 }
 
-static Reference<XInterface> ImplementationRegistration_CreateInstance(
+namespace stoc_bootstrap
+{
+//*************************************************************************
+Reference<XInterface> SAL_CALL ImplementationRegistration_CreateInstance(
     const Reference<XComponentContext> & xCtx ) // throw(Exception)
 {
-    return (XImplementationRegistration *)new ImplementationRegistration(xCtx);
+    return (XImplementationRegistration *)new stoc_impreg::ImplementationRegistration(xCtx);
 }
 
-extern "C" SAL_DLLPUBLIC_EXPORT void * SAL_CALL
-com_sun_star_comp_stoc_ImplementationRegistration_component_getFactory(
-    const char * , void * , void * )
-{
-    Reference< css::lang::XSingleComponentFactory > xFactory;
-    xFactory = createSingleComponentFactory(
-            ImplementationRegistration_CreateInstance,
-            IMPLNAME,
-            ImplementationRegistration_getSupportedServiceNames() );
-    xFactory->acquire();
-    return xFactory.get();
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

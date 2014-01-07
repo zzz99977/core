@@ -39,6 +39,8 @@
 #include <com/sun/star/io/FilePermission.hpp>
 #include <com/sun/star/connection/SocketPermission.hpp>
 
+#include "bootstrapservices.hxx"
+
 #define SERVICE_NAME "com.sun.star.security.Policy"
 #define IMPL_NAME "com.sun.star.security.comp.stoc.FilePolicy"
 
@@ -48,7 +50,8 @@ using namespace ::cppu;
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::uno;
 
-namespace {
+namespace stoc_sec
+{
 
 struct MutexHolder
 {
@@ -523,7 +526,7 @@ void FilePolicy::refresh()
 OUString FilePolicy::getImplementationName()
     throw (RuntimeException)
 {
-    return OUString(IMPL_NAME);
+    return stoc_bootstrap::filepolicy_getImplementationName();
 }
 //__________________________________________________________________________________________________
 sal_Bool FilePolicy::supportsService( OUString const & serviceName )
@@ -532,39 +535,34 @@ sal_Bool FilePolicy::supportsService( OUString const & serviceName )
     return cppu::supportsService(this, serviceName);
 }
 //__________________________________________________________________________________________________
-static Sequence< OUString > FilePolicy_getSupportedServiceNames() SAL_THROW(())
+Sequence< OUString > FilePolicy::getSupportedServiceNames()
+    throw (RuntimeException)
+{
+    return stoc_bootstrap::filepolicy_getSupportedServiceNames();
+}
+}
+//##################################################################################################
+namespace stoc_bootstrap
+{
+//--------------------------------------------------------------------------------------------------
+Reference< XInterface > SAL_CALL filepolicy_create(
+    Reference< XComponentContext > const & xComponentContext )
+    SAL_THROW( (Exception) )
+{
+    return (OWeakObject *)new stoc_sec::FilePolicy( xComponentContext );
+}
+//--------------------------------------------------------------------------------------------------
+Sequence< OUString > filepolicy_getSupportedServiceNames() SAL_THROW(())
 {
     Sequence< OUString > aSNS( 1 );
     aSNS.getArray()[0] = OUString(SERVICE_NAME);
     return aSNS;
 }
-
-Sequence< OUString > FilePolicy::getSupportedServiceNames()
-    throw (RuntimeException)
+//--------------------------------------------------------------------------------------------------
+OUString filepolicy_getImplementationName() SAL_THROW(())
 {
-    return FilePolicy_getSupportedServiceNames();
+    return OUString(IMPL_NAME);
 }
-
-} // namespace
-
-static Reference< XInterface > FilePolicy_CreateInstance(
-    Reference< XComponentContext > const & xComponentContext )
-    SAL_THROW( (Exception) )
-{
-    return (OWeakObject *)new FilePolicy( xComponentContext );
-}
-
-extern "C" SAL_DLLPUBLIC_EXPORT void * SAL_CALL
-com_sun_star_security_comp_stoc_FilePolicy_component_getFactory(
-    const char * , void * , void * )
-{
-    Reference< css::lang::XSingleComponentFactory > xFactory;
-    xFactory = createSingleComponentFactory(
-            FilePolicy_CreateInstance,
-            IMPL_NAME,
-            FilePolicy_getSupportedServiceNames() );
-    xFactory->acquire();
-    return xFactory.get();
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

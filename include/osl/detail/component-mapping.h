@@ -10,8 +10,6 @@
 #ifndef INCLUDED_OSL_DETAIL_COMPONENT_MAPPING_H
 #define INCLUDED_OSL_DETAIL_COMPONENT_MAPPING_H
 
-#include <osl/detail/component-declarations.h>
-
 #ifdef DISABLE_DYNLOADING
 
 #ifdef __cplusplus

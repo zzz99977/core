@@ -12,10 +12,9 @@
 extern "C"
 __attribute__ ((visibility("default")))
 const lib_to_component_mapping *
-lo_get_library_map(void)
+lo_get_libmap(void)
 {
     static lib_to_component_mapping map[] = {
-        NON_APP_SPECIFIC_COMPONENT_MAP
         { "libanimcorelo.a", animcore_component_getFactory },
         { "libavmedialo.a", avmedia_component_getFactory },
         { "libbasprovlo.a", basprov_component_getFactory },
@@ -86,19 +85,6 @@ lo_get_library_map(void)
 
     extern void Java_org_libreoffice_android_AppSupport_renderVCL();
     p = (void *) Java_org_libreoffice_android_AppSupport_renderVCL;
-
-    return map;
-}
-
-extern "C"
-__attribute__ ((visibility("default")))
-const lib_to_component_mapping *
-lo_get_implementation_map(void)
-{
-    static lib_to_component_mapping map[] = {
-        NON_APP_SPECIFIC_DIRECT_COMPONENT_MAP
-        { NULL, NULL }
-    };
 
     return map;
 }

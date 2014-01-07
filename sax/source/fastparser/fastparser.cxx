@@ -81,12 +81,12 @@ enum CallbackType { INVALID, START_ELEMENT, END_ELEMENT, CHARACTERS, DONE, EXCEP
 
 struct Event
 {
-    CallbackType maType;
+    OUString msChars;
     sal_Int32 mnElementToken;
     OUString msNamespace;
     OUString msElementName;
     rtl::Reference< FastAttributeList > mxAttributes;
-    OUString msChars;
+    CallbackType maType;
 };
 
 struct NameWithToken
@@ -169,13 +169,9 @@ struct Entity : public ParserData
     XML_Parser                              mpParser;
     ::sax_expatwrap::XMLFile2UTFConverter   maConverter;
 
-    // Exceptions cannot be thrown through the C-XmlParser (possible
-    // resource leaks), therefore any exception thrown by a UNO callback
-    // must be saved somewhere until the C-XmlParser is stopped.
-    ::com::sun::star::uno::Any maSavedException;
-    void saveException( const Exception &e );
-    void throwException( const ::rtl::Reference< FastLocatorImpl > &xDocumentLocator,
-                         bool mbDuringParse );
+    // Exceptions cannot be thrown through the C-XmlParser (possible resource leaks),
+    // therefore the exception must be saved somewhere.
+    ::com::sun::star::uno::Any              maSavedException;
 
     ::std::stack< NameWithToken >           maNamespaceStack;
     /* Context for main thread consuming events.
@@ -280,10 +276,9 @@ private:
         {
             mpParser->parse();
         }
-        catch (const Exception &e)
+        catch (const SAXParseException&)
         {
-            Entity &rEntity = mpParser->getEntity();
-            rEntity.getEvent( EXCEPTION );
+            mpParser->getEntity().getEvent( EXCEPTION );
             mpParser->produce( EXCEPTION );
         }
     }
@@ -463,7 +458,7 @@ void Entity::startElement( Event *pEvent )
     }
     catch (const Exception& e)
     {
-        saveException( e );
+        maSavedException <<= e;
     }
 }
 
@@ -476,7 +471,7 @@ void Entity::characters( const OUString& sChars )
     }
     catch (const Exception& e)
     {
-        saveException( e );
+        maSavedException <<= e;
     }
 }
 
@@ -494,7 +489,7 @@ void Entity::endElement()
     }
     catch (const Exception& e)
     {
-        saveException( e );
+        maSavedException <<= e;
     }
     maContextStack.pop();
 }
@@ -790,7 +785,7 @@ void FastSaxParserImpl::parseStream( const InputSource& maStructSource) throw (S
     {
         popEntity();
         XML_ParserFree( entity.mpParser );
-        throw;
+          throw;
     }
     catch (const IOException&)
     {
@@ -967,7 +962,7 @@ bool FastSaxParserImpl::consume(EventList *pEventList)
 {
     Entity& rEntity = getEntity();
     for (EventList::iterator aEventIt = pEventList->begin();
-         aEventIt != pEventList->end(); ++aEventIt)
+            aEventIt != pEventList->end(); ++aEventIt)
     {
         switch ((*aEventIt).maType)
         {
@@ -983,8 +978,28 @@ bool FastSaxParserImpl::consume(EventList *pEventList)
             case DONE:
                 return false;
             case EXCEPTION:
-                rEntity.throwException( mxDocumentLocator, false );
-                return false;
+            {
+                assert( rEntity.maSavedException.hasValue() );
+                // Error during parsing !
+                XML_Error xmlE = XML_GetErrorCode( rEntity.mpParser );
+                OUString sSystemId = mxDocumentLocator->getSystemId();
+                sal_Int32 nLine = mxDocumentLocator->getLineNumber();
+
+                SAXParseException aExcept(
+                    lclGetErrorMessage( xmlE, sSystemId, nLine ),
+                    Reference< XInterface >(),
+                    Any( &rEntity.maSavedException, getCppuType( &rEntity.maSavedException ) ),
+                    mxDocumentLocator->getPublicId(),
+                    mxDocumentLocator->getSystemId(),
+                    mxDocumentLocator->getLineNumber(),
+                    mxDocumentLocator->getColumnNumber()
+                );
+                // error handler is set, it may throw the exception
+                if( rEntity.mxErrorHandler.is() )
+                    rEntity.mxErrorHandler->fatalError( Any( aExcept ) );
+
+                throw aExcept;
+            }
             default:
                 assert(false);
                 return false;
@@ -1013,35 +1028,6 @@ const Entity& FastSaxParserImpl::getEntity() const
     return maEntities.top();
 }
 
-// throw an exception, but avoid callback if
-// during a threaded produce
-void Entity::throwException( const ::rtl::Reference< FastLocatorImpl > &xDocumentLocator,
-                             bool mbDuringParse )
-{
-    // Error during parsing !
-    SAXParseException aExcept(
-        lclGetErrorMessage( XML_GetErrorCode( mpParser ),
-                            xDocumentLocator->getSystemId(),
-                            xDocumentLocator->getLineNumber() ),
-        Reference< XInterface >(),
-        Any( &maSavedException, getCppuType( &maSavedException ) ),
-        xDocumentLocator->getPublicId(),
-        xDocumentLocator->getSystemId(),
-        xDocumentLocator->getLineNumber(),
-        xDocumentLocator->getColumnNumber()
-    );
-
-    // error handler is set, it may throw the exception
-    if( !mbDuringParse || !mbEnableThreads )
-    {
-        if (mxErrorHandler.is() )
-            mxErrorHandler->fatalError( Any( aExcept ) );
-    }
-
-    // error handler has not thrown, but parsing must stop => throw ourselves
-    throw aExcept;
-}
-
 // starts parsing with actual parser !
 void FastSaxParserImpl::parse()
 {
@@ -1061,32 +1047,37 @@ void FastSaxParserImpl::parse()
 
         bool const bContinue = XML_STATUS_ERROR != XML_Parse(rEntity.mpParser,
             reinterpret_cast<const char*>(seqOut.getConstArray()), nRead, 0);
-
         // callbacks used inside XML_Parse may have caught an exception
         if( !bContinue || rEntity.maSavedException.hasValue() )
-            rEntity.throwException( mxDocumentLocator, true );
+        {
+            // Error during parsing !
+            XML_Error xmlE = XML_GetErrorCode( rEntity.mpParser );
+            OUString sSystemId = mxDocumentLocator->getSystemId();
+            sal_Int32 nLine = mxDocumentLocator->getLineNumber();
+
+            SAXParseException aExcept(
+                lclGetErrorMessage( xmlE, sSystemId, nLine ),
+                Reference< XInterface >(),
+                Any( &rEntity.maSavedException, getCppuType( &rEntity.maSavedException ) ),
+                mxDocumentLocator->getPublicId(),
+                mxDocumentLocator->getSystemId(),
+                mxDocumentLocator->getLineNumber(),
+                mxDocumentLocator->getColumnNumber()
+            );
+
+            // error handler is set, it may throw the exception
+            if( rEntity.mxErrorHandler.is() )
+                rEntity.mxErrorHandler->fatalError( Any( aExcept ) );
+
+            // error handler has not thrown, but parsing cannot go on, the
+            // exception MUST be thrown
+            throw aExcept;
+        }
     }
     while( nRead > 0 );
     rEntity.getEvent( DONE );
-    if( rEntity.mbEnableThreads )
+    if (rEntity.mbEnableThreads)
         produce( DONE );
-}
-
-// In the single threaded case we emit events via our C
-// callbacks, so any exception caught must be queued up until
-// we can safely re-throw it from our C++ parent of parse()
-//
-// If multi-threaded, we need to push an EXCEPTION event, at
-// which point we transfer ownership of maSavedException to
-// the consuming thread.
-void Entity::saveException( const Exception &e )
-{
-    // only store the first exception
-    if( !maSavedException.hasValue() )
-    {
-        maSavedException <<= e;
-        XML_StopParser( mpParser, /* resumable? */ XML_FALSE );
-    }
 }
 
 //------------------------------------------
@@ -1220,7 +1211,7 @@ void FastSaxParserImpl::callbackStartElement( const XML_Char* pwName, const XML_
     }
     catch (const Exception& e)
     {
-        rEntity.saveException( e );
+        rEntity.maSavedException <<= e;
     }
 }
 
@@ -1266,13 +1257,13 @@ void FastSaxParserImpl::callbackEntityDecl(
     if (value) { // value != 0 means internal entity
         SAL_INFO("sax", "FastSaxParser: internal entity declaration, stopping");
         XML_StopParser(getEntity().mpParser, XML_FALSE);
-        getEntity().saveException( SAXParseException(
+        getEntity().maSavedException <<= SAXParseException(
             "FastSaxParser: internal entity declaration, stopping",
             static_cast<OWeakObject*>(mpFront), Any(),
             mxDocumentLocator->getPublicId(),
             mxDocumentLocator->getSystemId(),
             mxDocumentLocator->getLineNumber(),
-            mxDocumentLocator->getColumnNumber() ) );
+            mxDocumentLocator->getColumnNumber() );
     } else {
         SAL_INFO("sax", "FastSaxParser: ignoring external entity declaration");
     }
@@ -1297,17 +1288,17 @@ int FastSaxParserImpl::callbackExternalEntityRef(
     }
     catch (const SAXParseException & e)
     {
-        rCurrEntity.saveException( e );
+        rCurrEntity.maSavedException <<= e;
         bOK = false;
     }
     catch (const SAXException& e)
     {
-        rCurrEntity.saveException( SAXParseException(
+        rCurrEntity.maSavedException <<= SAXParseException(
             e.Message, e.Context, e.WrappedException,
             mxDocumentLocator->getPublicId(),
             mxDocumentLocator->getSystemId(),
             mxDocumentLocator->getLineNumber(),
-            mxDocumentLocator->getColumnNumber() ) );
+            mxDocumentLocator->getColumnNumber() );
         bOK = false;
     }
 
@@ -1327,21 +1318,21 @@ int FastSaxParserImpl::callbackExternalEntityRef(
         }
         catch (const SAXParseException& e)
         {
-            rCurrEntity.saveException( e );
+            rCurrEntity.maSavedException <<= e;
             bOK = false;
         }
         catch (const IOException& e)
         {
             SAXException aEx;
             aEx.WrappedException <<= e;
-            rCurrEntity.saveException( aEx );
+            rCurrEntity.maSavedException <<= aEx;
             bOK = false;
         }
         catch (const RuntimeException& e)
         {
             SAXException aEx;
             aEx.WrappedException <<= e;
-            rCurrEntity.saveException( aEx );
+            rCurrEntity.maSavedException <<= aEx;
             bOK = false;
         }
 

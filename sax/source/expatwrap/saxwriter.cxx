@@ -51,6 +51,7 @@ using namespace ::com::sun::star::xml::sax;
 using namespace ::com::sun::star::util;
 using namespace ::com::sun::star::io;
 
+#include "factory.hxx"
 #include "xml2utf.hxx"
 
 #define LINEFEED 10
@@ -65,7 +66,7 @@ using namespace ::com::sun::star::io;
 *
 *****/
 
-namespace {
+namespace sax_expatwrap {
 
 enum SaxInvalidCharacterError
 {
@@ -867,13 +868,6 @@ static inline sal_Int32 getFirstLineBreak( const OUString & str ) throw ()
     return -1;
 }
 
-static Sequence< OUString > SAXWriter_getSupportedServiceNames(void) throw ()
-{
-    Sequence<OUString> seq(1);
-    seq.getArray()[0] = OUString("com.sun.star.xml.sax.Writer");
-    return seq;
-}
-
 class SAXWriter :
     public WeakImplHelper2<
             XWriter,
@@ -971,6 +965,36 @@ private:
     sal_Int32 m_nLevel;
 };
 
+
+//--------------------------------------
+// the extern interface
+//---------------------------------------
+Reference < XInterface > SAL_CALL SaxWriter_CreateInstance(
+    SAL_UNUSED_PARAMETER const Reference < XMultiServiceFactory > & )
+    throw (Exception)
+{
+    SAXWriter *p = new SAXWriter;
+    return Reference< XInterface > ( (static_cast< OWeakObject * >(p)) );
+}
+
+OUString SaxWriter_getServiceName() throw()
+{
+    return OUString("com.sun.star.xml.sax.Writer");
+}
+
+OUString SaxWriter_getImplementationName() throw()
+{
+    return OUString("com.sun.star.extensions.xml.sax.Writer");
+}
+
+Sequence< OUString >    SaxWriter_getSupportedServiceNames(void) throw()
+{
+    Sequence<OUString> aRet(1);
+    aRet.getArray()[0] = SaxWriter_getServiceName();
+    return aRet;
+}
+
+
 sal_Int32 SAXWriter::getIndentPrefixLength( sal_Int32 nFirstLineBreakOccurrence ) throw()
 {
     sal_Int32 nLength =-1;
@@ -994,7 +1018,7 @@ static inline sal_Bool isFirstCharWhitespace( const sal_Unicode *p ) throw()
 // XServiceInfo
 OUString SAXWriter::getImplementationName() throw()
 {
-    return OUString("com.sun.star.extensions.xml.sax.Writer");
+    return SaxWriter_getImplementationName();
 }
 
 // XServiceInfo
@@ -1006,7 +1030,9 @@ sal_Bool SAXWriter::supportsService(const OUString& ServiceName) throw()
 // XServiceInfo
 Sequence< OUString > SAXWriter::getSupportedServiceNames(void) throw ()
 {
-    return SAXWriter_getSupportedServiceNames();
+    Sequence<OUString> seq(1);
+    seq.getArray()[0] = SaxWriter_getServiceName();
+    return seq;
 }
 
 void SAXWriter::startDocument()                     throw(SAXException, RuntimeException )
@@ -1372,29 +1398,6 @@ void SAXWriter::unknown(const OUString& sString) throw (SAXException, RuntimeExc
     }
 }
 
-} // namespace
-
-static Reference < XInterface > SAXWriter_CreateInstance(
-    SAL_UNUSED_PARAMETER const Reference < XMultiServiceFactory > & )
-    throw (Exception)
-{
-    SAXWriter *p = new SAXWriter;
-    return Reference< XInterface > ( (static_cast< OWeakObject * >(p)) );
-}
-
-extern "C" SAL_DLLPUBLIC_EXPORT void * SAL_CALL
-com_sun_star_extensions_xml_sax_Writer_component_getFactory(
-    const char * , void *pServiceManager, void * )
-{
-    Reference< XSingleServiceFactory > xFactory;
-    Reference< XMultiServiceFactory > xSMgr =
-        reinterpret_cast< XMultiServiceFactory * >( pServiceManager );
-    xFactory = createSingleFactory( xSMgr,
-            "com.sun.star.extensions.xml.sax.Writer",
-            SAXWriter_CreateInstance,
-            SAXWriter_getSupportedServiceNames() );
-    xFactory->acquire();
-    return xFactory.get();
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

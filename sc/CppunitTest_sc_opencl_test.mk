@@ -96,7 +96,6 @@ $(eval $(call gb_CppunitTest_use_components,sc_opencl_test,\
     sot/util/sot \
     svl/util/svl \
     svx/util/svx \
-    svx/util/svxcore \
     svtools/util/svt \
     toolkit/util/tk \
     ucb/source/core/ucb1 \

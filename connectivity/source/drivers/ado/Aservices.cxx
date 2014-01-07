@@ -19,6 +19,7 @@
 
 #include "ado/ADriver.hxx"
 #include <cppuhelper/factory.hxx>
+#include <uno/lbnames.h>
 
 using namespace connectivity::ado;
 using ::com::sun::star::uno::Reference;
@@ -72,6 +73,14 @@ struct ProviderRequest
 
     void* getProvider() const { return xRet.get(); }
 };
+
+//---------------------------------------------------------------------------------------
+extern "C" SAL_DLLPUBLIC_EXPORT void SAL_CALL ado_component_getImplementationEnvironment(
+                const sal_Char **ppEnvTypeName,
+                uno_Environment        ** /*ppEnv*/)
+{
+    *ppEnvTypeName = CPPU_CURRENT_LANGUAGE_BINDING_NAME ":affine";
+}
 
 //---------------------------------------------------------------------------------------
 extern "C" SAL_DLLPUBLIC_EXPORT void* SAL_CALL ado_component_getFactory(

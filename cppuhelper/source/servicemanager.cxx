@@ -125,7 +125,6 @@ private:
     cppuhelper::ServiceManager::Data * data_;
     rtl::OUString attrLoader_;
     rtl::OUString attrUri_;
-    rtl::OUString attrEnvironment_;
     rtl::OUString attrPrefix_;
     boost::shared_ptr< cppuhelper::ServiceManager::Data::Implementation >
         implementation_;
@@ -245,7 +244,6 @@ Parser::Parser(
 void Parser::handleComponent() {
     attrLoader_ = rtl::OUString();
     attrUri_ = rtl::OUString();
-    attrEnvironment_ = rtl::OUString();
     attrPrefix_ = rtl::OUString();
     xmlreader::Span name;
     int nsId;
@@ -280,23 +278,6 @@ void Parser::handleComponent() {
                 throw css::registry::InvalidRegistryException(
                     (reader_.getUrl()
                      + ": <component> has empty \"uri\" attribute"),
-                    css::uno::Reference< css::uno::XInterface >());
-            }
-        } else if (nsId == xmlreader::XmlReader::NAMESPACE_NONE
-                   && name.equals(RTL_CONSTASCII_STRINGPARAM("environment")))
-        {
-            if (!attrEnvironment_.isEmpty()) {
-                throw css::registry::InvalidRegistryException(
-                    (reader_.getUrl() +
-                     ": <component> has multiple \"environment\" attributes"),
-                    css::uno::Reference< css::uno::XInterface >());
-            }
-            attrEnvironment_ = reader_.getAttributeValue(false)
-                .convertFromUtf8();
-            if (attrEnvironment_.isEmpty()) {
-                throw css::registry::InvalidRegistryException(
-                    (reader_.getUrl() +
-                     ": <component> has empty \"environment\" attribute"),
                     css::uno::Reference< css::uno::XInterface >());
             }
         } else if (nsId == xmlreader::XmlReader::NAMESPACE_NONE
@@ -347,8 +328,8 @@ void Parser::handleImplementation() {
     OUString name(getNameAttribute());
     implementation_.reset(
         new cppuhelper::ServiceManager::Data::Implementation(
-            name, attrLoader_, attrUri_, attrEnvironment_, attrPrefix_,
-            alienContext_, reader_.getUrl()));
+            name, attrLoader_, attrUri_, attrPrefix_, alienContext_,
+            reader_.getUrl()));
     if (!data_->namedImplementations.insert(
             cppuhelper::ServiceManager::Data::NamedImplementations::value_type(
                 name, implementation_)).
@@ -664,18 +645,15 @@ void cppuhelper::ServiceManager::loadImplementation(
             static_cast< cppu::OWeakObject * >(this));
     }
     css::uno::Reference< css::uno::XInterface > f0;
-    // Shortcut loading via SharedLibrary loader, to pass in environment and
-    // prefix arguments:
+    // Shortcut loading via SharedLibrary loader, to pass in prefix argument
+    // (which the loader's activate implementation would normally obtain through
+    // the legacy xKey argument):
     if (!info->alienContext.is()
         && info->loader == "com.sun.star.loader.SharedLibrary")
     {
         f0 = cppuhelper::detail::loadSharedLibComponentFactory(
-            uri, info->environment, info->prefix, info->name, this);
+            uri, info->prefix, info->name, this);
     } else {
-        SAL_WARN_IF(
-            !info->environment.isEmpty(), "cppuhelper",
-            "Loader " << info->loader << " and non-empty environment "
-                << info->environment);
         SAL_WARN_IF(
             !info->prefix.isEmpty(), "cppuhelper",
             "Loader " << info->loader << " and non-empty prefix "
@@ -1312,7 +1290,8 @@ bool cppuhelper::ServiceManager::readLegacyRdbFile(rtl::OUString const & uri) {
         boost::shared_ptr< Data::Implementation > impl(
             new Data::Implementation(
                 name, readLegacyRdbString(uri, implKey, "UNO/ACTIVATOR"),
-                readLegacyRdbString(uri, implKey, "UNO/LOCATION"), "", "",
+                readLegacyRdbString(uri, implKey, "UNO/LOCATION"),
+                rtl::OUString(),
                 css::uno::Reference< css::uno::XComponentContext >(), uri));
         if (!data_.namedImplementations.insert(
                 Data::NamedImplementations::value_type(name, impl)).

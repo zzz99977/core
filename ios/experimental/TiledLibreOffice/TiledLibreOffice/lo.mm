@@ -114,6 +114,7 @@ lo_get_libmap(void)
         { "libstocserviceslo.a", stocservices_component_getFactory },
         { "libsvllo.a", svl_component_getFactory },
         { "libsvtlo.a", svt_component_getFactory },
+        { "libsvxlo.a", svx_component_getFactory },
         { "libsvxcorelo.a", svxcore_component_getFactory },
         { "libswdlo.a", swd_component_getFactory },
         { "libswlo.a", sw_component_getFactory },

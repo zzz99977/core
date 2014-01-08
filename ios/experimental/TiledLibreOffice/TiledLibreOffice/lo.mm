@@ -21,6 +21,7 @@ extern "C" {
     extern void * avmedia_component_getFactory( const char * pImplName, void * pServiceManager, void * pRegistryKey );
     extern void * chartcore_component_getFactory( const char * pImplName, void * pServiceManager, void * pRegistryKey );
     extern void * configmgr_component_getFactory( const char * pImplName, void * pServiceManager, void * pRegistryKey );
+    extern void * comphelp_component_getFactory( const char * pImplName, void * pServiceManager, void * pRegistryKey );
     extern void * cui_component_getFactory( const char * pImplName, void * pServiceManager, void * pRegistryKey );
     extern void * deployment_component_getFactory( const char * pImplName, void * pServiceManager, void * pRegistryKey );
     extern void * embobj_component_getFactory( const char * pImplName, void * pServiceManager, void * pRegistryKey );
@@ -82,7 +83,9 @@ lo_get_libmap(void)
     static lib_to_component_mapping map[] = {
         { "libanimcorelo.a", animcore_component_getFactory },
         { "libavmedialo.a", avmedia_component_getFactory },
+        { "libchartcorelo.a", chartcore_component_getFactory },
         { "libconfigmgrlo.a", configmgr_component_getFactory },
+        { "libcomphelper.a", comphelp_component_getFactory },
         { "libcuilo.a", cui_component_getFactory },
         { "libdeployment.a", deployment_component_getFactory },
         { "libembobj.a", embobj_component_getFactory },
@@ -125,6 +128,7 @@ lo_get_libmap(void)
         { "libunoxmllo.a", unoxml_component_getFactory },
         { "libutllo.a", utl_component_getFactory },
         { "libuuilo.a", uui_component_getFactory },
+        { "libvcllo.a", vcl_component_getFactory },
         { "libwpftwriterlo.a", wpftwriter_component_getFactory },
         { "libwriterfilterlo.a", writerfilter_component_getFactory },
         { "libxmlfdlo.a", xmlfd_component_getFactory },

@@ -922,7 +922,7 @@ OString SAL_CALL unicode::getExemplarLanguageForUScriptCode(UScriptCode eScript)
             sRet = "mai";
             break;
 #endif
-#if (U_ICU_VERSION_MAJOR_NUM >= 52)
+#if (U_ICU_VERSION_MAJOR_NUM >= 52) || defined(U_ICU_IS_ICULESS)
         case USCRIPT_CAUCASIAN_ALBANIAN:
             sRet = "xag";
             break;

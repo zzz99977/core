@@ -1153,7 +1153,34 @@ gb_LinkTarget__use_graphite :=
 
 endif # SYSTEM_GRAPHITE
 
-ifeq ($(SYSTEM_ICU),YES)
+ifneq (,$(filter ICULESS,$(BUILD_TYPE)))
+
+define gb_LinkTarget__use_icu_headers
+$(call gb_LinkTarget_set_include,$(1),\
+	-I$(SRCDIR)/include/iculess \
+	$$(INCLUDE) \
+)
+
+endef
+
+define gb_LinkTarget__use_icudata
+$(call gb_LinkTarget_add_libs,$(1),-liculess)
+
+endef
+
+define gb_LinkTarget__use_icui18n
+$(call gb_LinkTarget_add_libs,$(1),-liculess)
+
+endef
+
+define gb_LinkTarget__use_icuuc
+$(call gb_LinkTarget_add_libs,$(1),-liculess)
+
+endef
+
+gb_ExternalProject__use_icu :=
+
+else ifeq ($(SYSTEM_ICU),YES)
 
 gb_LinkTarget__use_icu_headers:=
 gb_ExternalProject__use_icu:=
@@ -3127,6 +3154,7 @@ $(call gb_Executable_add_runtime_dependencies,gengal,\
 endef
 
 ifneq ($(SYSTEM_ICU),YES)
+ifeq (,$(filter ICULESS,$(BUILD_TYPE)))
 
 define gb_Executable__register_gendict
 $(call gb_Executable_add_runtime_dependencies,gendict,\
@@ -3134,6 +3162,7 @@ $(call gb_Executable_add_runtime_dependencies,gendict,\
 )
 endef
 
+endif
 endif
 
 define gb_Executable__register_idlc

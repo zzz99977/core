@@ -275,6 +275,7 @@ $(eval $(call gb_Helper_register_libraries_for_install,OOOLIBS,ooo, \
 	hyphen \
 	icd \
 	icg \
+	$(if $(filter ICULESS,$(BUILD_TYPE)),iculess) \
 	idx \
 	ime \
 	ipb \

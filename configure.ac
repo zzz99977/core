@@ -1495,6 +1495,10 @@ AC_ARG_WITH(system-icu,
         [Use icu already on system.]),,
     [with_system_icu="$with_system_libs"])
 
+AC_ARG_WITH(icu,
+    AS_HELP_STRING([--without-icu],
+        [Use a platform-specific emulation layer instead of ICU. Experimental.]))
+
 AC_ARG_WITH(system-ucpp,
     AS_HELP_STRING([--with-system-ucpp],
         [Use ucpp already on system.]),,
@@ -8991,7 +8995,12 @@ ICU_RECLASSIFIED_PREPEND_SET_EMPTY="YES"
 ICU_RECLASSIFIED_CONDITIONAL_JAPANESE_STARTER="YES"
 ICU_RECLASSIFIED_HEBREW_LETTER="YES"
 AC_MSG_CHECKING([which icu to use])
-if test "$with_system_icu" = "yes"; then
+if test "$with_icu" = no; then
+    AC_MSG_RESULT([none])
+    BUILD_TYPE="$BUILD_TYPE ICULESS"
+    ICU_CFLAGS="-I$SRC_ROOT/include/iculess"
+    ICU_LIBS=-liculess
+elif test "$with_system_icu" = "yes"; then
     AC_MSG_RESULT([external])
     SYSTEM_ICU=YES
     AC_LANG_PUSH([C++])

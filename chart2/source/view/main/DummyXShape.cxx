@@ -1006,7 +1006,6 @@ int oglErrorHandler( unx::Display* /*dpy*/, unx::XErrorEvent* /*evnt*/ )
 
 #endif
 
-
 bool DummyChart::initOpengl()
 {
     SAL_WARN("chart2.opengl", "DummyChart::initOpengl----start");
@@ -1169,7 +1168,6 @@ void DummyChart::setPosition( const awt::Point& aPosition )
 
 DummyChart::~DummyChart()
 {
-    m_GLRender.Release();
 }
 
 void DummyChart::setSize( const awt::Size& aSize )

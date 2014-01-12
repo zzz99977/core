@@ -185,6 +185,7 @@ public:
 
     virtual void render(com::sun::star::uno::Reference< com::sun::star::drawing::XShapes > xRootShape) SAL_OVERRIDE;
 
+    virtual void clearPage(com::sun::star::uno::Reference< com::sun::star::drawing::XShapes > xRootShape) SAL_OVERRIDE;
 };
 
 }

@@ -433,6 +433,13 @@ void OpenglShapeFactory::render(uno::Reference< drawing::XShapes > xRootShape)
     pChart->render();
 }
 
+void OpenglShapeFactory::clearPage(uno::Reference< drawing::XShapes > xRootShape)
+{
+    dummy::DummyChart* pChart = dynamic_cast<dummy::DummyChart*>(xRootShape.get());
+    assert(pChart);
+    pChart->clear();
+}
+
 } //namespace dummy
 
 } //namespace chart

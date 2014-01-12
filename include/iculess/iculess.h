@@ -16,19 +16,6 @@
 
 #include <Availability.h>
 
-#ifdef __cplusplus
-#include <rtl/ustrbuf.hxx>
-#endif
-
-#ifdef __IPHONE_OS_VERSION_MIN_REQUIRED
-
-// The iOS SDK has a subset of ICU as public API, so use that version number
-#include <unicode/uversion.h>
-#include <unicode/utypes.h>
-#include <unicode/utext.h>
-
-#else
-
 #include <stdint.h>
 
 // Pretend to be like ICU 2.4
@@ -37,7 +24,30 @@
 
 // Directly lifted from ICU
 
+#define U_CAPI
+#define U_EXPORT2
+
 typedef int32_t UChar32;
+typedef int16_t UChar;
+typedef int8_t UBool;
+
+// Sigh... how antiquated
+#ifndef TRUE
+#   define TRUE  1
+#endif
+#ifndef FALSE
+#   define FALSE 0
+#endif
+
+typedef double UDate;
+/** The number of milliseconds per second @stable ICU 2.0 */
+#define U_MILLIS_PER_SECOND        (1000)
+/** The number of milliseconds per minute @stable ICU 2.0 */
+#define U_MILLIS_PER_MINUTE       (60000)
+/** The number of milliseconds per hour @stable ICU 2.0 */
+#define U_MILLIS_PER_HOUR       (3600000)
+/** The number of milliseconds per day @stable ICU 2.0 */
+#define U_MILLIS_PER_DAY       (86400000)
 
 typedef enum UErrorCode {
     /* The ordering of U_ERROR_INFO_START Vs U_USING_FALLBACK_WARNING looks weird
@@ -247,9 +257,9 @@ typedef enum UErrorCode {
     U_ERROR_LIMIT=U_PLUGIN_ERROR_LIMIT      /**< This must always be the last value to indicate the limit for UErrorCode (last error code +1) */
 } UErrorCode;
 
-struct UText;
+inline UBool U_SUCCESS(UErrorCode code) { return (UBool)(code<=U_ZERO_ERROR); }
 
-#endif
+struct UText;
 
 #define U_ICU_IS_ICULESS 1
 
@@ -262,7 +272,12 @@ namespace icu {
 }
 #endif
 
-class UnicodeString : OUStringBuffer {
+struct _rtl_uString;
+
+class UnicodeString {
+private:
+    _rtl_uString *buffer;
+
 public:
     UnicodeString();
 
@@ -274,6 +289,9 @@ public:
 }
 
 using namespace icu; // Eek, but this is what ICU does...
+
+#define U_ICU_ENTRY_POINT_RENAME2(x,y) x ## y
+#define U_ICU_ENTRY_POINT_RENAME(x) U_ICU_ENTRY_POINT_RENAME2(iculess_,x)
 
 #endif // __cplusplus
 

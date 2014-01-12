@@ -7,25 +7,20 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef INCLUDED_ICULESS_UNICODE_BRKITER_H
-#define INCLUDED_ICULESS_UNICODE_BRKITER_H
+#ifndef INCLUDED_ICULESS_UNICODE_UCHAR_H
+#define INCLUDED_ICULESS_UNICODE_UCHAR_H
 
 #include <iculess.h>
 
-namespace icu {
-#if 0
-}
-#endif
+#define u_isalpha U_ICU_ENTRY_POINT_RENAME(u_isalpha)
+UBool u_isalpha(UChar32 c);
 
-class BreakIterator {
-private:
+#define u_ispunct U_ICU_ENTRY_POINT_RENAME(u_ispunct)
+UBool u_ispunct(UChar32 c);
 
-public:
-    virtual ~BreakIterator();
-};
+#define u_isWhitespace U_ICU_ENTRY_POINT_RENAME(u_isWhitespace)
+UBool u_isWhitespace(UChar32 c);
 
-} // namespace icu
-
-#endif // INCLUDED_ICULESS_UNICODE_BRKITER_H
+#endif // INCLUDED_ICULESS_UNICODE_UCHAR_H
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

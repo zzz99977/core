@@ -9,10 +9,22 @@
 
 $(eval $(call gb_Library_Library,iculess))
 
+$(eval $(call gb_Library_use_externals,iculess,\
+	icu_headers \
+))
+
+$(eval $(call gb_Library_add_defs,vcl,\
+    -DICULESS_DLLIMPLEMENTATION \
+))
+
 ifneq (,$(filter IOS MACOSX,$(OS)))
 
-$(eval $(call gb_Library_add_exception_objects,iculess,\
-	iculess/source/darwin/foo \
+$(eval $(call gb_Library_use_system_darwin_frameworks,iculess,\
+    CoreFoundation \
+))
+
+$(eval $(call gb_Library_add_objcxxobjects,iculess,\
+	iculess/source/apple \
 ))
 
 endif

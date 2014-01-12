@@ -36,11 +36,17 @@ $(eval $(call gb_Library_use_externals,i18npool,\
 ))
 
 $(eval $(call gb_Library_add_exception_objects,i18npool,\
-	i18npool/source/breakiterator/breakiterator_cjk \
-	i18npool/source/breakiterator/breakiterator_ctl \
-	i18npool/source/breakiterator/breakiteratorImpl \
-	i18npool/source/breakiterator/breakiterator_th \
-	i18npool/source/breakiterator/breakiterator_unicode \
+	$(if $(filter ICULESS,$(BUILD_TYPE)), \
+		$(if $(filter IOS MACOSX,$(OS)), \
+			i18npool/source/breakiterator/breakiterator_apple \
+		) \
+	, \
+		i18npool/source/breakiterator/breakiterator_cjk \
+		i18npool/source/breakiterator/breakiterator_ctl \
+		i18npool/source/breakiterator/breakiteratorImpl \
+		i18npool/source/breakiterator/breakiterator_th \
+		i18npool/source/breakiterator/breakiterator_unicode \
+	) \
 	i18npool/source/breakiterator/xdictionary \
 	i18npool/source/calendar/calendarImpl \
 	i18npool/source/calendar/calendar_gregorian \
@@ -52,7 +58,13 @@ $(eval $(call gb_Library_add_exception_objects,i18npool,\
 	i18npool/source/characterclassification/unoscripttypedetector \
 	i18npool/source/collator/chaptercollator \
 	i18npool/source/collator/collatorImpl \
-	i18npool/source/collator/collator_unicode \
+	$(if $(filter ICULESS,$(BUILD_TYPE)), \
+		$(if $(filter IOS MACOSX,$(OS)), \
+			i18npool/source/collator/collator_apple \
+		) \
+	, \
+		i18npool/source/collator/collator_unicode \
+	) \
 	i18npool/source/defaultnumberingprovider/defaultnumberingprovider \
 	i18npool/source/indexentry/indexentrysupplier \
 	i18npool/source/indexentry/indexentrysupplier_asian \

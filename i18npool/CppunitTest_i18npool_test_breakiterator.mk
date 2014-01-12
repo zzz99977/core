@@ -34,8 +34,12 @@ $(eval $(call gb_CppunitTest_use_components,i18npool_test_breakiterator,\
 	i18npool/util/i18npool \
 ))
 
+ifeq (,$(filter ICULESS,$(BUILD_TYPE)))
+
 $(call gb_CppunitTest_get_target,i18npool_test_breakiterator) : \
     $(call gb_Library_get_target,dict_ja) \
     $(call gb_Library_get_target,dict_zh)
+
+endif
 
 # vim: set noet sw=4 ts=4:

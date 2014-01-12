@@ -14,6 +14,8 @@
 
 #include <iculess.h>
 
+#include <unicode/locid.h>
+
 typedef enum {
   /** string a == string b */
   UCOL_EQUAL    = 0,

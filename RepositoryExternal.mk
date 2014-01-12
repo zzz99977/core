@@ -1164,17 +1164,17 @@ $(call gb_LinkTarget_set_include,$(1),\
 endef
 
 define gb_LinkTarget__use_icudata
-$(call gb_LinkTarget_add_libs,$(1),-liculess)
+$(call gb_LinkTarget_add_libs,$(1),-liculesslo)
 
 endef
 
 define gb_LinkTarget__use_icui18n
-$(call gb_LinkTarget_add_libs,$(1),-liculess)
+$(call gb_LinkTarget_add_libs,$(1),-liculesslo)
 
 endef
 
 define gb_LinkTarget__use_icuuc
-$(call gb_LinkTarget_add_libs,$(1),-liculess)
+$(call gb_LinkTarget_add_libs,$(1),-liculesslo)
 
 endef
 

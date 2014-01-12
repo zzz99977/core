@@ -10,7 +10,10 @@
 #ifndef INCLUDED_ICULESS_UNICODE_LOCID_H
 #define INCLUDED_ICULESS_UNICODE_LOCID_H
 
+#include <sal/types.h>
+
 #include <iculess.h>
+#include <iculess/dllapi.h>
 
 #ifdef __APPLE__
 
@@ -23,7 +26,7 @@ namespace icu {
 }
 #endif
 
-class Locale {
+class ICULESS_DLLPUBLIC Locale {
 private:
 #ifdef __APPLE__
     CFLocaleRef m_localeRef;
@@ -31,10 +34,10 @@ private:
 
 public:
     Locale();
-    Locale( const   char * language,
-            const   char * country  = 0,
-            const   char * variant  = 0,
-            const   char * keywordsAndValues = 0);
+    Locale(const char *language,
+           const char *country = 0,
+           const char *variant = 0,
+           const char *keywordsAndValues = 0);
     virtual ~Locale();
 
     static Locale createFromName(const char *name);

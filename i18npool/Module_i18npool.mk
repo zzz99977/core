@@ -10,14 +10,16 @@
 $(eval $(call gb_Module_Module,i18npool))
 
 $(eval $(call gb_Module_add_targets,i18npool,\
-	CustomTarget_breakiterator \
-	CustomTarget_collator \
+	$(if $(filter ICULESS,$(BUILD_TYPE)),, \
+		CustomTarget_breakiterator \
+		Library_dict_ja \
+		Library_dict_zh \
+		CustomTarget_collator \
+	) \
 	CustomTarget_indexentry \
 	CustomTarget_localedata \
 	CustomTarget_textconversion \
 	Library_collator_data \
-	Library_dict_ja \
-	Library_dict_zh \
 	Library_i18npool \
 	Library_i18nsearch \
 	Library_index_data \
@@ -29,7 +31,9 @@ $(eval $(call gb_Module_add_targets,i18npool,\
 ))
 
 $(eval $(call gb_Module_add_targets_for_build,i18npool,\
-	Executable_gencoll_rule \
+	$(if $(filter ICULESS,$(BUILD_TYPE)),, \
+		Executable_gencoll_rule \
+	) \
 	Executable_genconv_dict \
 	Executable_gendict \
 	Executable_genindex_data \

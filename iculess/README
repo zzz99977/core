@@ -1,0 +1,5 @@
+Implementations of a "fake" partial ICU API
+
+We would like to avoid buindling the huge ICU with LibreOffice-based
+apps on iOS and Android. I am experimenting with replacing ICU
+functionality with system-dependent APIs.

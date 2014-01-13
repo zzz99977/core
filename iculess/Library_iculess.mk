@@ -17,6 +17,10 @@ $(eval $(call gb_Library_add_defs,vcl,\
     -DICULESS_DLLIMPLEMENTATION \
 ))
 
+$(eval $(call gb_Library_add_exception_objects,iculess,\
+	iculess/source/common \
+))
+
 ifneq (,$(filter IOS MACOSX,$(OS)))
 
 $(eval $(call gb_Library_use_system_darwin_frameworks,iculess,\

@@ -14,29 +14,29 @@ $(eval $(call gb_Module_add_targets,i18npool,\
 		CustomTarget_breakiterator \
 		Library_dict_ja \
 		Library_dict_zh \
+		Library_collator_data \
+		Library_index_data \
+		Library_textconv_dict \
 		CustomTarget_collator \
+		CustomTarget_indexentry \
+		CustomTarget_textconversion \
 	) \
-	CustomTarget_indexentry \
 	CustomTarget_localedata \
-	CustomTarget_textconversion \
-	Library_collator_data \
 	Library_i18npool \
 	Library_i18nsearch \
-	Library_index_data \
 	Library_localedata_en \
 	Library_localedata_es \
 	Library_localedata_euro \
 	Library_localedata_others \
-	Library_textconv_dict \
 ))
 
 $(eval $(call gb_Module_add_targets_for_build,i18npool,\
 	$(if $(filter ICULESS,$(BUILD_TYPE)),, \
 		Executable_gencoll_rule \
+		Executable_genconv_dict \
+		Executable_gendict \
+		Executable_genindex_data \
 	) \
-	Executable_genconv_dict \
-	Executable_gendict \
-	Executable_genindex_data \
 	Executable_saxparser \
 	Rdb_saxparser \
 ))

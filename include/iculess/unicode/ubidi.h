@@ -60,35 +60,44 @@ enum UBiDiDirection {
   UBIDI_NEUTRAL
 };
 
-UBiDi *ubidi_openSized(int32_t maxLength, int32_t maxRunCount, UErrorCode *pErrorCode);
+U_STABLE UBiDi U_EXPORT2
+*ubidi_openSized(int32_t maxLength,
+                 int32_t maxRunCount,
+                 UErrorCode *pErrorCode);
 
-void ubidi_setLine(const UBiDi *pParaBiDi,
-                   int32_t start,
-                   int32_t limit,
-                   UBiDi *pLineBiDi,
-                   UErrorCode *pErrorCode);
+U_STABLE void U_EXPORT2
+ubidi_setLine(const UBiDi *pParaBiDi,
+              int32_t start,
+              int32_t limit,
+              UBiDi *pLineBiDi,
+              UErrorCode *pErrorCode);
 
-void ubidi_setPara(UBiDi *pBiDi,
-                   const UChar *text,
-                   int32_t length,
-                   UBiDiLevel paraLevel,
-                   UBiDiLevel *embeddingLevels,
-                   UErrorCode *pErrorCode);
+U_STABLE void U_EXPORT2
+ubidi_setPara(UBiDi *pBiDi,
+              const UChar *text,
+              int32_t length,
+              UBiDiLevel paraLevel,
+              UBiDiLevel *embeddingLevels,
+              UErrorCode *pErrorCode);
 
-int32_t ubidi_countRuns(UBiDi *pBiDi,
-                        UErrorCode *pErrorCode);
+U_STABLE int32_t U_EXPORT2
+ubidi_countRuns(UBiDi *pBiDi,
+                UErrorCode *pErrorCode);
 
-void ubidi_getLogicalRun(const UBiDi *pBiDi,
-                         int32_t logicalPosition,
-                         int32_t *pLogicalLimit,
-                         UBiDiLevel *pLevel);
+U_STABLE void U_EXPORT2
+ubidi_getLogicalRun(const UBiDi *pBiDi,
+                    int32_t logicalPosition,
+                    int32_t *pLogicalLimit,
+                    UBiDiLevel *pLevel);
 
-UBiDiDirection ubidi_getVisualRun(UBiDi *pBiDi,
-                                  int32_t runIndex,
-                                  int32_t *pLogicalStart,
-                                  int32_t *pLength);
+U_STABLE UBiDiDirection U_EXPORT2
+ubidi_getVisualRun(UBiDi *pBiDi,
+                   int32_t runIndex,
+                   int32_t *pLogicalStart,
+                   int32_t *pLength);
 
-void ubidi_close(UBiDi *pBiDi);
+U_STABLE void U_EXPORT2
+ubidi_close(UBiDi *pBiDi);
 
 #endif // INCLUDED_ICULESS_UNICODE_UBIDI_H
 

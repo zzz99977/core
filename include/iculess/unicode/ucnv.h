@@ -14,28 +14,33 @@
 
 struct UConverter;
 
-UConverter* ucnv_open(const char *converterName, UErrorCode *err);
+U_STABLE UConverter* U_EXPORT2
+ucnv_open(const char *converterName,
+          UErrorCode *err);
 
-UChar32 ucnv_getNextUChar(UConverter * converter,
-                          const char **source,
-                          const char * sourceLimit,
-                          UErrorCode * err);
+U_STABLE UChar32 U_EXPORT2
+ucnv_getNextUChar(UConverter *converter,
+                  const char **source,
+                  const char *sourceLimit,
+                  UErrorCode *err);
 
-void ucnv_convertEx(UConverter *targetCnv,
-                    UConverter *sourceCnv,
-                    char **target,
-                    const char *targetLimit,
-                    const char **source,
-                    const char *sourceLimit,
-                    UChar *pivotStart,
-                    UChar **pivotSource,
-                    UChar **pivotTarget,
-                    const UChar *pivotLimit,
-                    UBool reset,
-                    UBool flush,
-                    UErrorCode *pErrorCode);
+U_STABLE void U_EXPORT2
+ucnv_convertEx(UConverter *targetCnv,
+               UConverter *sourceCnv,
+               char **target,
+               const char *targetLimit,
+               const char **source,
+               const char *sourceLimit,
+               UChar *pivotStart,
+               UChar **pivotSource,
+               UChar **pivotTarget,
+               const UChar *pivotLimit,
+               UBool reset,
+               UBool flush,
+               UErrorCode *pErrorCode);
 
-void ucnv_close(UConverter * converter);
+U_STABLE void U_EXPORT2
+ucnv_close(UConverter *converter);
 
 #endif // INCLUDED_ICULESS_UNICODE_UCNV_H
 

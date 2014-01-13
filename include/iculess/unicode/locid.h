@@ -17,7 +17,9 @@
 
 #ifdef __APPLE__
 
+#include <premac.h>
 #include <CoreFoundation/CFLocale.h>
+#include <postmac.h>
 
 #endif // __APPLE__
 

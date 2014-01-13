@@ -39,6 +39,8 @@ $(eval $(call gb_Library_add_exception_objects,i18npool,\
 	$(if $(filter ICULESS,$(BUILD_TYPE)), \
 		$(if $(filter IOS MACOSX,$(OS)), \
 			i18npool/source/breakiterator/breakiterator_apple \
+			i18npool/source/characterclassification/cclass_apple \
+			i18npool/source/collator/collator_apple \
 		) \
 	, \
 		i18npool/source/breakiterator/breakiterator_cjk \
@@ -46,25 +48,20 @@ $(eval $(call gb_Library_add_exception_objects,i18npool,\
 		i18npool/source/breakiterator/breakiteratorImpl \
 		i18npool/source/breakiterator/breakiterator_th \
 		i18npool/source/breakiterator/breakiterator_unicode \
+		i18npool/source/characterclassification/cclass_unicode \
+		i18npool/source/characterclassification/cclass_unicode_parser \
+		i18npool/source/collator/collator_unicode \
+		i18npool/source/registerservices/registerservices \
 	) \
 	i18npool/source/breakiterator/xdictionary \
 	i18npool/source/calendar/calendarImpl \
 	i18npool/source/calendar/calendar_gregorian \
 	i18npool/source/calendar/calendar_hijri \
 	i18npool/source/calendar/calendar_jewish \
-	i18npool/source/characterclassification/cclass_unicode \
-	i18npool/source/characterclassification/cclass_unicode_parser \
 	i18npool/source/characterclassification/characterclassificationImpl \
 	i18npool/source/characterclassification/unoscripttypedetector \
 	i18npool/source/collator/chaptercollator \
 	i18npool/source/collator/collatorImpl \
-	$(if $(filter ICULESS,$(BUILD_TYPE)), \
-		$(if $(filter IOS MACOSX,$(OS)), \
-			i18npool/source/collator/collator_apple \
-		) \
-	, \
-		i18npool/source/collator/collator_unicode \
-	) \
 	i18npool/source/defaultnumberingprovider/defaultnumberingprovider \
 	i18npool/source/indexentry/indexentrysupplier \
 	i18npool/source/indexentry/indexentrysupplier_asian \
@@ -78,7 +75,6 @@ $(eval $(call gb_Library_add_exception_objects,i18npool,\
 	i18npool/source/nativenumber/nativenumbersupplier \
 	i18npool/source/numberformatcode/numberformatcode \
 	i18npool/source/ordinalsuffix/ordinalsuffix \
-	i18npool/source/registerservices/registerservices \
 	i18npool/source/textconversion/textconversion \
 	i18npool/source/textconversion/textconversionImpl \
 	i18npool/source/textconversion/textconversion_ko \

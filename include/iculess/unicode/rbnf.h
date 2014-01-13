@@ -25,15 +25,12 @@ enum URBNFRuleSetTag {
     URBNF_COUNT
 };
 
-class RuleBasedNumberFormat {
-private:
-
+class ICULESS_DLLPUBLIC RuleBasedNumberFormat {
 public:
     RuleBasedNumberFormat(URBNFRuleSetTag tag, const Locale& locale, UErrorCode& status);
 
     virtual ~RuleBasedNumberFormat();
 };
-
 
 } // namespace icu
 

@@ -15,30 +15,38 @@
 struct UCharsetDetector;
 struct UCharsetMatch;
 
-UCharsetDetector *ucsdet_open(UErrorCode *status);
+U_STABLE UCharsetDetector* U_EXPORT2
+ucsdet_open(UErrorCode *status);
 
-UBool ucsdet_enableInputFilter(UCharsetDetector *ucsd,
-                               UBool filter);
+U_STABLE UBool U_EXPORT2
+ucsdet_enableInputFilter(UCharsetDetector *ucsd,
+                         UBool filter);
 
-void ucsdet_setText(UCharsetDetector *ucsd,
-                    const char *textIn,
-                    int32_t len,
-                    UErrorCode *status);
+U_STABLE void U_EXPORT2
+ucsdet_setText(UCharsetDetector *ucsd,
+               const char *textIn,
+               int32_t len,
+               UErrorCode *status);
 
-const UCharsetMatch *ucsdet_detect(UCharsetDetector *ucsd,
-                                   UErrorCode *status);
+U_STABLE const UCharsetMatch * U_EXPORT2
+ucsdet_detect(UCharsetDetector *ucsd,
+              UErrorCode *status);
 
-const UCharsetMatch **ucsdet_detectAll(UCharsetDetector *ucsd,
-                                       int32_t *matchesFound,
-                                       UErrorCode *status);
+U_STABLE const UCharsetMatch ** U_EXPORT2
+ucsdet_detectAll(UCharsetDetector *ucsd,
+                 int32_t *matchesFound,
+                 UErrorCode *status);
 
-int32_t ucsdet_getConfidence(const UCharsetMatch *ucsm,
-                             UErrorCode *status);
+U_STABLE int32_t U_EXPORT2
+ucsdet_getConfidence(const UCharsetMatch *ucsm,
+                     UErrorCode *status);
 
-const char *ucsdet_getName(const UCharsetMatch *ucsm,
-                           UErrorCode *status);
+U_STABLE const char * U_EXPORT2
+ucsdet_getName(const UCharsetMatch *ucsm,
+               UErrorCode *status);
 
-void ucsdet_close(UCharsetDetector *ucsd);
+U_STABLE void U_EXPORT2
+ucsdet_close(UCharsetDetector *ucsd);
 
 #endif // INCLUDED_ICULESS_UNICODE_UCSDET_H
 

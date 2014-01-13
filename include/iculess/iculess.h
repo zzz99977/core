@@ -18,6 +18,8 @@
 
 #include <stdint.h>
 
+#include <iculess/dllapi.h>
+
 // Pretend to be like ICU 2.4
 #define U_ICU_VERSION_MAJOR_NUM 52
 #define U_ICU_VERSION_MINOR_NUM 1
@@ -25,7 +27,8 @@
 // Directly lifted from ICU
 
 #define U_CAPI
-#define U_EXPORT2
+#define U_STABLE
+#define U_EXPORT2 ICULESS_DLLPUBLIC
 
 typedef int32_t UChar32;
 typedef int16_t UChar;
@@ -257,7 +260,8 @@ typedef enum UErrorCode {
     U_ERROR_LIMIT=U_PLUGIN_ERROR_LIMIT      /**< This must always be the last value to indicate the limit for UErrorCode (last error code +1) */
 } UErrorCode;
 
-inline UBool U_SUCCESS(UErrorCode code) { return (UBool)(code<=U_ZERO_ERROR); }
+#define U_SUCCESS(x) ((x)<=U_ZERO_ERROR)
+#define U_FAILURE(x) ((x)>U_ZERO_ERROR)
 
 struct UText;
 
@@ -281,17 +285,32 @@ private:
 public:
     UnicodeString();
 
-    UnicodeString(const UChar *text);
+    explicit UnicodeString(UChar ch);
+
+    explicit UnicodeString(UChar32 ch);
+
+    explicit UnicodeString(const UChar *text);
+
+    explicit UnicodeString(const char *codepageData);
+
+    ~UnicodeString();
+
+    int length();
 
     UChar *getBuffer(int32_t minCapacity);
+    const UChar *getBuffer();
+
+    UBool startsWith(const UnicodeString& text) const;
+
+    UBool operator== (const UnicodeString& text) const;
 };
 
 }
 
 using namespace icu; // Eek, but this is what ICU does...
 
-#define U_ICU_ENTRY_POINT_RENAME2(x,y) x ## y
-#define U_ICU_ENTRY_POINT_RENAME(x) U_ICU_ENTRY_POINT_RENAME2(iculess_,x)
+#define U_ICULESS_ENTRY_POINT_RENAME2(x,y) x ## y
+#define U_ICULESS_ENTRY_POINT_RENAME(x) U_ICULESS_ENTRY_POINT_RENAME2(iculess_,x)
 
 #endif // __cplusplus
 

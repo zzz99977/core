@@ -37,7 +37,7 @@ namespace icu {
 }
 #endif
 
-class Normalizer {
+class ICULESS_DLLPUBLIC Normalizer {
 private:
 public:
   static void normalize(const UnicodeString& source,

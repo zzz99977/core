@@ -73,7 +73,7 @@ namespace icu {
 }
 #endif
 
-class Collator {
+class ICULESS_DLLPUBLIC Collator {
 private:
 
 public:

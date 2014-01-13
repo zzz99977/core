@@ -296,9 +296,7 @@ namespace icu {
 }
 #endif
 
-class Calendar {
-private:
-
+class ICULESS_DLLPUBLIC Calendar {
 public:
     enum EDaysOfWeek {
         SUNDAY = 1,

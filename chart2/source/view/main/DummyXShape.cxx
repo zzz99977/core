@@ -841,7 +841,7 @@ bool DummyChart::initWindow()
     GLWin.screen = XScreenNumberOfScreen( xattr.screen );
 
     unx::XVisualInfo* vi( NULL );
-#if defined( GLX_VERSION_1_3 ) && defined( GLX_EXT_texture_from_pixmap )
+#if defined( GLX_EXT_texture_from_pixmap )
     unx::XVisualInfo* visinfo;
     unx::XVisualInfo* firstVisual( NULL );
 #endif
@@ -897,7 +897,7 @@ bool DummyChart::initWindow()
     const SystemEnvData* pChildSysData = NULL;
     pWindow.reset();
 
-#if defined( GLX_VERSION_1_3 ) && defined( GLX_EXT_texture_from_pixmap )
+#if defined( GLX_EXT_texture_from_pixmap )
     unx::GLXFBConfig* fbconfigs = NULL;
     int nfbconfigs, value, i = 0;
 #endif
@@ -909,7 +909,7 @@ bool DummyChart::initWindow()
                 GLWin.screen,
                 *pAttributeTable );
 
-#if defined( GLX_VERSION_1_3 ) && defined( GLX_EXT_texture_from_pixmap )
+#if defined( GLX_EXT_texture_from_pixmap )
         if( vi ) {
             if( !firstVisual )
                 firstVisual = vi;
@@ -976,7 +976,7 @@ bool DummyChart::initWindow()
                         pWindow.reset();
                     }
                 }
-#if defined( GLX_VERSION_1_3 ) && defined( GLX_EXT_texture_from_pixmap )
+#if defined( GLX_EXT_texture_from_pixmap )
             }
 #endif
 
@@ -1004,7 +1004,7 @@ bool DummyChart::initWindow()
 #elif defined( UNX )
             GLWin.dpy = reinterpret_cast<unx::Display*>(pChildSysData->pDisplay);
             GLWin.win = pChildSysData->aWindow;
-#if defined( GLX_VERSION_1_3 ) && defined( GLX_EXT_texture_from_pixmap )
+#if defined( GLX_EXT_texture_from_pixmap )
             //TODO: moggi
             /*
             if( mbHasTFPVisual )

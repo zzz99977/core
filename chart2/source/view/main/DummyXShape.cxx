@@ -840,6 +840,8 @@ bool DummyChart::initWindow()
         pWindow->EnablePaint(sal_False);
         GLWin.hWnd = sysData->hWnd;
     }
+
+    return true;
 }
 
 #elif defined( UNX )

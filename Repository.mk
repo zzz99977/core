@@ -710,6 +710,9 @@ $(eval $(call gb_Helper_register_packages_for_install,ooo,\
 	$(if $(SYSTEM_CURL),,curl) \
 	$(if $(SYSTEM_LCMS2),,lcms2) \
 	$(if $(SYSTEM_LIBXSLT),,xslt) \
+	$(if $(filter FREEBSD LINUX MACOSX WNT,$(OS)), \
+		chart2_opengl_shader \
+	) \
 ))
 
 # External executables

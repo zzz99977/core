@@ -184,7 +184,6 @@ public:
 #endif
 
     void SetBackGroundColor(sal_uInt32 color1, sal_uInt32 color2, sal_uInt8 nAlpha);
-    void SetTransparency(sal_uInt32 transparency);
 private:
     GLint LoadShaders(const OUString& rVertexShaderName, const OUString& rFragmentShaderName);
     int CreateTextureObj(int width, int height);
@@ -287,7 +286,6 @@ private:
     GLuint m_DebugVertexID;
     GLuint m_DebugColorID;
 #endif
-    float m_fAlpha;
 };
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

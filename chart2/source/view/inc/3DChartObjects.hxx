@@ -102,7 +102,7 @@ class TemporaryContext: public opengl3D::Renderable3DObject
 public:
     TemporaryContext(OpenGL3DRenderer* pRenderer);
 
-    void render();
+    virtual void render();
     void init();
 
 private:

@@ -111,30 +111,6 @@ void Camera::render()
     mpRenderer->SetCameraInfo(maPos, maDirection, maUp, true);
 }
 
-
-namespace temporary {
-
-TemporaryContext::TemporaryContext(OpenGL3DRenderer* pRenderer):
-    Renderable3DObject(pRenderer, -1)
-{
-}
-
-void TemporaryContext::render()
-{
-    maContext.renderToFile();
-}
-
-void TemporaryContext::init()
-{
-    maContext.init();
-    Size winSize(800, 600);
-    maContext.setWinSize(winSize);
-    mpRenderer->SetSize(winSize);
-    mpRenderer->init();
-}
-
-}
-
 }
 
 }

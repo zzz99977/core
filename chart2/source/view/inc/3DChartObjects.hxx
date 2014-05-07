@@ -95,22 +95,6 @@ private:
     glm::vec3 maDirection;
 };
 
-namespace temporary {
-
-class TemporaryContext: public opengl3D::Renderable3DObject
-{
-public:
-    TemporaryContext(OpenGL3DRenderer* pRenderer);
-
-    virtual void render();
-    void init();
-
-private:
-    OpenGLContext maContext;
-};
-
-}
-
 }
 
 }

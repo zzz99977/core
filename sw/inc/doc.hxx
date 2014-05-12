@@ -45,6 +45,7 @@
 #include <tox.hxx>
 #include <frmfmt.hxx>
 #include <charfmt.hxx>
+#include <pagedesc.hxx>
 
 #include <boost/unordered_map.hpp>
 
@@ -117,7 +118,6 @@ class SwNodeRange;
 class SwNodes;
 class SwNumRule;
 class SwNumRuleTbl;
-class SwPageDesc;
 class SwPagePreviewPrtData;
 class SwRangeRedline;
 class SwRedlineTbl;
@@ -235,14 +235,6 @@ namespace sfx2 {
     class IXmlIdRegistry;
     class LinkManager;
 }
-
-// PageDescriptor-interface, Array because of inlines.
-class SwPageDescs : public std::vector<SwPageDesc*>
-{
-public:
-    // the destructor will free all objects still in the vector
-    ~SwPageDescs();
-};
 
 // forward declaration
 void SetAllScriptItem( SfxItemSet& rSet, const SfxPoolItem& rItem );
@@ -954,7 +946,8 @@ public:
     sal_uInt16 GetPageDescCnt() const { return maPageDescs.size(); }
     const SwPageDesc& GetPageDesc( const sal_uInt16 i ) const { return *maPageDescs[i]; }
     SwPageDesc& GetPageDesc( sal_uInt16 i ) { return *maPageDescs[i]; }
-    SwPageDesc* FindPageDesc(const OUString& rName, sal_uInt16* pPos = NULL) const;
+    SwPageDesc* FindPageDesc( const OUString& rName, sal_uInt16* pPos = 0 ) const;
+    SwPageDesc* FindPageDesc( const OUString& rName, sal_uInt16* pPos = 0 );
 
     /** Copy the complete PageDesc - beyond document and "deep"!
      Optionally copying of PoolFmtId, -HlpId can be prevented. */
@@ -972,7 +965,6 @@ public:
         { CopyPageDescHeaderFooterImpl( false, rSrcFmt, rDestFmt ); }
 
     // For Reader
-    SwPageDesc * GetPageDesc( const OUString & rName );
     void ChgPageDesc( const OUString & rName, const SwPageDesc& );
     void ChgPageDesc( sal_uInt16 i, const SwPageDesc& );
     void DelPageDesc( const OUString & rName, bool bBroadcast = false);

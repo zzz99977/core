@@ -2170,7 +2170,7 @@ bool DocumentStylePoolManager::IsPoolPageDescUsed( sal_uInt16 nId ) const
 {
     OSL_ENSURE( RES_POOLPAGE_BEGIN <= nId && nId < RES_POOLPAGE_END,
             "Wrong AutoFormat Id" );
-    SwPageDesc *pNewPgDsc = 0;
+    const SwPageDesc *pNewPgDsc = 0;
     bool bFnd = false;
     for( sal_uInt16 n = 0; !bFnd && n < m_rDoc.GetPageDescCnt(); ++n )
     {

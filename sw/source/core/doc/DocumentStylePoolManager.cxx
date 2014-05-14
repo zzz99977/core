@@ -1351,13 +1351,9 @@ SwPageDesc* DocumentStylePoolManager::GetPageDescFromPool( sal_uInt16 nId, bool 
     OSL_ENSURE( RES_POOLPAGE_BEGIN <= nId && nId < RES_POOLPAGE_END,
             "Wrong AutoFormat Id" );
 
-    for( sal_uInt16 n = 0; n < m_rDoc.GetPageDescCnt(); ++n )
-    {
-        if ( nId == m_rDoc.GetPageDesc(n).GetPoolFmtId() )
-        {
-            return &m_rDoc.GetPageDesc(n);
-        }
-    }
+    SwPageDesc* ret = m_rDoc.FindPageDescByPoolId( nId );
+    if (ret)
+        return ret;
 
     if( RES_POOLPAGE_BEGIN > nId ||  nId >= RES_POOLPAGE_END )
     {

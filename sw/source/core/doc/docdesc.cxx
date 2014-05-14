@@ -832,6 +832,11 @@ SwPageDesc* SwDoc::FindPageDescByName( const OUString & rName, sal_uInt16* pPos 
     return lcl_FindPageDescByName( const_cast <SwPageDescs *>( &maPageDescs ), rName, pPos );
 }
 
+SwPageDesc* SwDoc::FindPageDescByPoolId( sal_uInt16 nPoolId )
+{
+    return maPageDescs.GetPoolPageDesc( nPoolId );
+}
+
 void SwDoc::DelPageDesc( const OUString & rName, bool bBroadcast )
 {
     SwPageDesc *pd = FindPageDescByName(rName);

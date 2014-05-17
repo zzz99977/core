@@ -94,8 +94,8 @@ void RenderThread::renderFrame()
     if(!mpChart->mbValidContext)
         return;
 
-    mpChart->mrWindow.getContext().makeCurrent();
-    Size aSize = mpChart->mrWindow.GetSizePixel();
+    mpChart->mpWindow->getContext().makeCurrent();
+    Size aSize = mpChart->mpWindow->GetSizePixel();
     mpChart->mpRenderer->SetSize(aSize);
     if(mpChart->mbNeedsNewRender)
     {
@@ -112,7 +112,7 @@ void RenderThread::renderFrame()
     }
     mpChart->mpRenderer->ProcessUnrenderedShape(mpChart->mbNeedsNewRender);
     mpChart->mbNeedsNewRender = false;
-    mpChart->mrWindow.getContext().swapBuffers();
+    mpChart->mpWindow->getContext().swapBuffers();
 
 }
 
@@ -417,10 +417,10 @@ void RenderBenchMarkThread::execute()
 
 GL3DBarChart::GL3DBarChart(
     const css::uno::Reference<css::chart2::XChartType>& xChartType,
-    OpenGLWindow& rWindow) :
+    OpenGLWindow* pWindow) :
     mxChartType(xChartType),
     mpRenderer(new opengl3D::OpenGL3DRenderer()),
-    mrWindow(rWindow),
+    mpWindow(pWindow),
     mpCamera(NULL),
     mbValidContext(true),
     mpTextCache(new opengl3D::TextCache()),
@@ -448,9 +448,14 @@ GL3DBarChart::GL3DBarChart(
             }
         }
     }
-    Size aSize = mrWindow.GetSizePixel();
+    Size aSize;
+    if (mpWindow)
+    {
+        mpWindow->setRenderer(this);
+        Size aSize = mpWindow->GetSizePixel();
+    }
     mpRenderer->SetSize(aSize);
-    mrWindow.setRenderer(this);
+    mpWindow->setRenderer(this);
     mpRenderer->init();
 }
 
@@ -474,8 +479,8 @@ GL3DBarChart::~GL3DBarChart()
     if(mpRenderThread.is())
         mpRenderThread->join();
 
-    if(mbValidContext)
-        mrWindow.setRenderer(NULL);
+    if(mbValidContext && mpWindow)
+        mpWindow->setRenderer(NULL);
 }
 
 void GL3DBarChart::create3DShapes(const boost::ptr_vector<VDataSeries>& rDataSeriesContainer,
@@ -560,7 +565,7 @@ void GL3DBarChart::create3DShapes(const boost::ptr_vector<VDataSeries>& rDataSer
                         BarInformation(glm::vec3(nXPos, nYPos, float(nVal/nMaxVal)),
                             nVal, nIndex, nSeriesIndex)));
 
-            maShapes.push_back(new opengl3D::Bar(mpRenderer.get(), aBarPosition, nColor, nId));
+            //maShapes.push_back(new opengl3D::Bar(mpRenderer.get(), aBarPosition, nColor, nId));
             nId += ID_STEP;
         }
 
@@ -681,10 +686,10 @@ void GL3DBarChart::create3DShapes(const boost::ptr_vector<VDataSeries>& rDataSer
             mpRenderer->SetScrollSpeed((float)(BAR_SIZE_X + BAR_DISTANCE_X) / (float)miScrollRate);
             mpRenderer->SetScrollDistance((float)(BAR_SIZE_X + BAR_DISTANCE_X));
         }
-        Size aSize = mrWindow.GetSizePixel();
-        mrWindow.getContext().setWinSize(aSize);
+        Size aSize = mpWindow->GetSizePixel();
+        mpWindow->getContext().setWinSize(aSize);
         mpRenderThread = rtl::Reference<RenderThread>(new RenderBenchMarkThread(this));
-        mrWindow.getContext().resetCurrent();
+        mpWindow->getContext().resetCurrent();
         mpRenderThread->launch();
     }
     mbNeedsNewRender = true;
@@ -696,10 +701,10 @@ void GL3DBarChart::update()
         return;
     if(mpRenderThread.is())
         mpRenderThread->join();
-    Size aSize = mrWindow.GetSizePixel();
-    mrWindow.getContext().setWinSize(aSize);
+    Size aSize = mpWindow->GetSizePixel();
+    mpWindow->getContext().setWinSize(aSize);
     mpRenderThread = rtl::Reference<RenderThread>(new RenderOneFrameThread(this));
-    mrWindow.getContext().resetCurrent();
+    mpWindow->getContext().resetCurrent();
     mpRenderThread->launch();
 
 }
@@ -745,10 +750,10 @@ void GL3DBarChart::moveToDefault()
         mpRenderThread->join();
 
     osl::MutexGuard aGuard(maMutex);
-    Size aSize = mrWindow.GetSizePixel();
-    mrWindow.getContext().setWinSize(aSize);
+    Size aSize = mpWindow->GetSizePixel();
+    mpWindow->getContext().setWinSize(aSize);
     mpRenderThread = rtl::Reference<RenderThread>(new RenderAnimationThread(this, maCameraPosition, maDefaultCameraPosition, STEPS));
-    mrWindow.getContext().resetCurrent();
+    mpWindow->getContext().resetCurrent();
     mpRenderThread->launch();
 
     /*
@@ -812,10 +817,10 @@ void GL3DBarChart::clickedAt(const Point& rPos, sal_uInt16 nButtons)
     glm::vec3 maTargetPosition = rBarInfo.maPos;
     maTargetPosition.z += 240;
     maTargetPosition.y += BAR_SIZE_Y / 2.0f;
-    Size aSize = mrWindow.GetSizePixel();
-    mrWindow.getContext().setWinSize(aSize);
+    Size aSize = mpWindow->GetSizePixel();
+    mpWindow->getContext().setWinSize(aSize);
     mpRenderThread = rtl::Reference<RenderThread>(new RenderAnimationThread(this, maCameraPosition, maTargetPosition, STEPS));
-    mrWindow.getContext().resetCurrent();
+    mpWindow->getContext().resetCurrent();
     mpRenderThread->launch();
 
     /*
@@ -901,11 +906,11 @@ void GL3DBarChart::moveToCorner()
 
     osl::MutexGuard aGuard(maMutex);
 
-    Size aSize = mrWindow.GetSizePixel();
-    mrWindow.getContext().setWinSize(aSize);
+    Size aSize = mpWindow->GetSizePixel();
+    mpWindow->getContext().setWinSize(aSize);
     mpRenderThread = rtl::Reference<RenderThread>(new RenderAnimationThread(this, maCameraPosition,
                 getCornerPosition(mnCornerId), STEPS));
-    mrWindow.getContext().resetCurrent();
+    mpWindow->getContext().resetCurrent();
     mpRenderThread->launch();
 
     // TODO: moggi: add to thread
@@ -930,6 +935,12 @@ void GL3DBarChart::contextDestroyed()
 {
     osl::MutexGuard aGuard(maMutex);
     mbValidContext = false;
+}
+
+void GL3DBarChart::setOpenGLWindow(OpenGLWindow* pWindow)
+{
+    if (mpWindow != pWindow)
+        mpWindow = pWindow;
 }
 
 }

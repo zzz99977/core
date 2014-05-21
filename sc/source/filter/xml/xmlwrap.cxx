@@ -309,7 +309,210 @@ sal_uInt32 ScXMLImportWrapper::ImportFromComponent(const uno::Reference<uno::XCo
     return nReturn;
 }
 
-bool ScXMLImportWrapper::Import( sal_uInt8 nMode, ErrCode& rError )
+#include <cppuhelper/weak.hxx>
+#include <cppuhelper/implbase1.hxx>
+
+#include <com/sun/star/xml/Attribute.hpp>
+#include <com/sun/star/xml/sax/InputSource.hpp>
+#include <com/sun/star/xml/sax/XFastParser.hpp>
+#include <com/sun/star/xml/sax/XAttributeList.hpp>
+#include <com/sun/star/xml/sax/XFastAttributeList.hpp>
+#include <com/sun/star/xml/sax/XFastContextHandler.hpp>
+
+class XFastAttribWrap :
+    public cppu::WeakImplHelper1< css::xml::sax::XAttributeList >
+{
+    css::uno::Sequence< ::css::xml::Attribute > maAttributes;
+    css::uno::Reference< css::xml::sax::XFastAttributeList > mxList;
+public:
+
+    XFastAttribWrap(css::uno::Reference< css::xml::sax::XFastAttributeList > xList)
+        : mxList( xList )
+    {
+        maAttributes = mxList->getUnknownAttributes();
+        assert (mxList->getFastAttributes().getLength() == 0);
+    }
+
+    virtual ::sal_Int16 SAL_CALL getLength() SAL_OVERRIDE
+    {
+        return maAttributes.getLength();
+    }
+
+    virtual ::rtl::OUString SAL_CALL getNameByIndex( ::sal_Int16 i ) SAL_OVERRIDE
+    {
+        if( i >= 0 && i < maAttributes.getLength())
+             return maAttributes[i].Name; // URGH FIXME [!] -> no namespace ? ...
+        return OUString();
+    }
+
+    virtual ::rtl::OUString SAL_CALL getTypeByIndex( ::sal_Int16 /* i */ ) SAL_OVERRIDE
+    {
+        return OUString("CDATA");
+    }
+
+    virtual ::rtl::OUString SAL_CALL getTypeByName( const ::rtl::OUString& /* aName */ ) SAL_OVERRIDE
+    {
+        return OUString("CDATA");
+    }
+
+    virtual ::rtl::OUString SAL_CALL getValueByIndex( ::sal_Int16 i ) SAL_OVERRIDE
+    {
+        if( i >= 0 && i < maAttributes.getLength())
+            return maAttributes[i].Value;
+        return OUString();
+    }
+
+    virtual ::rtl::OUString SAL_CALL getValueByName( const ::rtl::OUString& aName ) SAL_OVERRIDE
+    {
+        for (sal_Int32 i = 0; i < maAttributes.getLength(); i++)
+        {
+            if (maAttributes[i].Name == aName)
+                return maAttributes[i].Value;
+        }
+        // FIXME: ARGH - namespacing again !? ... surely this will break ...
+        return OUString();
+    }
+};
+
+class XFastHandlerWrapper :
+    public cppu::WeakImplHelper1< css::xml::sax::XFastDocumentHandler >
+{
+    css::uno::Reference< css::xml::sax::XDocumentHandler > mxSax;
+public:
+    XFastHandlerWrapper(css::uno::Reference< css::xml::sax::XDocumentHandler > xHandler) : mxSax( xHandler )
+    {
+    }
+
+    // XFastContextHandler
+    virtual void SAL_CALL startFastElement( ::sal_Int32 /* Element */,
+                                             const ::css::uno::Reference< ::css::xml::sax::XFastAttributeList >& /* Attribs */ ) SAL_OVERRIDE
+    {
+        assert(false);
+    }
+
+    virtual void SAL_CALL endFastElement( ::sal_Int32 /* Element */ ) SAL_OVERRIDE
+    {
+        assert(false);
+    }
+
+    virtual ::css::uno::Reference< ::css::xml::sax::XFastContextHandler > SAL_CALL createFastChildContext( ::sal_Int32 /* Element */, const ::css::uno::Reference< ::css::xml::sax::XFastAttributeList >& /* Attribs */ )
+    {
+        assert(false);
+    }
+
+    static OUString getName( const ::rtl::OUString& Namespace, const ::rtl::OUString& Name )
+    {
+        if (Namespace.isEmpty())
+            return Name;
+        else
+            return Namespace + ":" + Name;
+    }
+
+    virtual void SAL_CALL startUnknownElement( const ::rtl::OUString& Namespace, const ::rtl::OUString& Name, const ::css::uno::Reference< ::css::xml::sax::XFastAttributeList >& Attribs ) SAL_OVERRIDE
+    {
+        // FIXME: urgh, surely we can implement both APIs inside XFastParser [!] ...
+        ::css::uno::Reference< ::css::xml::sax::XAttributeList > xAttribs(
+                new XFastAttribWrap(Attribs));
+        mxSax->startElement (getName (Namespace, Name), xAttribs);
+    }
+
+    virtual void SAL_CALL endUnknownElement( const ::rtl::OUString& Namespace, const ::rtl::OUString& Name )
+    {
+        // FIXME: horrors - re-parsing this name just for it to be ignored ...
+        mxSax->endElement (getName (Namespace, Name));
+    }
+
+    virtual ::css::uno::Reference< ::css::xml::sax::XFastContextHandler > SAL_CALL createUnknownChildContext( const ::rtl::OUString& /* Namespace */, const ::rtl::OUString& /* Name */, const ::css::uno::Reference< ::css::xml::sax::XFastAttributeList >& /* Attribs */ ) SAL_OVERRIDE
+    {
+        // the old sax::Parser API has no hierarchy of contexts at all.
+        // FIXME: what are the attributes here ? is this a 'startElement' too ?
+        return ::css::uno::Reference< ::css::xml::sax::XFastContextHandler >( this );
+    }
+
+    virtual void SAL_CALL characters( const ::rtl::OUString& aChars )
+    {
+        mxSax->characters(aChars);
+    }
+
+    // FIXME: processingInstruction ? ...
+
+    // XFastDocumentHandler
+
+    virtual void SAL_CALL startDocument() SAL_OVERRIDE
+    {
+        mxSax->startDocument();
+    }
+
+    virtual void SAL_CALL endDocument() SAL_OVERRIDE
+    {
+        mxSax->endDocument();
+    }
+
+    virtual void SAL_CALL setDocumentLocator( const ::css::uno::Reference< ::css::xml::sax::XLocator >& xLocator ) SAL_OVERRIDE
+    {
+        mxSax->setDocumentLocator(xLocator);
+    }
+};
+
+// This class wraps the threaded XFastParser with a lame Sax interface
+class FastSaxWrapper : public cppu::WeakImplHelper1< ::css::xml::sax::XParser >
+{
+    css::uno::Reference< css::xml::sax::XFastParser > mxFastParser;
+    css::uno::Reference< css::xml::sax::XFastDocumentHandler > mxHandler;
+
+public:
+    FastSaxWrapper(const uno::Reference<uno::XComponentContext>& xContext)
+    {
+        mxFastParser = xml::sax::FastParser::create(xContext);
+    }
+    virtual ~FastSaxWrapper() {}
+
+    // The SAX-Parser-Interface
+    virtual void SAL_CALL parseStream( const css::xml::sax::InputSource& structSource)
+        throw ( css::xml::sax::SAXException,
+                IOException,
+                css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    {
+        mxFastParser->parseStream(structSource);
+    }
+
+    virtual void SAL_CALL setDocumentHandler(const css::uno::Reference< ::css::xml::sax::XDocumentHandler > & xHandler)
+        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    {
+        if (xHandler.is())
+            mxHandler = css::uno::Reference< css::xml::sax::XFastDocumentHandler >(
+                              new XFastHandlerWrapper( xHandler ) );
+        else
+            mxHandler.clear();
+        mxFastParser->setFastDocumentHandler(xHandle);
+    }
+
+    virtual void SAL_CALL setErrorHandler(const css::uno::Reference< XErrorHandler > & xHandler)
+        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    {
+        mxFastParser->setErrorHandler(xHandler);
+    }
+
+    virtual void SAL_CALL setDTDHandler(const css::uno::Reference < XDTDHandler > & xHandler)
+        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    {
+        mxFastParser->setDTDHandler(xHandler);
+    }
+
+    virtual void SAL_CALL setEntityResolver(const css::uno::Reference<  XEntityResolver >& xResolver)
+        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    {
+        mxFastParser->setEntityResolver(xResolver);
+    }
+
+    virtual void SAL_CALL setLocale( const Locale &locale )                     throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    {
+        mxFastParser->setLocale(locale);
+    }
+};
+
+
+bool ScXMLImportWrapper::Import(bool bStylesOnly, ErrCode& nError)
 {
     uno::Reference<uno::XComponentContext> xContext = comphelper::getProcessComponentContext();
 
@@ -321,7 +524,11 @@ bool ScXMLImportWrapper::Import( sal_uInt8 nMode, ErrCode& rError )
         xStorage = pMedium->GetStorage();
 
     // get parser
-    uno::Reference<xml::sax::XParser> xXMLParser = xml::sax::Parser::create(xContext);
+    uno::Reference<xml::sax::XParser> xXMLParser;
+    if (getenv ("NEWANDCRAZY"))
+        xXMLParser = uno::Reference<xml::sax::XParser>( new FastSaxWrapper( xContext ) );
+    else
+        xXMLParser = xml::sax::Parser::create(xContext);
 
     // get filter
     OUString sEmpty;

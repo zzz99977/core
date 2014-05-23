@@ -36,6 +36,7 @@
 #include <com/sun/star/xml/sax/InputSource.hpp>
 #include <com/sun/star/xml/sax/XDTDHandler.hpp>
 #include <com/sun/star/xml/sax/Parser.hpp>
+#include <com/sun/star/xml/sax/FastParser.hpp>
 #include <com/sun/star/xml/sax/Writer.hpp>
 #include <com/sun/star/io/XActiveDataSource.hpp>
 #include <com/sun/star/io/XActiveDataControl.hpp>
@@ -469,8 +470,7 @@ public:
 
     // The SAX-Parser-Interface
     virtual void SAL_CALL parseStream( const css::xml::sax::InputSource& structSource)
-        throw ( css::xml::sax::SAXException,
-                IOException,
+        throw ( css::xml::sax::SAXException, css::io::IOException,
                 css::uno::RuntimeException, std::exception) SAL_OVERRIDE
     {
         mxFastParser->parseStream(structSource);
@@ -484,35 +484,35 @@ public:
                               new XFastHandlerWrapper( xHandler ) );
         else
             mxHandler.clear();
-        mxFastParser->setFastDocumentHandler(xHandle);
+        mxFastParser->setFastDocumentHandler(mxHandler);
     }
 
-    virtual void SAL_CALL setErrorHandler(const css::uno::Reference< XErrorHandler > & xHandler)
+    virtual void SAL_CALL setErrorHandler(const css::uno::Reference< xml::sax::XErrorHandler > & xHandler)
         throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
     {
         mxFastParser->setErrorHandler(xHandler);
     }
 
-    virtual void SAL_CALL setDTDHandler(const css::uno::Reference < XDTDHandler > & xHandler)
+    virtual void SAL_CALL setDTDHandler(const css::uno::Reference < xml::sax::XDTDHandler > & /* xHandler */)
         throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
     {
-        mxFastParser->setDTDHandler(xHandler);
+        assert(false);
     }
 
-    virtual void SAL_CALL setEntityResolver(const css::uno::Reference<  XEntityResolver >& xResolver)
+    virtual void SAL_CALL setEntityResolver(const css::uno::Reference< xml::sax::XEntityResolver >& xResolver)
         throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
     {
         mxFastParser->setEntityResolver(xResolver);
     }
 
-    virtual void SAL_CALL setLocale( const Locale &locale )                     throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setLocale( const lang::Locale &locale )
+        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
     {
         mxFastParser->setLocale(locale);
     }
 };
 
-
-bool ScXMLImportWrapper::Import(bool bStylesOnly, ErrCode& nError)
+bool ScXMLImportWrapper::Import( sal_uInt8 nMode, ErrCode& rError )
 {
     uno::Reference<uno::XComponentContext> xContext = comphelper::getProcessComponentContext();
 

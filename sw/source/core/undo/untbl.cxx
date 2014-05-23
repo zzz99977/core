@@ -417,9 +417,9 @@ SwUndoTblToTxt::SwUndoTblToTxt( const SwTable& rTbl, sal_Unicode cCh )
     sal_uLong nTblStt = pTblNd->GetIndex(), nTblEnd = pTblNd->EndOfSectionIndex();
 
     const SwFrmFmts& rFrmFmtTbl = *pTblNd->GetDoc()->GetSpzFrmFmts();
-    for( size_t n = 0; n < rFrmFmtTbl.size(); ++n )
+    for ( SwFrmFmts::const_iterator it = rFrmFmtTbl.begin(); it != rFrmFmtTbl.end(); it++ )
     {
-        SwFrmFmt* pFmt = rFrmFmtTbl[ n ];
+        SwFrmFmt* pFmt = *it;
         SwFmtAnchor const*const pAnchor = &pFmt->GetAnchor();
         SwPosition const*const pAPos = pAnchor->GetCntntAnchor();
         if (pAPos &&

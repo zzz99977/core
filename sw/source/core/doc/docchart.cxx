@@ -91,13 +91,12 @@ void SwDoc::DoUpdateAllCharts()
     if( pVSh )
     {
         const SwFrmFmts& rTblFmts = *GetTblFrmFmts();
-        for( sal_uInt16 n = 0; n < rTblFmts.size(); ++n )
+        for ( SwFrmFmts::const_iterator it = rTblFmts.begin(); it != rTblFmts.end(); it++ )
         {
             SwTable* pTmpTbl;
             const SwTableNode* pTblNd;
-            const SwFrmFmt* pFmt = rTblFmts[ n ];
 
-            if( 0 != ( pTmpTbl = SwTable::FindTable( pFmt ) ) &&
+            if( 0 != ( pTmpTbl = SwTable::FindTable( *it ) ) &&
                 0 != ( pTblNd = pTmpTbl->GetTableNode() ) &&
                 pTblNd->GetNodes().IsDocNodes() )
             {
@@ -151,8 +150,8 @@ void SwDoc::SetTableName( SwFrmFmt& rTblFmt, const OUString &rNewName )
     {
         const SwFrmFmt* pFmt;
         const SwFrmFmts& rTbl = *GetTblFrmFmts();
-        for( sal_uInt16 i = rTbl.size(); i; )
-            if( !( pFmt = rTbl[ --i ] )->IsDefault() &&
+        for ( SwFrmFmts::const_reverse_iterator it = rTbl.rbegin(); it != rTbl.rend(); it++ )
+            if( !( pFmt = *it )->IsDefault() &&
                 pFmt->GetName() == rNewName && IsUsed( *pFmt ) )
             {
                 bNameFound = true;

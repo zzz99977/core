@@ -119,11 +119,11 @@ void SwChartLockController_Helper::LockUnlockAllCharts( bool bLock )
         return;
 
     const SwFrmFmts& rTblFmts = *pDoc->GetTblFrmFmts();
-    for( size_t n = 0; n < rTblFmts.size(); ++n )
+    for ( SwFrmFmts::const_iterator it = rTblFmts.begin(); it != rTblFmts.end(); it++ )
     {
         SwTable* pTmpTbl;
         const SwTableNode* pTblNd;
-        const SwFrmFmt* pFmt = rTblFmts[ n ];
+        SwFrmFmt* pFmt = *it;
 
         if( 0 != ( pTmpTbl = SwTable::FindTable( pFmt ) ) &&
             0 != ( pTblNd = pTmpTbl->GetTableNode() ) &&

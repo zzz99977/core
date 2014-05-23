@@ -669,12 +669,12 @@ void lcl_dumpSfxItemSet(WriterHelper& writer, const SfxItemSet* pSet)
 void SwFrmFmts::dumpAsXml(xmlTextWriterPtr w, const char* pName) const
 {
     WriterHelper writer(w);
-    if (size())
+    if (!empty())
     {
         writer.startElement(pName);
-        for (size_t i = 0; i < size(); ++i)
+        for ( SwFrmFmts::const_iterator it = begin(); it != end(); it++ )
         {
-            const SwFrmFmt* pFmt = GetFmt(i);
+            const SwFrmFmt* pFmt = *it;
             writer.startElement("swfrmfmt");
             OString aName = OUStringToOString(pFmt->GetName(), RTL_TEXTENCODING_UTF8);
             writer.writeFormatAttribute("ptr", "%p", pFmt);

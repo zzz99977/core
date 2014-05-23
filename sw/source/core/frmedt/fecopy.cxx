@@ -144,13 +144,23 @@ bool SwFEShell::Copy( SwDoc* pClpDoc, const OUString* pNewClpTxt )
         }
         pFlyFmt = pClpDoc->getIDocumentLayoutAccess().CopyLayoutFmt( *pFlyFmt, aAnchor, true, true );
 
+        // Special handling of first element in array (RootFmt)!
+
        // assure the "RootFmt" is the first element in Spz-Array
         // (if necessary Flys were copied in Flys)
         SwFrmFmts& rSpzFrmFmts = *(SwFrmFmts*)pClpDoc->GetSpzFrmFmts();
         if( rSpzFrmFmts[ 0 ] != pFlyFmt )
         {
+<<<<<<< HEAD
             bool inserted = rSpzFrmFmts.newDefault( pFlyFmt );
             OSL_ENSURE( !inserted, "Fly not contained in Spz-Array" );
+=======
+            sal_Int32 pos = rSpzFrmFmts.GetPos( pFlyFmt );
+            OSL_ENSURE( pos != rSpzFrmFmts.GetFmtCountMax(), "Fly not contained in Spz-Array" );
+
+            rSpzFrmFmts.erase( rSpzFrmFmts.begin() + pos );
+            rSpzFrmFmts.insert( rSpzFrmFmts.begin(), pFlyFmt );
+>>>>>>> a778fd4... SwFrmFmts sal_uInt6 => salInt23 or iterator
         }
 
         if ( FLY_AS_CHAR == aAnchor.GetAnchorId() )

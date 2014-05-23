@@ -54,8 +54,11 @@ class SwFmtsBase
 {
 public:
     virtual size_t GetFmtCount() const = 0;
-    virtual SwFmt* GetFmt(size_t idx) const = 0;
-    virtual ~SwFmtsBase() {};
+    virtual size_t GetFmtCountMax() const = 0;
+    virtual SwFmt* GetFmt(size_t) const = 0;
+    virtual size_t GetPos(SwFmt* const& p) const = 0;
+    virtual bool Contains(SwFmt* const& p) const = 0;
+    virtual ~SwFmtsBase() {}
 };
 
 template<typename Value>
@@ -66,9 +69,13 @@ public:
 
 private:
     const bool mCleanup;
+    int mIntMax;
 
 protected:
-    SwFmtsBaseModify(bool cleanup = true) : mCleanup(cleanup) {}
+    SwFmtsBaseModify(bool cleanup = true, bool intmax = false) : mCleanup(cleanup)
+    {
+        mIntMax = (intmax) ? INT_MAX : USHRT_MAX;
+    }
 
 public:
     using std::vector<Value>::begin;
@@ -92,12 +99,13 @@ public:
         erase( begin() + aStartIdx, begin() + aEndIdx);
     }
 
-    sal_uInt16 GetPos(Value const& p) const
+    size_t GetPos(Value const& p) const
     {
         const_iterator const it = std::find(begin(), end(), p);
-        return it == end() ? USHRT_MAX : it - begin();
+        return it == end() ? mIntMax : it - begin();
     }
-    inline sal_uInt16 GetPos(const SwFmt *p) const
+
+    inline size_t GetPos(const SwFmt *p) const
         { return GetPos( static_cast<Value>( const_cast<SwFmt*>( p ) ) ); }
 
     bool Contains(Value const& p) const
@@ -107,6 +115,8 @@ public:
 
     virtual size_t GetFmtCount() const SAL_OVERRIDE
         { return std::vector<Value>::size(); }
+    virtual size_t GetFmtCountMax() const SAL_OVERRIDE
+        { return mIntMax; }
 
     virtual Value GetFmt(size_t idx) const SAL_OVERRIDE
         { return std::vector<Value>::operator[](idx); }
@@ -195,7 +205,9 @@ public:
 class SwFrmFmtsV : public SwFmtsBaseModify<SwFrmFmt*>
 {
 public:
-    virtual ~SwFrmFmtsV() {}
+    SwFrmFmts() : SwFmtsBaseModify( true, false ) {}
+    virtual ~SwFrmFmts() {}
+    void dumpAsXml(xmlTextWriterPtr w, const char* pName);
 };
 
 class SwCharFmts : public SwFmtsBaseModify<SwCharFmt*>

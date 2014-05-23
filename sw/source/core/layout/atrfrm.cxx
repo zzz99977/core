@@ -2669,10 +2669,10 @@ bool SwFrmFmt::IsLowerOf( const SwFrmFmt& rFmt ) const
         while( pFlyNd )
         {
             // then we walk up using the anchor
-            sal_uInt16 n;
-            for( n = 0; n < rFmts.size(); ++n )
+            SwFrmFmts::const_iterator it;
+            for ( it = rFmts.begin(); it != rFmts.end(); it++ )
             {
-                const SwFrmFmt* pFmt = rFmts[ n ];
+                const SwFrmFmt* pFmt = *it;
                 const SwNodeIndex* pIdx = pFmt->GetCntnt().GetCntntIdx();
                 if( pIdx && pFlyNd == &pIdx->GetNode() )
                 {
@@ -2691,7 +2691,7 @@ bool SwFrmFmt::IsLowerOf( const SwFrmFmt& rFmt ) const
                     break;
                 }
             }
-            if( n >= rFmts.size() )
+            if( it == rFmts.end() )
             {
                 OSL_ENSURE( false, "Fly section but no format found" );
                 return false;
@@ -2800,9 +2800,9 @@ void SwFlyFrmFmt::MakeFrms()
             {
                 const SwNodeIndex &rIdx = aAnchorAttr.GetCntntAnchor()->nNode;
                 SwFrmFmts& rFmts = *GetDoc()->GetSpzFrmFmts();
-                for( sal_uInt16 i = 0; i < rFmts.size(); ++i )
+                for ( SwFrmFmts::const_iterator it = rFmts.begin(); it != rFmts.end(); it++ )
                 {
-                    SwFrmFmt* pFlyFmt = rFmts[i];
+                    SwFrmFmt* pFlyFmt = *it;
                     if( pFlyFmt->GetCntnt().GetCntntIdx() &&
                         rIdx == *pFlyFmt->GetCntnt().GetCntntIdx() )
                     {

@@ -352,10 +352,10 @@ static void lcl_MakeObjs( const SwFrmFmts &rTbl, SwPageFrm *pPage )
 {
     // formats are in the special table of the document
 
-    for ( size_t i = 0; i < rTbl.size(); ++i )
+    for ( SwFrmFmts::const_iterator it = rTbl.begin(); it != rTbl.end(); it++ )
     {
         SdrObject *pSdrObj;
-        SwFrmFmt *pFmt = rTbl[i];
+        SwFrmFmt *pFmt = *it;
         const SwFmtAnchor &rAnch = pFmt->GetAnchor();
         if ( rAnch.GetPageNum() == pPage->GetPhyPageNum() )
         {
@@ -378,7 +378,7 @@ static void lcl_MakeObjs( const SwFrmFmts &rTbl, SwPageFrm *pPage )
             {
                 OSL_FAIL( "DrawObject not found." );
                 pFmt->GetDoc()->DelFrmFmt( pFmt );
-                --i;
+                it--;
                 continue;
             }
             // The object might be anchored to another page, e.g. when inserting
@@ -1387,9 +1387,9 @@ void SwRootFrm::AssertFlyPages()
     // what page targets the "last" Fly?
     sal_uInt16 nMaxPg = 0;
 
-    for ( size_t i = 0; i < pTbl->size(); ++i )
+    for ( SwFrmFmts::const_iterator it = pTbl->begin(); it != pTbl->end(); it++ )
     {
-        const SwFmtAnchor &rAnch = (*pTbl)[i]->GetAnchor();
+        const SwFmtAnchor &rAnch = (*it)->GetAnchor();
         if ( !rAnch.GetCntntAnchor() && nMaxPg < rAnch.GetPageNum() )
             nMaxPg = rAnch.GetPageNum();
     }
@@ -1445,19 +1445,21 @@ void SwRootFrm::AssertFlyPages()
     }
 }
 
+// TODO: recheck
 /// Ensure that after the given page all page-bound objects are located on the correct page
 void SwRootFrm::AssertPageFlys( SwPageFrm *pPage )
 {
     while ( pPage )
     {
-        if ( pPage->GetSortedObjs() )
+        SwSortedObjs *sObjs = pPage->GetSortedObjs();
+        if ( sObjs )
         {
             pPage->GetSortedObjs();
             size_t i = 0;
             while ( pPage->GetSortedObjs() && i< pPage->GetSortedObjs()->size() )
             {
                 // #i28701#
-                SwFrmFmt& rFmt = (*pPage->GetSortedObjs())[i]->GetFrmFmt();
+                SwFrmFmt& rFmt = (*sObjs)[i]->GetFrmFmt();
                 const SwFmtAnchor &rAnch = rFmt.GetAnchor();
                 const sal_uInt16 nPg = rAnch.GetPageNum();
                 if ((rAnch.GetAnchorId() == FLY_AT_PAGE) &&

@@ -713,12 +713,21 @@ void SwDoc::DelFrmFmt( SwFrmFmt *pFmt, bool bBroadcast )
         }
         else
         {
+<<<<<<< HEAD
             bool contains = GetSpzFrmFmts()->Contains( pFmt );
             OSL_ENSURE( contains, "FrmFmt not found." );
             if( contains )
             {
                 GetSpzFrmFmts()->erase( pFmt );
                 delete pFmt;
+=======
+            it = std::find( GetSpzFrmFmts()->begin(), GetSpzFrmFmts()->end(), pFmt );
+            OSL_ENSURE( it != GetSpzFrmFmts()->end(), "FrmFmt not found." );
+            if( it != GetSpzFrmFmts()->end() )
+            {
+                delete *it;
+                GetSpzFrmFmts()->erase( it );
+>>>>>>> a778fd4... SwFrmFmts sal_uInt6 => salInt23 or iterator
             }
         }
     }

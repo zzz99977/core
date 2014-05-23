@@ -217,10 +217,9 @@ void CollectFrameAtNode( SwClient& rClnt, const SwNodeIndex& rIdx,
     else
     {
         const SwFrmFmts& rFmts = *pDoc->GetSpzFrmFmts();
-        const size_t nSize = rFmts.size();
-        for ( size_t i = 0; i < nSize; i++)
+        for ( SwFrmFmts::const_iterator it = rFmts.begin(); it != rFmts.end(); it++ )
         {
-            const SwFrmFmt* pFmt = rFmts[ i ];
+            const SwFrmFmt* pFmt = *it;
             const SwFmtAnchor& rAnchor = pFmt->GetAnchor();
             const SwPosition* pAnchorPos;
             if( rAnchor.GetAnchorId() == nChkType &&

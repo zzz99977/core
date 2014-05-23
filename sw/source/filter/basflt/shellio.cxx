@@ -219,9 +219,10 @@ sal_uLong SwReader::Read( const Reader& rOptions )
                                    rNd.FindFooterStartNode();
 
             // search all new Fly's, and store them as individual Undo Objects
-            for( sal_uInt16 n = 0; n < pDoc->GetSpzFrmFmts()->size(); ++n )
+            const SwFrmFmts& rFmts = *(pDoc->GetSpzFrmFmts());
+            for ( SwFrmFmts::const_iterator it = rFmts.begin(); it != rFmts.end(); it++ )
             {
-                SwFrmFmt* pFrmFmt = (*pDoc->GetSpzFrmFmts())[ n ];
+                SwFrmFmt* pFrmFmt = *it;
                 const SwFmtAnchor& rAnchor = pFrmFmt->GetAnchor();
                 if( USHRT_MAX == aFlyFrmArr.GetPos( pFrmFmt) )
                 {
@@ -255,7 +256,7 @@ sal_uLong SwReader::Read( const Reader& rOptions )
                             // DrawObjects are not allowed in Headers/Footers!
                             pFrmFmt->DelFrms();
                             pDoc->DelFrmFmt( pFrmFmt );
-                            --n;
+                            it--;
                         }
                         else
                         {

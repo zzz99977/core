@@ -920,11 +920,11 @@ SwCntntNotify::~SwCntntNotify()
 
             const SwPageFrm *pPage = 0;
             SwNodeIndex *pIdx  = 0;
-            SwFrmFmts *pTbl = pDoc->GetSpzFrmFmts();
+            const SwFrmFmts &rTblFmts = *(pDoc->GetSpzFrmFmts());
 
-            for ( sal_uInt16 i = 0; i < pTbl->size(); ++i )
+            for ( SwFrmFmts::const_iterator it = rTblFmts.begin(); it != rTblFmts.end(); it++ )
             {
-                SwFrmFmt *pFmt = (*pTbl)[i];
+                SwFrmFmt *pFmt = *it;
                 const SwFmtAnchor &rAnch = pFmt->GetAnchor();
                 if ( FLY_AT_PAGE != rAnch.GetAnchorId() ||
                      rAnch.GetCntntAnchor() == 0 )
@@ -1004,7 +1004,7 @@ void AppendObjs( const SwFrmFmts *pTbl, sal_uLong nIndex,
     (void) pTbl;
 #if OSL_DEBUG_LEVEL > 0
     std::list<SwFrmFmt*> checkFmts;
-    for ( sal_uInt16 i = 0; i < pTbl->size(); ++i )
+    for ( SwFrmFmts::const_iterator it = pTbl->begin(); it != pTbl->end(); it++ )
     {
         SwFrmFmt *pFmt = (*pTbl)[i];
         const SwFmtAnchor &rAnch = pFmt->GetAnchor();
@@ -1014,8 +1014,6 @@ void AppendObjs( const SwFrmFmts *pTbl, sal_uLong nIndex,
             checkFmts.push_back( pFmt );
         }
     }
-#else
-    (void)pTbl;
 #endif
     SwFrmFmtAnchorMap::const_iterator_pair range = doc->GetFrmFmtAnchorMap()->equal_range( SwNodeIndex( doc->GetNodes(), nIndex ));
     for( std::multimap< SwNodeIndex, SwFrmFmt* >::const_iterator it = range.first;
@@ -1049,8 +1047,8 @@ void AppendObjs( const SwFrmFmts *pTbl, sal_uLong nIndex,
                 if ( bSdrObj && 0 == (pSdrObj = pFmt->FindSdrObject()) )
                 {
                     OSL_ENSURE( !bSdrObj, "DrawObject not found." );
-                    ++it;
                     pFmt->GetDoc()->DelFrmFmt( pFmt );
+                    it++;
                     continue;
                 }
                 if ( pSdrObj )
@@ -1154,9 +1152,9 @@ static void lcl_AppendAllObjs( const SwFrmFmts *pTbl, const SwFrm* pSib )
     SwFrmFmtsV aCpy;
     aCpy.insert(aCpy.end(), pTbl->begin(), pTbl->end());
 
-    sal_uInt16 nOldCnt = USHRT_MAX;
+    sal_Int32 nOldCnt = pTbl->GetFmtCountMax();
 
-    while ( !aCpy.empty() && aCpy.size() != nOldCnt )
+    while ( !aCpy.empty() && (sal_Int32) aCpy.size() != nOldCnt )
     {
         nOldCnt = aCpy.size();
         SwFrmFmtsV::iterator it = aCpy.begin();

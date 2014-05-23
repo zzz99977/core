@@ -244,8 +244,8 @@ SwTableNode* SwTableNode::MakeCopy( SwDoc* pDoc, const SwNodeIndex& rIdx ) const
     if( !pDoc->IsCopyIsMove() )
     {
         const SwFrmFmts& rTblFmts = *pDoc->GetTblFrmFmts();
-        for( sal_uInt16 n = rTblFmts.size(); n; )
-            if( rTblFmts[ --n ]->GetName() == sTblName )
+        for ( SwFrmFmts::const_reverse_iterator it = rTblFmts.rbegin(); it != rTblFmts.rend(); it++ )
+            if( (*it)->GetName() == sTblName )
             {
                 sTblName = pDoc->GetUniqueTblName();
                 break;

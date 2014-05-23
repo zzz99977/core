@@ -233,20 +233,22 @@ bool SwUndoFmtAttr::IsFmtInDoc( SwDoc* pDoc )
 {
     // search for the Format in the Document; if it does not exist any more,
     // the attribute is not restored!
-    sal_uInt16 nPos = USHRT_MAX;
+    const SwFmtsBase *fmts = NULL;
+    bool bContains = false;
+    sal_Int32 nPos;
+    sal_Int32 nMax = USHRT_MAX;
     switch ( m_nFmtWhich )
     {
         case RES_TXTFMTCOLL:
-            nPos = pDoc->GetTxtFmtColls()->GetPos( m_pFmt );
+            fmts = pDoc->GetTxtFmtColls();
             break;
 
         case RES_GRFFMTCOLL:
-            nPos = pDoc->GetGrfFmtColls()->GetPos(
-                    static_cast<const SwGrfFmtColl*>(m_pFmt) );
+            fmts = pDoc->GetGrfFmtColls();
             break;
 
         case RES_CHRFMT:
-            nPos = pDoc->GetCharFmts()->GetPos( m_pFmt );
+            fmts = pDoc->GetCharFmts();
             break;
 
         case RES_FRMFMT:
@@ -287,13 +289,21 @@ bool SwUndoFmtAttr::IsFmtInDoc( SwDoc* pDoc )
             // no break!
         case RES_DRAWFRMFMT:
         case RES_FLYFRMFMT:
-            if (pDoc->GetSpzFrmFmts()->Contains( m_pFmt )
-                    || pDoc->GetFrmFmts()->Contains( m_pFmt ))
-                nPos = 1;
+            fmts = pDoc->GetSpzFrmFmts();
+            bContains = fmts->Contains( m_pFmt );
+            if ( !bContains )
+                fmts = pDoc->GetFrmFmts();
+            else
+                fmts = NULL;
             break;
     }
 
-    if ( USHRT_MAX == nPos )
+    if (fmts != NULL)
+        bContains = fmts->Contains( m_pFmt );
+    else
+        bContains = true;
+
+    if ( !bContains || (nMax == nPos) )
     {
         // Format does not exist; reset
         m_pFmt = 0;

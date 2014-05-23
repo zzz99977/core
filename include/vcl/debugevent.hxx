@@ -10,6 +10,8 @@
 #ifndef INCLUDED_VCL_DEBUGEVENT_HXX
 #define INCLUDED_VCL_DEBUGEVENT_HXX
 
+#if OSL_DEBUG_LEVEL > 0
+
 #include <vcl/dllapi.h>
 #include <vcl/timer.hxx>
 #include <sal/types.h>
@@ -25,11 +27,13 @@ class VCL_DLLPUBLIC DebugEventInjector : Timer {
   void InjectMouseEvent();
   void InjectEvent();
   void InjectKeyNavEdit();
-  virtual void Timeout();
+  virtual void Timeout() SAL_OVERRIDE;
 
   public:
      static DebugEventInjector *getCreate();
 };
+
+#endif // OSL_DEBUG_LEVEL > 0
 
 #endif // INCLUDED_VCL_DEBUGEVENT_HXX
 

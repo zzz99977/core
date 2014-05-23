@@ -1184,9 +1184,50 @@ void ScFormulaCell::CompileXML( sc::CompileFormulaContext& rCxt, ScProgress& rPr
     // pCode may not deleted for queries, but must be empty
     if ( pCode )
         pCode->Clear();
-    ScTokenArray* pCodeOld = pCode;
-    pCode = aComp.CompileString( aFormula, aFormulaNmsp );
-    delete pCodeOld;
+
+    bool bSkipCompile = false;
+
+    static bool bNewPath = getenv ("FASTFORMULA");
+
+    if ( bNewPath && !mxGroup && aFormulaNmsp.isEmpty() ) // optimization
+    {
+        ScAddress aPreviousCell( aPos );
+        aPreviousCell.IncRow( -1 );
+        ScFormulaCell *pPreviousCell = pDocument->GetFormulaCell( aPreviousCell );
+        if( pPreviousCell )
+        {
+            // Now try to convert to a string quickly ...
+            ScCompiler aBackComp( rCxt, aPos, *(pPreviousCell->pCode) );
+            OUStringBuffer aShouldBe;
+            aBackComp.CreateStringFromTokenArray( aShouldBe );
+
+            fprintf (stderr, "compile '%s' ==? '%s'\n",
+                     OUStringToOString( aFormula, RTL_TEXTENCODING_UTF8 ).getStr(),
+                     OUStringToOString( aShouldBe.toString(), RTL_TEXTENCODING_UTF8 ).getStr());
+            assert( aFormula[0] == '=' );
+            if( aFormula.match(aShouldBe.makeStringAndClear(), 1) )
+            {
+                // Put them in the same formula group.
+                ScFormulaCellGroupRef xGroup = pPreviousCell->GetCellGroup();
+                if (!xGroup) // Last cell is not grouped yet. Start a new group.
+                    xGroup = pPreviousCell->CreateCellGroup(1, false);
+                ++xGroup->mnLength;
+                SetCellGroup( xGroup );
+                bSkipCompile = true;
+
+                fprintf (stderr, "\twhoot ! a match - extended to %d\n",
+                         (int)xGroup->mnLength);
+            }
+        }
+    }
+
+    if (!bSkipCompile)
+    {
+        ScTokenArray* pCodeOld = pCode;
+        pCode = aComp.CompileString( aFormula, aFormulaNmsp );
+        delete pCodeOld;
+    }
+
     if( !pCode->GetCodeError() )
     {
         if ( !pCode->GetLen() )
@@ -3494,7 +3535,7 @@ ScFormulaCellGroupRef ScFormulaCell::CreateCellGroup( SCROW nLen, bool bInvarian
     return mxGroup;
 }
 
-ScFormulaCellGroupRef ScFormulaCell::GetCellGroup()
+ScFormulaCellGroupRef ScFormulaCell::GetCellGroup() const
 {
     return mxGroup;
 }

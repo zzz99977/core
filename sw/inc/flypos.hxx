@@ -33,7 +33,7 @@ class SW_DLLPUBLIC SwPosFlyFrm
     SwNodeIndex* pNdIdx;        ///< Index for node is sufficient.
     sal_uInt32 nOrdNum;
 public:
-    SwPosFlyFrm( const SwNodeIndex& , const SwFrmFmt*, sal_uInt16 nArrPos );
+    SwPosFlyFrm( const SwNodeIndex& , const SwFrmFmt*, sal_uInt32 nArrPos );
     virtual ~SwPosFlyFrm(); ///< Virtual for Writer (DLL !!)
 
     const SwFrmFmt& GetFmt() const { return *pFrmFmt; }

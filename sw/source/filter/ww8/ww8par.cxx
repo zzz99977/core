@@ -5382,7 +5382,7 @@ sal_uLong SwWW8ImplReader::CoreLoad(WW8Glossary *pGloss, const SwPosition &rPos)
                         }
                     }
                     // Remove additional pictures
-                    for (sal_uInt16 i = 0; i < vecFrmFmt.size(); ++i)
+                    for (sal_uInt32 i = 0; i < vecFrmFmt.size(); ++i)
                     {
                         rDoc.getIDocumentLayoutAccess().DelLayoutFmt(vecFrmFmt[i]);
                     }

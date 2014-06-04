@@ -1758,7 +1758,6 @@ void SwDoc::SetAllUniqueFlyNames()
     OUString sGrfNm( nGrfId );
     OUString sOLENm( nOLEId );
 
-//LHM: was passiert hier? Warum kann hier kein größerer Wert zurückkommen?
     if( 255 < ( n = GetSpzFrmFmts()->size() ))
         n = 255;
     SwFrmFmtsV aArr;
@@ -1874,7 +1873,7 @@ bool SwDoc::IsInHeaderFooter( const SwNodeIndex& rIdx ) const
         // get up by using the Anchor
 #if OSL_DEBUG_LEVEL > 0
         std::list<const SwFrmFmt*> checkFmts;
-        sal_uInt16 n;
+        sal_Int32 n;
         for( n = 0; n < GetSpzFrmFmts()->size(); ++n )
         {
             const SwFrmFmt* pFmt = (*GetSpzFrmFmts())[ n ];

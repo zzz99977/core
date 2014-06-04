@@ -3873,8 +3873,8 @@ OUString SwDoc::GetUniqueTblName() const
     ResId aId( STR_TABLE_DEFNAME, *pSwResMgr );
     const OUString aName( aId );
 
-    sal_uInt16 nNum, nTmp, nFlagSize = ( mpTblFrmFmtTbl->size() / 8 ) +2;
-    sal_uInt16 n;
+    sal_uInt32 nNum, nTmp, nFlagSize = ( mpTblFrmFmtTbl->size() / 8 ) +2;
+    sal_uInt32 n;
 
     sal_uInt8* pSetFlags = new sal_uInt8[ nFlagSize ];
     memset( pSetFlags, 0, nFlagSize );
@@ -3887,7 +3887,7 @@ OUString SwDoc::GetUniqueTblName() const
         {
             // Get number and set the Flag
             const sal_Int32 nNmLen = aName.getLength();
-            nNum = static_cast<sal_uInt16>(pFmt->GetName().copy( nNmLen ).toInt32());
+            nNum = static_cast<sal_uInt32>(pFmt->GetName().copy( nNmLen ).toInt32());
             if( nNum-- && nNum < mpTblFrmFmtTbl->size() )
                 pSetFlags[ nNum / 8 ] |= (0x01 << ( nNum & 0x07 ));
         }
@@ -3917,7 +3917,7 @@ SwTableFmt* SwDoc::FindTblFmtByName( const OUString& rName, bool bAll ) const
     else
     {
         // Only the ones set in the Doc
-        for( sal_uInt16 n = 0; n < mpTblFrmFmtTbl->size(); ++n )
+        for( sal_uInt32 n = 0; n < mpTblFrmFmtTbl->size(); ++n )
         {
             const SwFrmFmt* pFmt = (*mpTblFrmFmtTbl)[ n ];
             if( !pFmt->IsDefault() && IsUsed( *pFmt ) &&

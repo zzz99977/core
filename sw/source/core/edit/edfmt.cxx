@@ -110,7 +110,7 @@ sal_uInt32 SwEditShell::GetTblFrmFmtCount(bool bUsed) const
     return GetDoc()->GetTblFrmFmtCount(bUsed);
 }
 
-SwFrmFmt& SwEditShell::GetTblFrmFmt(sal_uInt16 nFmt, bool bUsed ) const
+SwFrmFmt& SwEditShell::GetTblFrmFmt(sal_uInt32 nFmt, bool bUsed ) const
 {
     return GetDoc()->GetTblFrmFmt(nFmt, bUsed );
 }

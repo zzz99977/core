@@ -209,7 +209,7 @@ SwContentType::SwContentType(SwWrtShell* pShell, sal_uInt16 nType, sal_uInt8 nLe
 void SwContentType::Init(bool* pbInvalidateWindow)
 {
     // if the MemberCount is changing ...
-    sal_uInt16 nOldMemberCount = nMemberCount;
+    sal_Int32 nOldMemberCount = nMemberCount;
     nMemberCount = 0;
     switch(nContentType)
     {

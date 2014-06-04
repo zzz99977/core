@@ -132,7 +132,7 @@ public:
     ~_SaveTable();
 
     sal_uInt32 AddFmt( SwFrmFmt* pFmt, bool bIsLine );
-    void NewFrmFmt( const SwTableLine* , const SwTableBox*, sal_uInt16 nFmtPos,
+    void NewFrmFmt( const SwTableLine* , const SwTableBox*, sal_uInt32 nFmtPos,
                     SwFrmFmt* pOldFmt );
 
     void RestoreAttr( SwTable& rTbl, bool bModifyBox = false );
@@ -1080,7 +1080,7 @@ void _SaveTable::CreateNew( SwTable& rTbl, bool bCreateFrms,
 }
 
 void _SaveTable::NewFrmFmt( const SwTableLine* pTblLn, const SwTableBox* pTblBx,
-                            sal_uInt16 nFmtPos, SwFrmFmt* pOldFmt )
+                            sal_uInt32 nFmtPos, SwFrmFmt* pOldFmt )
 {
     SwDoc* pDoc = pOldFmt->GetDoc();
 

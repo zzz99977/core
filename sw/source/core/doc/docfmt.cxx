@@ -775,13 +775,13 @@ sal_uInt32 SwDoc::GetTblFrmFmtCount(bool bUsed) const
     return nCount;
 }
 
-SwFrmFmt& SwDoc::GetTblFrmFmt(sal_uInt16 nFmt, bool bUsed ) const
+SwFrmFmt& SwDoc::GetTblFrmFmt(sal_uInt32 nFmt, bool bUsed ) const
 {
-    sal_uInt16 nRemoved = 0;
+    sal_uInt32 nRemoved = 0;
     if(bUsed)
     {
         SwAutoFmtGetDocNode aGetHt( &GetNodes() );
-        for ( sal_uInt16 i = 0; i <= nFmt; i++ )
+        for ( sal_uInt32 i = 0; i <= nFmt; i++ )
         {
             while ( (*mpTblFrmFmtTbl)[ i + nRemoved]->GetInfo( aGetHt ))
             {
@@ -1104,7 +1104,7 @@ SwFmt* SwDoc::CopyFmt( const SwFmt& rFmt,
     // It's no autoformat, default format or collection format,
     // then search for it.
     if( !rFmt.IsAuto() || !rFmt.GetRegisteredIn() )
-        for( sal_uInt16 n = 0; n < rFmtArr.GetFmtCount(); n++ )
+        for( sal_uInt32 n = 0; n < rFmtArr.GetFmtCount(); n++ )
         {
             // Does the Doc already contain the template?
             if( rFmtArr.GetFmt(n)->GetName()==rFmt.GetName() )
@@ -1247,7 +1247,7 @@ void SwDoc::CopyFmtArr( const SwFmtsBase& rSourceArr,
                         FNCopyFmt fnCopyFmt,
                         SwFmt& rDfltFmt )
 {
-    sal_uInt16 nSrc;
+    sal_uInt32 nSrc;
     SwFmt* pSrc, *pDest;
 
     // 1st step: Create all formats (skip the 0th - it's the default one)
@@ -1609,7 +1609,7 @@ SwFmt* SwDoc::FindFmtByName( const SwFmtsBase& rFmtArr,
                              const OUString& rName ) const
 {
     SwFmt* pFnd = 0;
-    for( sal_uInt16 n = 0; n < rFmtArr.GetFmtCount(); n++ )
+    for( sal_uInt32 n = 0; n < rFmtArr.GetFmtCount(); n++ )
     {
         // Does the Doc already contain the template?
         if( rFmtArr.GetFmt(n)->GetName() == rName )

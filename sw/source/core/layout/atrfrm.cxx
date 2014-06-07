@@ -2407,7 +2407,8 @@ SwFrmFmt::SwFrmFmt(
     const sal_uInt16* pWhichRange)
 :   SwFmt(rPool, pFmtNm, (pWhichRange ? pWhichRange : aFrmFmtSetRange), pDrvdFrm, nFmtWhich),
     m_wXObject(),
-    maFillAttributes()
+    maFillAttributes(),
+    list(0)
 {
 }
 
@@ -2419,7 +2420,8 @@ SwFrmFmt::SwFrmFmt(
     const sal_uInt16* pWhichRange)
 :   SwFmt(rPool, rFmtNm, (pWhichRange ? pWhichRange : aFrmFmtSetRange), pDrvdFrm, nFmtWhich),
     m_wXObject(),
-    maFillAttributes()
+    maFillAttributes(),
+    list(0)
 {
 }
 
@@ -2431,6 +2433,28 @@ SwFrmFmt::~SwFrmFmt()
         if( anchor.GetCntntAnchor() != NULL )
             GetDoc()->GetFrmFmtAnchorMap()->Remove( this, anchor.GetCntntAnchor()->nNode );
     }
+}
+
+void SwFrmFmt::SetName( const OUString& rNewName, bool bBroadcast )
+{
+    SwFrmFmts *_list = list;
+    SwFrmFmts::const_iterator it;
+    bool move_entry = false;
+
+    if (list) {
+        it = list->find( this );
+        SAL_WARN_IF( list->end() == it, "sw", "SwFrmFmt not found in expected list" );
+//        move_entry = (it != list->begin());
+        if (move_entry)
+            // Clears list
+            list->erase( it );
+    }
+
+    SwFmt::SetName( rNewName, bBroadcast );
+
+    if (_list && move_entry)
+        // Sets list
+        _list->insert( this );
 }
 
 bool SwFrmFmt::supportsFullDrawingLayerFillAttributeSet() const

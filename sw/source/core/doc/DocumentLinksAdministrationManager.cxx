@@ -266,9 +266,10 @@ bool DocumentLinksAdministrationManager::GetData( const OUString& rItem, const O
     }
 
     _FindItem aPara( GetAppCharClass().lowercase( rItem ));
-    BOOST_FOREACH( const SwFrmFmt* pFmt, *m_rDoc.GetTblFrmFmts() )
+    const SwFrmFmts *mpTblFrmFmtTbl = m_rDoc.GetTblFrmFmts();
+    for (SwFrmFmts::const_iterator it = mpTblFrmFmtTbl->begin(); it != mpTblFrmFmtTbl->end(); it++)
     {
-        if (!(lcl_FindTable(pFmt, &aPara)))
+        if (!(lcl_FindTable(*it, &aPara)))
             break;
     }
     if( aPara.pTblNd )
@@ -310,9 +311,10 @@ bool DocumentLinksAdministrationManager::SetData( const OUString& rItem, const O
 
     OUString sItem(GetAppCharClass().lowercase(rItem));
     _FindItem aPara( sItem );
-    BOOST_FOREACH( const SwFrmFmt* pFmt, *m_rDoc.GetTblFrmFmts() )
+    const SwFrmFmts *mpTblFrmFmtTbl = m_rDoc.GetTblFrmFmts();
+    for (SwFrmFmts::const_iterator it = mpTblFrmFmtTbl->begin(); it != mpTblFrmFmtTbl->end(); it++)
     {
-        if (!(lcl_FindTable(pFmt, &aPara)))
+        if (!(lcl_FindTable(*it, &aPara)))
             break;
     }
     if( aPara.pTblNd )
@@ -368,10 +370,10 @@ bool DocumentLinksAdministrationManager::SetData( const OUString& rItem, const O
     }
 
     _FindItem aPara( GetAppCharClass().lowercase(rItem) );
-    // tables
-    BOOST_FOREACH( const SwFrmFmt* pFmt, *m_rDoc.GetTblFrmFmts() )
+    const SwFrmFmts *mpTblFrmFmtTbl = m_rDoc.GetTblFrmFmts();
+    for (SwFrmFmts::const_iterator it = mpTblFrmFmtTbl->begin(); it != mpTblFrmFmtTbl->end(); it++)
     {
-        if (!(lcl_FindTable(pFmt, &aPara)))
+        if (!(lcl_FindTable(*it, &aPara)))
             break;
     }
     if(aPara.pTblNd
@@ -458,9 +460,10 @@ bool DocumentLinksAdministrationManager::SelectServerObj( const OUString& rStr, 
         if( sCmp == "table" )
         {
             sName = rCC.lowercase( sName );
-            BOOST_FOREACH( const SwFrmFmt* pFmt, *m_rDoc.GetTblFrmFmts() )
+            const SwFrmFmts *mpTblFrmFmtTbl = m_rDoc.GetTblFrmFmts();
+            for (SwFrmFmts::const_iterator it = mpTblFrmFmtTbl->begin(); it != mpTblFrmFmtTbl->end(); it++)
             {
-                if (!(lcl_FindTable(pFmt, &aPara)))
+                if (!(lcl_FindTable(*it, &aPara)))
                     break;
             }
             if( aPara.pTblNd )

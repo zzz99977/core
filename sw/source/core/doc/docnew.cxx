@@ -305,7 +305,7 @@ SwDoc::SwDoc()
      * DefaultFormats and are also in the list.
      */
     /* Formats */
-    mpFrmFmtTbl->push_back(mpDfltFrmFmt);
+    mpFrmFmtTbl->insert(mpDfltFrmFmt);
     mpCharFmtTbl->push_back(mpDfltCharFmt);
 
     /* FmtColls */
@@ -477,10 +477,10 @@ SwDoc::~SwDoc()
 
     // Any of the FrmFormats can still have indices registered.
     // These need to be destroyed now at the latest.
-    BOOST_FOREACH( SwFrmFmt* pFmt, *mpFrmFmtTbl )
-        lcl_DelFmtIndices( pFmt );
-    BOOST_FOREACH( SwFrmFmt* pFmt, *mpSpzFrmFmtTbl )
-        lcl_DelFmtIndices( pFmt );
+    for (SwFrmFmts::const_iterator it = mpFrmFmtTbl->begin(); it != mpFrmFmtTbl->end(); it++)
+        lcl_DelFmtIndices( *it );
+    for (SwFrmFmts::const_iterator it = mpSpzFrmFmtTbl->begin(); it != mpSpzFrmFmtTbl->end(); it++)
+        lcl_DelFmtIndices( *it );
     BOOST_FOREACH( SwSectionFmt* pFmt, *mpSectionFmtTbl )
         lcl_DelFmtIndices( pFmt );
 
@@ -541,7 +541,7 @@ SwDoc::~SwDoc()
     // All Flys need to be destroyed before the Drawing Model,
     // because Flys can still contain DrawContacts, when no
     // Layout could be constructed due to a read error.
-    mpSpzFrmFmtTbl->DeleteAndDestroy( 0, mpSpzFrmFmtTbl->size() );
+    mpSpzFrmFmtTbl->DeleteAndDestroyAll();
 
     // Only now destroy the Model, the drawing objects - which are also
     // contained in the Undo - need to remove their attributes from the
@@ -714,12 +714,12 @@ void SwDoc::ClearDoc()
     if( getIDocumentLayoutAccess().GetCurrentViewShell() )
     {
         // search the FrameFormat of the root frm. This is not allowed to delete
-        mpFrmFmtTbl->erase( std::find( mpFrmFmtTbl->begin(), mpFrmFmtTbl->end(), getIDocumentLayoutAccess().GetCurrentViewShell()->GetLayout()->GetFmt() ) );
-        mpFrmFmtTbl->DeleteAndDestroy(1, mpFrmFmtTbl->size());
-        mpFrmFmtTbl->push_back( getIDocumentLayoutAccess().GetCurrentViewShell()->GetLayout()->GetFmt() );
+        mpFrmFmtTbl->erase( getIDocumentLayoutAccess().GetCurrentViewShell()->GetLayout()->GetFmt() );
+        mpFrmFmtTbl->DeleteAndDestroyAll( true );
+        mpFrmFmtTbl->insert( getIDocumentLayoutAccess().GetCurrentViewShell()->GetLayout()->GetFmt() );
     }
     else
-        mpFrmFmtTbl->DeleteAndDestroy(1, mpFrmFmtTbl->size());
+        mpFrmFmtTbl->DeleteAndDestroyAll( true );
 
     mxForbiddenCharsTable.clear();
 

@@ -287,11 +287,9 @@ bool SwUndoFmtAttr::IsFmtInDoc( SwDoc* pDoc )
             // no break!
         case RES_DRAWFRMFMT:
         case RES_FLYFRMFMT:
-            nPos = pDoc->GetSpzFrmFmts()->GetPos( m_pFmt );
-            if ( USHRT_MAX == nPos )
-            {
-                nPos = pDoc->GetFrmFmts()->GetPos( m_pFmt );
-            }
+            if (pDoc->GetSpzFrmFmts()->Contains( m_pFmt )
+                    || pDoc->GetFrmFmts()->Contains( m_pFmt ))
+                nPos = 1;
             break;
     }
 

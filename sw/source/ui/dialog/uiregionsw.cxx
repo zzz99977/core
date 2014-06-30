@@ -756,8 +756,8 @@ IMPL_LINK_NOARG(SwEditRegionDlg, OkHdl)
         {
             pRepr->GetSectionData().SetPassword(uno::Sequence<sal_Int8 >());
         }
-        sal_uInt16 nNewPos = rDocFmts.GetPos( pFmt );
-        if( USHRT_MAX != nNewPos )
+        sal_uInt32 nNewPos = rDocFmts.GetPos( pFmt );
+        if( UINT_MAX != nNewPos )
         {
             boost::scoped_ptr<SfxItemSet> pSet(pFmt->GetAttrSet().Clone( false ));
             if( pFmt->GetCol() != pRepr->GetCol() )
@@ -791,8 +791,8 @@ IMPL_LINK_NOARG(SwEditRegionDlg, OkHdl)
     for (SectReprArr::reverse_iterator aI = aSectReprArr.rbegin(), aEnd = aSectReprArr.rend(); aI != aEnd; ++aI)
     {
         SwSectionFmt* pFmt = aOrigArray[ aI->GetArrPos() ];
-        const sal_uInt16 nNewPos = rDocFmts.GetPos( pFmt );
-        if( USHRT_MAX != nNewPos )
+        const sal_uInt32 nNewPos = rDocFmts.GetPos( pFmt );
+        if( UINT_MAX != nNewPos )
             rSh.DelSectionFmt( nNewPos );
     }
 

@@ -624,12 +624,12 @@ OUString SwDoc::GetUniqueTOXBaseName( const SwTOXType& rType,
     const OUString aName( rType.GetTypeName() );
     const sal_Int32 nNmLen = aName.getLength();
 
-    sal_uInt16 nNum = 0;
-    const sal_uInt16 nFlagSize = ( mpSectionFmtTbl->size() / 8 ) +2;
+    sal_uInt32 nNum = 0;
+    const sal_uInt32 nFlagSize = ( mpSectionFmtTbl->size() / 8 ) +2;
     sal_uInt8* pSetFlags = new sal_uInt8[ nFlagSize ];
     memset( pSetFlags, 0, nFlagSize );
 
-    for( sal_uInt16 n = 0; n < mpSectionFmtTbl->size(); ++n )
+    for( sal_uInt32 n = 0; n < mpSectionFmtTbl->size(); ++n )
     {
         const SwSectionNode *pSectNd = (*mpSectionFmtTbl)[ n ]->GetSectionNode( false );
         if ( !pSectNd )
@@ -642,7 +642,7 @@ OUString SwDoc::GetUniqueTOXBaseName( const SwTOXType& rType,
             if ( aName.startsWith(rNm) )
             {
                 // Calculate number and set the Flag
-                nNum = (sal_uInt16)rNm.copy( nNmLen ).toInt32();
+                nNum = rNm.copy( nNmLen ).toInt32();
                 if( nNum-- && nNum < mpSectionFmtTbl->size() )
                     pSetFlags[ nNum / 8 ] |= (0x01 << ( nNum & 0x07 ));
             }

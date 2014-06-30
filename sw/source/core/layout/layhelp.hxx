@@ -69,7 +69,7 @@ public:
     sal_Int32 GetBreakOfst( size_t nIdx ) const { return aOffset[ nIdx ]; }
     sal_uInt16 GetBreakType( sal_uInt16 nIdx ) const { return aType[ nIdx ]; }
 
-    sal_uInt16 GetFlyCount() const { return aFlyCache.size(); }
+    sal_uInt32 GetFlyCount() const { return aFlyCache.size(); }
     SwFlyCache& GetFlyCache( sal_uInt16 nIdx ) { return aFlyCache[ nIdx ]; }
 
     bool IsUseFlyCache() const { return bUseFlyCache; }

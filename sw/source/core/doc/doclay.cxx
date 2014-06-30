@@ -416,7 +416,6 @@ SwFrmFmt *SwDoc::CopyLayoutFmt(
     return pDest;
 }
 
->>>>>>> a778fd4... SwFrmFmts sal_uInt6 => salInt23 or iterator
 SdrObject* SwDoc::CloneSdrObj( const SdrObject& rObj, bool bMoveWithinDoc,
                                 bool bInsInPage )
 {

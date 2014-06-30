@@ -606,7 +606,7 @@ void SwDoc::DelSectionFmt( SwSectionFmt *pFmt, bool bDelNodes )
     getIDocumentState().SetModified();
 }
 
-void SwDoc::UpdateSection(sal_uInt16 const nPos, SwSectionData & rNewData,
+void SwDoc::UpdateSection(sal_uInt32 const nPos, SwSectionData & rNewData,
         SfxItemSet const*const pAttr, bool const bPreventLinkUpdate)
 {
     SwSectionFmt* pFmt = (*mpSectionFmtTbl)[ nPos ];
@@ -1393,13 +1393,13 @@ OUString SwDoc::GetUniqueSectionName( const OUString* pChkStr ) const
 
     const OUString aName( ResId( STR_REGION_DEFNAME, *pSwResMgr ) );
 
-    sal_uInt16 nNum = 0;
-    sal_uInt16 nTmp, nFlagSize = ( mpSectionFmtTbl->size() / 8 ) +2;
+    sal_Int32 nNum = 0;
+    sal_uInt32 nTmp, nFlagSize = ( mpSectionFmtTbl->size() / 8 ) +2;
     sal_uInt8* pSetFlags = new sal_uInt8[ nFlagSize ];
     memset( pSetFlags, 0, nFlagSize );
 
     const SwSectionNode* pSectNd;
-    sal_uInt16 n;
+    sal_uInt32 n;
 
     for( n = 0; n < mpSectionFmtTbl->size(); ++n )
         if( 0 != ( pSectNd = (*mpSectionFmtTbl)[ n ]->GetSectionNode( false ) ))
@@ -1408,7 +1408,7 @@ OUString SwDoc::GetUniqueSectionName( const OUString* pChkStr ) const
             if (rNm.startsWith( aName ))
             {
                 // Calculate the Number and reset the Flag
-                nNum = static_cast<sal_uInt16>(rNm.copy( aName.getLength() ).toInt32());
+                nNum = rNm.copy( aName.getLength() ).toInt32();
                 if( nNum-- && nNum < mpSectionFmtTbl->size() )
                     pSetFlags[ nNum / 8 ] |= (0x01 << ( nNum & 0x07 ));
             }

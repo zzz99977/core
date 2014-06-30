@@ -1344,7 +1344,7 @@ bool SwDoc::RemoveInvisibleContent()
         // Delete/empty all hidden areas
         SwSectionFmts aSectFmts;
         SwSectionFmts& rSectFmts = GetSections();
-        sal_uInt16 n;
+        sal_uInt32 n;
 
         for( n = rSectFmts.size(); n; )
         {

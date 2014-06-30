@@ -1689,8 +1689,8 @@ throw (uno::RuntimeException, std::exception)
         aSection.SetSectionName(rName);
 
         const SwSectionFmts& rFmts = pFmt->GetDoc()->GetSections();
-        sal_uInt16 nApplyPos = USHRT_MAX;
-        for( size_t i = 0; i < rFmts.size(); ++i )
+        sal_uInt32 nApplyPos = UINT_MAX;
+        for( sal_uInt32 i = 0; i < rFmts.size(); i++ )
         {
             if(rFmts[i]->GetSection() == pSect)
             {
@@ -1701,7 +1701,7 @@ throw (uno::RuntimeException, std::exception)
                 throw uno::RuntimeException();
             }
         }
-        if(nApplyPos != USHRT_MAX)
+        if(nApplyPos != UINT_MAX)
         {
             {
                 UnoActionContext aContext(pFmt->GetDoc());

@@ -1444,7 +1444,7 @@ void SwIntrnlSectRefLink::Closed()
         // Advise says goodbye: mark the Section as not protected
         // and change the Flag
         const SwSectionFmts& rFmts = pDoc->GetSections();
-        for( sal_uInt16 n = rFmts.size(); n; )
+        for( sal_uInt32 n = rFmts.size(); n; )
             if( rFmts[ --n ] == &rSectFmt )
             {
                 SwViewShell* pSh = pDoc->getIDocumentLayoutAccess().GetCurrentViewShell();

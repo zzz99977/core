@@ -829,8 +829,8 @@ public:
     sal_uInt16 GetSectionFmtCount() const;
     sal_uInt16 GetSectionFmtPos( const SwSectionFmt& ) const;
     const SwSectionFmt& GetSectionFmt(sal_uInt16 nFmt) const;
-    void DelSectionFmt( sal_uInt16 nFmt );
-    void UpdateSection(sal_uInt16 const nSect, SwSectionData &,
+    void DelSectionFmt( sal_uInt32 nFmt );
+    void UpdateSection(sal_uInt32 const nSect, SwSectionData &,
             SfxItemSet const*const  = 0);
     bool IsAnySectionInDoc( bool bChkReadOnly = false,
                             bool bChkHidden = false,

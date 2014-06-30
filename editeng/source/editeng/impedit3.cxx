@@ -436,9 +436,8 @@ void ImpEditEngine::FormatDoc()
     {
         sal_uInt32 nNewHeightNTP;
         sal_uInt32 nNewHeight = CalcTextHeight( &nNewHeightNTP );
-        // FIXME(matteocam)
-        long nDiff = 0;
-        //long nDiff = nNewHeight - nCurTextHeight;
+
+        long nDiff = nNewHeight - nCurTextHeight;
         if ( nDiff )
             aStatus.GetStatusWord() |= !IsVertical() ? EE_STAT_TEXTHEIGHTCHANGED : EE_STAT_TEXTWIDTHCHANGED;
         if ( nNewHeight < nCurTextHeight )
@@ -518,11 +517,6 @@ bool ImpEditEngine::ImpCheckRefMapMode()
 
 void ImpEditEngine::CheckAutoPageSize()
 {
-    // FIXME(matteocam)
-    SetValidPaperSize( aPaperSize );    // consider Min, Max
-    return;
-    // END FIXME
-
     Size aPrevPaperSize( GetPaperSize() );
 
     if ( GetStatus().AutoPageWidth() )
@@ -3429,12 +3423,6 @@ void ImpEditEngine::Paint( OutputDevice* pOutDev, Rectangle aClipRect, Point aSt
                                              pDXArray[ nTextLen - 2 ] &&
                                              ' ' == aText[nTextStart + nTextLen - 1] )
                                             --nTextLen;
-
-                                        // FIXME(matteocam)
-                                        if (aTmpFont.GetItalic() != ITALIC_NONE) {
-                                            Color aColor = COL_BROWN;
-                                            aTmpFont.SetFillColor(aColor);
-                                        }
 
                                         // output directly
                                         aTmpFont.QuickDrawText( pOutDev, aRealOutPos, aText, nTextStart, nTextLen, pDXArray );

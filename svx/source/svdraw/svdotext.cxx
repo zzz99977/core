@@ -1230,6 +1230,7 @@ void SdrTextObj::ImpInitDrawOutliner( SdrOutliner& rOutl ) const
 
 SdrOutliner& SdrTextObj::ImpGetDrawOutliner() const
 {
+    fprintf(stderr, "pModel=%p \t this=%p\n", pModel, this);
     SdrOutliner& rOutl=pModel->GetDrawOutliner(this);
 
     // Code extracted to ImpInitDrawOutliner()

@@ -360,7 +360,7 @@ void SwPageDesc::ChgFirstShare( bool bNew )
 
 SwPageDesc* SwPageDesc::GetByName(SwDoc& rDoc, const OUString& rName)
 {
-    SwPageDesc* pDsc = rDoc.FindPageDesc( rName );
+    SwPageDesc* pDsc = rDoc.FindPageDescByName( rName );
     if (pDsc)
         return pDsc;
 
@@ -473,7 +473,7 @@ SwPageDescExt::operator SwPageDesc() const
 {
     SwPageDesc aResult(aPageDesc);
 
-    SwPageDesc * pPageDesc = pDoc->FindPageDesc(sFollow);
+    SwPageDesc * pPageDesc = pDoc->FindPageDescByName(sFollow);
 
     if ( 0 != pPageDesc )
         aResult.SetFollow(pPageDesc);

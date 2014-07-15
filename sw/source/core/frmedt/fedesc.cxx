@@ -126,7 +126,7 @@ SwPageDesc* SwFEShell::FindPageDescByName( const OUString& rName,
                                             bool bGetFromPool,
                                             sal_uInt16* pPos )
 {
-    SwPageDesc* pDesc = GetDoc()->FindPageDesc(rName, pPos);
+    SwPageDesc* pDesc = GetDoc()->FindPageDescByName(rName, pPos);
     if( !pDesc && bGetFromPool )
     {
         sal_uInt16 nPoolId = SwStyleNameMapper::GetPoolIdFromUIName( rName, nsSwGetPoolIdFromName::GET_POOLID_PAGEDESC );

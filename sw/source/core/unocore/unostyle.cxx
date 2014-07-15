@@ -3002,7 +3002,7 @@ void SAL_CALL SwXStyle::setPropertiesToDefault( const uno::Sequence< OUString >&
 
                 case SFX_STYLE_FAMILY_PAGE:
                 {
-                    SwPageDesc *pDesc = m_pDoc->FindPageDesc(xStyle->GetPageDesc()->GetName());
+                    SwPageDesc *pDesc = m_pDoc->FindPageDescByName(xStyle->GetPageDesc()->GetName());
                     if( pDesc )
                         pTargetFmt = &pDesc->GetMaster();
                     break;
@@ -3120,7 +3120,7 @@ void SAL_CALL SwXStyle::setAllPropertiesToDefault(  )
 
                 case SFX_STYLE_FAMILY_PAGE:
                 {
-                    SwPageDesc *pDesc = m_pDoc->FindPageDesc(xStyle->GetPageDesc()->GetName(), &nPgDscPos);
+                    SwPageDesc *pDesc = m_pDoc->FindPageDescByName(xStyle->GetPageDesc()->GetName(), &nPgDscPos);
                     if( pDesc )
                     {
                         pTargetFmt = &pDesc->GetMaster();

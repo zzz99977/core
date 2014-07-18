@@ -1925,6 +1925,10 @@ void SdrTextObj::onEditOutlinerStatusEvent( EditStatus* pEditStatus )
             ImpAutoFitText(*pEdtOutl);
             mbInDownScale = false;
         }
+        else if (IsChained() && pEditStatus->IsOverflow())
+        {
+
+        }
     }
 }
 

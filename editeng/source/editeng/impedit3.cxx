@@ -542,11 +542,8 @@ void ImpEditEngine::CheckAutoPageSize()
     SetValidPaperSize( aPaperSize );    // consider Min, Max
 
     // FIXME(matteocam)
-    fprintf( stderr, IsPageOverflow( aStatus.GetStatusWord(),
-                                    IsVertical(),
-                                    aPrevPaperSize,
-                                    aPaperSize)
-                     ? "YES Overflow!\n"  : "NO Overflow!\n" );
+    fprintf( stderr, IsPageOverflow(aPaperSize, aPrevPaperSize)
+                        ? "YES Overflow!\n"  : "NO Overflow!\n" );
 
     if ( aPaperSize != aPrevPaperSize )
     {

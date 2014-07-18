@@ -92,8 +92,11 @@ protected:
     sal_uLong   nControlBits;
     sal_Int32   nPrevPara;                  // for EE_STAT_CRSRLEFTPARA
 
+    bool        bIsPageOverflow;
+
 public:
-            EditStatus()                { nStatusBits = 0; nControlBits = 0; nPrevPara = -1; }
+            EditStatus()                { nStatusBits = 0; nControlBits = 0;
+                                          nPrevPara = -1; bIsPageOverflow = false; }
 
     void    Clear()                     { nStatusBits = 0; }
     void    SetControlBits( sal_uLong nMask, bool bOn )
@@ -107,6 +110,8 @@ public:
 
     sal_Int32   GetPrevParagraph() const    { return nPrevPara; }
     sal_Int32&  GetPrevParagraph()          { return nPrevPara; }
+
+    bool        IsPageOverflow() const      { return bIsPageOverflow; }
 };
 
 #define SPELLCMD_IGNOREWORD         0x0001

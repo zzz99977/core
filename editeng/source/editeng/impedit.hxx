@@ -260,8 +260,6 @@ protected:
         throw (::com::sun::star::uno::RuntimeException,
                std::exception) SAL_OVERRIDE;
 
-    bool IsPageOverflow( const Size aCurPaperSize, const Size aPrevPaperSize ) const;
-
     void ShowDDCursor( const Rectangle& rRect );
     void HideDDCursor();
 
@@ -726,6 +724,8 @@ public:
 
     const Size&             GetMaxAutoPaperSize() const             { return aMaxAutoPaperSize; }
     void                    SetMaxAutoPaperSize( const Size& rSz )  { aMaxAutoPaperSize = rSz; }
+
+    bool IsPageOverflow( const Size aCurPaperSize, const Size aPrevPaperSize ) const;
 
     void                    FormatDoc();
     void                    FormatFullDoc();

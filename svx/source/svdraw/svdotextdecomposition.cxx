@@ -780,7 +780,7 @@ void SdrTextObj::impCopyTextInTextObj(SdrTextObj *pNextTextObj) const
     if( pText!=NULL && pText->GetOutlinerParaObject() && pModel!=NULL)
     {
         Rectangle &aNextRect = pNextTextObj->aRect;
-        SdrOutliner& rOutliner = pNextTextObj->ImpGetDrawOutliner(); // XXX: shit seems to happen in here
+        SdrOutliner& rOutliner = pNextTextObj->ImpGetDrawOutliner();
         rOutliner.SetPaperSize(
             Size(
                 aNextRect.Right()-aNextRect.Left(),
@@ -801,6 +801,10 @@ void SdrTextObj::impCopyTextInTextObj(SdrTextObj *pNextTextObj) const
         if (aNewRect!=aNextRect) {
             pNextTextObj->SetLogicRect(aNewRect);
         }
+
+        // Set text object's string
+        pNextTextObj->SetOutlinerParaObject(*pText->GetOutlinerParaObject());
+
     }
 }
 

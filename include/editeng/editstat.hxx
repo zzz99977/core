@@ -98,7 +98,7 @@ public:
             EditStatus()                { nStatusBits = 0; nControlBits = 0;
                                           nPrevPara = -1; bIsPageOverflow = false; }
 
-    void    Clear()                     { nStatusBits = 0; }
+    void    Clear()                     { nStatusBits = 0; bIsPageOverflow = false; }
     void    SetControlBits( sal_uLong nMask, bool bOn )
                 { SetFlags( nControlBits, nMask, bOn ); }
 

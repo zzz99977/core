@@ -546,7 +546,7 @@ void ImpEditEngine::CheckAutoPageSize()
                         ? "YES Overflow!\n"  : "NO Overflow!\n" );
     // setting overflow status // XXX: Is status reset somewhere?
     if ( IsPageOverflow( aPaperSize, aPrevPaperSize ) )
-        aStatus.bIsPageOverflow = true;
+        aStatus.SetPageOverflow(true);
 
     if ( aPaperSize != aPrevPaperSize )
     {

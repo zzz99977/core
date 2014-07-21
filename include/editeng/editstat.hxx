@@ -112,6 +112,7 @@ public:
     sal_Int32&  GetPrevParagraph()          { return nPrevPara; }
 
     bool        IsPageOverflow() const      { return bIsPageOverflow; }
+    void        SetPageOverflow(bool isOverflow) { bIsPageOverflow = isOverflow; }
 };
 
 #define SPELLCMD_IGNOREWORD         0x0001

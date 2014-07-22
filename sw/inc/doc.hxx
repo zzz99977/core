@@ -965,8 +965,10 @@ public:
         { CopyPageDescHeaderFooterImpl( false, rSrcFmt, rDestFmt ); }
 
     // For Reader
+    void ChgPageDescP( const SwPageDesc &, SwPageDesc *pDesc = NULL );
     void ChgPageDesc( const OUString & rName, const SwPageDesc& );
     void ChgPageDesc( sal_uInt16 i, const SwPageDesc& );
+    void DelPageDescP( SwPageDesc *pDel, bool bBroadcast = false );
     void DelPageDesc( const OUString & rName, bool bBroadcast = false);
     void DelPageDesc( sal_uInt16 i, bool bBroadcast = false );
     void PreDelPageDesc(SwPageDesc * pDel);

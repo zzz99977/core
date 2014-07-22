@@ -957,19 +957,4 @@ SfxPoolItem* SwFltTOX::Clone(SfxItemPool*) const
     return new SwFltTOX(*this);
 }
 
-// UpdatePageDescs needs to be called at end of parsing to make Writer actually
-// accept Pagedescs contents
-void UpdatePageDescs(SwDoc &rDoc, sal_uInt16 nInPageDescOffset)
-{
-    // Update document page descriptors (only this way also left pages
-    // get adjusted)
-
-    // PageDesc "Standard"
-    rDoc.ChgPageDesc(0, rDoc.GetPageDesc(0));
-
-    // PageDescs "Convert..."
-    for (sal_uInt16 i = nInPageDescOffset; i < rDoc.GetPageDescCnt(); ++i)
-        rDoc.ChgPageDesc(i, rDoc.GetPageDesc(i));
-}
-
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

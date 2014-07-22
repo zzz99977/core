@@ -851,6 +851,16 @@ void SwDoc::ChgPageDesc( const OUString & rName, const SwPageDesc & rDesc)
         ChgPageDescP(rDesc, pd);
 }
 
+bool SwDoc::ContainsPageDesc( const SwPageDesc *pg ) const
+{
+    return maPageDescs.Contains( const_cast<SwPageDesc*>( pg ) );
+}
+
+bool SwDoc::ContainsPageDesc( const SwPageDesc &pg ) const
+{
+    return maPageDescs.Contains( const_cast<SwPageDesc*>( &pg ) );
+}
+
 /*
  * The HTML import cannot resist changing the page descriptions, I don't
  * know why. This function is meant to check the page descriptors for invalid

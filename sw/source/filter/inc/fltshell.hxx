@@ -326,8 +326,6 @@ public:
     }
 };
 
-SW_DLLPUBLIC void UpdatePageDescs(SwDoc &rDoc, sal_uInt16 nInPageDescOffset);
-
 #endif
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

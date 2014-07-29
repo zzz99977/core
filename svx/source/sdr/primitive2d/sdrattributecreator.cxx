@@ -521,6 +521,15 @@ namespace drawinglayer
         {
             const SdrTextObj& rTextObj = rText.GetObject();
 
+            // FIXME(matteocam)
+            bool bToBeChained = rTextObj.IsToBeChained();
+            // for resetting status
+            // XXX
+            if ( rTextObj.IsToBeChained() )
+            {
+                    rTextObj.SetToBeChained( false );
+            }
+
             if(rText.GetOutlinerParaObject() && rText.GetModel())
             {
                 // added TextEdit text suppression
@@ -579,7 +588,8 @@ namespace drawinglayer
                     SDRTEXTANI_SCROLL == eAniKind || SDRTEXTANI_ALTERNATE == eAniKind || SDRTEXTANI_SLIDE == eAniKind,
                     bInEditMode,
                     ((const SdrTextFixedCellHeightItem&)rSet.Get(SDRATTR_TEXT_USEFIXEDCELLHEIGHT)).GetValue(),
-                    bWrongSpell);
+                    bWrongSpell,
+                    bToBeChained);
             }
 
             return attribute::SdrTextAttribute();

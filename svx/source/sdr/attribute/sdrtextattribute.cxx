@@ -90,7 +90,8 @@ namespace drawinglayer
                 bool bScroll,
                 bool bInEditMode,
                 bool bFixedCellHeight,
-                bool bWrongSpell)
+                bool bWrongSpell,
+                bool bToBeChained)
             :   mnRefCount(0),
                 mpSdrText(pSdrText),
                 mpOutlinerParaObject(new OutlinerParaObject(rOutlinerParaObject)),

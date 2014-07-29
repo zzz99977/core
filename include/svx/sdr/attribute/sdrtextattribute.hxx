@@ -73,7 +73,8 @@ namespace drawinglayer
                 bool bScroll,
                 bool bInEditMode,
                 bool bFixedCellHeight,
-                bool bWrongSpell);
+                bool bWrongSpell,
+                bool bToBeChained);
             SdrTextAttribute();
             SdrTextAttribute(const SdrTextAttribute& rCandidate);
             SdrTextAttribute& operator=(const SdrTextAttribute& rCandidate);
@@ -96,6 +97,7 @@ namespace drawinglayer
             bool isScroll() const;
             bool isInEditMode() const;
             bool isFixedCellHeight() const;
+            bool isToBeChained() const;
             const SdrFormTextAttribute& getSdrFormTextAttribute() const;
             sal_Int32 getTextLeftDistance() const;
             sal_Int32 getTextUpperDistance() const;

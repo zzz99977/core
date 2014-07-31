@@ -266,6 +266,9 @@ void SdrTextObj::EndTextEdit(SdrOutliner& rOutl)
             // set non overflow part of text to current box
             pNewText = rOutl.GetNonOverflowingParaObject();
             pNextText = rOutl.GetOverflowingParaObject();
+            // set overflowing text for SdrChainedTextPrimitive2D
+            mpOverflowingText = pNextText;
+            //SetOverflowingText( pNextText );
 
             // XXX: should this SdrTextObj know "how much text to ask" by CreateParaObject?
             //      No, it must be the editengine (or outliner) to give it since it is
@@ -291,14 +294,6 @@ void SdrTextObj::EndTextEdit(SdrOutliner& rOutl)
     sal_uInt32 nStat = rOutl.GetControlWord();
     nStat &= ~EE_CNTRL_AUTOPAGESIZE;
     rOutl.SetControlWord(nStat);
-
-    // sets text to next box
-    if (pNextText != NULL) {
-        SdrTextObj *pNextTextObj = GetNextLinkInChain();
-        pNextTextObj->SetOutlinerParaObject( pNextText );
-        pNextTextObj->BegTextEdit( rOutl );
-        // XXX: Also, will all those calls currently in impCopyTextInTextObj be necessary too?
-    }
 
     mbInEditMode = false;
 }

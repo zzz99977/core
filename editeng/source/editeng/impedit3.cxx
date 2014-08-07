@@ -427,8 +427,12 @@ void ImpEditEngine::FormatDoc()
                 pParaPortion->SetMustRepaint( false );
 
                 // FIXME(matteocam)
-                // set possible point for chainging
-                mnOverflowingPara = nPara;
+                // set possible point for chaining
+
+                // XXX: This may not work all the time: imp. edit engine is a shared resource!!
+                        // Can it be that two boxes modify it before it's used?
+                UpdateOverflowingPara( nPara );
+
                 fprintf(stderr, "[CHAINING] Setting first overflowing para: %d\n", nPara);
             }
 
@@ -4600,6 +4604,14 @@ void ImpEditEngine::ImplExpandCompressedPortions( EditLine* pLine, ParaPortion* 
             }
         }
     }
+}
+
+void ImpEditEngine::SetOverflowingParaNum(int nPara)
+{
+    // update if not already updated
+    if ( mnOverflowingPara == -1 )
+        mnOverflowingPara = nPara;
+    // XXX: where is this reset?
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

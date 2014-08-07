@@ -429,6 +429,7 @@ void ImpEditEngine::FormatDoc()
                 // FIXME(matteocam)
                 // set possible point for chainging
                 mnOverflowingPara = nPara;
+                fprintf(stderr, "[CHAINING] Setting first overflowing para: %d\n", nPara);
             }
 
             // InvalidRect set only once...

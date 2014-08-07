@@ -966,11 +966,13 @@ void OutputDevice::DrawTextArray( const Point& rStartPt, const OUString& rStr,
                                   const sal_Int32* pDXAry,
                                   sal_Int32 nIndex, sal_Int32 nLen )
 {
+    /*
     if ( maFont.IsTransparent() )
         fprintf(stderr, "[Actually transparent font] Real color = %x\n", maFont.GetFillColor().GetColor() );
     fprintf(stderr, "TextFillColor printing %c is %x\n",
         (char) rStr.toChar(),
         GetTextFillColor().GetColor());
+    */
 
     if(nLen == 0x0FFFF)
     {

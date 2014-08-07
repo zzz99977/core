@@ -760,6 +760,7 @@ public:
 
     OutlinerParaObject *GetNonOverflowingParaObject() const;
     OutlinerParaObject *GetOverflowingParaObject() const;
+    void ClearOverflowingParaNum();
 
     virtual void    DepthChangedHdl();
     void            SetDepthChangedHdl(const Link& rLink){aDepthChangedHdl=rLink;}

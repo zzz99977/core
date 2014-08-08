@@ -4601,7 +4601,7 @@ void ImpEditEngine::ImplExpandCompressedPortions( EditLine* pLine, ParaPortion* 
     }
 }
 
-void ImpEditEngine::UpdateOverflowingParaNum()
+void ImpEditEngine::UpdateOverflowingParaNum(sal_uInt32 nPaperHeight)
 {
     sal_uInt32 nY = 0;
     sal_uInt32 nPH;
@@ -4610,7 +4610,7 @@ void ImpEditEngine::UpdateOverflowingParaNum()
         ParaPortion* pPara = GetParaPortions()[nPara];
         nPH = pPara->GetHeight();
         nY += nPH;
-        if ( nY > aPaperSize.Height() /*nCurTextHeight*/ ) // found first paragraph overflowing
+        if ( nY > nPaperHeight /*nCurTextHeight*/ ) // found first paragraph overflowing
         {
             SetOverflowingParaNum( nPara );
             fprintf(stderr, "[CHAINING] Setting first overflowing para: %d\n", nPara);

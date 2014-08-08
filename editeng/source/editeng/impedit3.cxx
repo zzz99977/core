@@ -467,10 +467,6 @@ void ImpEditEngine::FormatDoc()
                 aInvalidRect.Left() = 0;
                 aInvalidRect.Right() = !IsVertical() ? aPaperSize.Width() : aPaperSize.Height();
             }
-        } else if ( nNewHeight > nCurTextHeight ) // possible page overflow // FIXME(matteocam)
-        {
-            // which paragraph is the first to cause higher size of the box?
-            UpdateOverflowingParaNum();
         }
 
         nCurTextHeight = nNewHeight;
@@ -551,8 +547,12 @@ void ImpEditEngine::CheckAutoPageSize()
     /* fprintf( stderr, IsPageOverflow(aPaperSize, aPrevPaperSize)
                         ? "YES Overflow!\n"  : "NO Overflow!\n" ); */
     // setting overflow status
-    if ( IsPageOverflow( aPaperSize, aPrevPaperSize ) )
+    if ( IsPageOverflow( aPaperSize, aPrevPaperSize ) ) {
+        // which paragraph is the first to cause higher size of the box?
+        UpdateOverflowingParaNum( aPrevPaperSize.Height() ); // XXX: currently only for horizontal text
+
         aStatus.SetPageOverflow(true);
+    }
 
     if ( aPaperSize != aPrevPaperSize )
     {
@@ -4610,14 +4610,13 @@ void ImpEditEngine::UpdateOverflowingParaNum()
         ParaPortion* pPara = GetParaPortions()[nPara];
         nPH = pPara->GetHeight();
         nY += nPH;
-        if ( nY > nCurTextHeight ) // found first paragraph overflowing
+        if ( nY > aPaperSize.Height() /*nCurTextHeight*/ ) // found first paragraph overflowing
         {
             SetOverflowingParaNum( nPara );
             fprintf(stderr, "[CHAINING] Setting first overflowing para: %d\n", nPara);
             return;
         }
     }
-    fprintf(stderr, "[CHAINING] Warning: Overflowing paragraph not found\n");
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

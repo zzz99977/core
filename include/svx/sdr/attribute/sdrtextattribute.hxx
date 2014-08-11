@@ -76,6 +76,7 @@ namespace drawinglayer
                 bool bWrongSpell,
                 bool bToBeChained);
             SdrTextAttribute();
+            SdrTextAttribute(bool bIsToBeChained); // special treatment for text chaining
             SdrTextAttribute(const SdrTextAttribute& rCandidate);
             SdrTextAttribute& operator=(const SdrTextAttribute& rCandidate);
             ~SdrTextAttribute();

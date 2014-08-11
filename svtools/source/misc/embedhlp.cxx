@@ -790,6 +790,11 @@ bool EmbeddedObjectRef::IsChart(const ::com::sun::star::uno::Reference < ::com::
     return false;
 }
 
+bool EmbeddedObjectRef::IsGLChart(const ::com::sun::star::uno::Reference < ::com::sun::star::embed::XEmbeddedObject >& xObj)
+{
+    return IsChart(xObj) && getenv("CHART_DUMMY_FACTORY");
+}
+
 void EmbeddedObjectRef::UpdateReplacement()
 {
     GetReplacement( true );
@@ -821,6 +826,14 @@ bool EmbeddedObjectRef::IsChart() const
         return false;
 
     return EmbeddedObjectRef::IsChart(mpImpl->mxObj);
+}
+
+bool EmbeddedObjectRef::IsGLChart() const
+{
+    if (!mpImpl->mxObj.is())
+        return false;
+
+    return EmbeddedObjectRef::IsGLChart(mpImpl->mxObj);
 }
 
 // MT: Only used for getting accessible attributes, which are not localized

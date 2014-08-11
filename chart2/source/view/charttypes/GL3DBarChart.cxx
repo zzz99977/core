@@ -451,8 +451,7 @@ GL3DBarChart::GL3DBarChart(
     Size aSize;
     if (mpWindow)
     {
-        mpWindow->setRenderer(this);
-        Size aSize = mpWindow->GetSizePixel();
+        aSize = mpWindow->GetSizePixel();
     }
     mpRenderer->SetSize(aSize);
     mpWindow->setRenderer(this);
@@ -565,7 +564,7 @@ void GL3DBarChart::create3DShapes(const boost::ptr_vector<VDataSeries>& rDataSer
                         BarInformation(glm::vec3(nXPos, nYPos, float(nVal/nMaxVal)),
                             nVal, nIndex, nSeriesIndex)));
 
-            //maShapes.push_back(new opengl3D::Bar(mpRenderer.get(), aBarPosition, nColor, nId));
+            maShapes.push_back(new opengl3D::Bar(mpRenderer.get(), aBarPosition, nColor, nId));
             nId += ID_STEP;
         }
 

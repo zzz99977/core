@@ -718,11 +718,6 @@ void SdrTextObj::TakeTextRect( SdrOutliner& rOutliner, Rectangle& rTextRect, boo
     sal_uIntPtr nStat0=rOutliner.GetControlWord();
     Size aNullSize;
 
-    // FIXME(matteocam)
-    bool bChainedFrame = true; // XXX: should be returned from a method
-
-    if (!bChainedFrame) {
-
     if (!bContourFrame)
     {
         rOutliner.SetControlWord(nStat0|EE_CNTRL_AUTOPAGESIZE);
@@ -748,15 +743,21 @@ void SdrTextObj::TakeTextRect( SdrOutliner& rOutliner, Rectangle& rTextRect, boo
                 if (eAniDirection==SDRTEXTANI_UP || eAniDirection==SDRTEXTANI_DOWN) nHgt=1000000;
             }
 
-            // #i119885# Do not limit/force height to geometrical frame (vice versa for vertical writing)
-            if(IsVerticalWriting())
-            {
-                nWdt = 1000000;
-            }
-            else
-            {
-                nHgt = 1000000;
-            }
+            // FIXME(matteocam)
+            bool bChainedFrame = true; // XXX: should be returned from a method
+
+            if (!bChainedFrame) {
+
+                // #i119885# Do not limit/force height to geometrical frame (vice versa for vertical writing)
+                if(IsVerticalWriting())
+                {
+                    nWdt = 1000000;
+                }
+                else
+                {
+                    nHgt = 1000000;
+                }
+            } // END if (!bChainedFrame)
 
             rOutliner.SetMaxAutoPaperSize(Size(nWdt,nHgt));
         }
@@ -773,7 +774,6 @@ void SdrTextObj::TakeTextRect( SdrOutliner& rOutliner, Rectangle& rTextRect, boo
             rOutliner.SetMinAutoPaperSize(Size(0, nAnkHgt));
         }
     }
-    } // END if (!bChainedFrame)
 
     rOutliner.SetPaperSize(aNullSize);
     if (bContourFrame)

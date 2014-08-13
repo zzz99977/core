@@ -1935,7 +1935,8 @@ void SdrTextObj::onEditOutlinerStatusEvent( EditStatus* pEditStatus )
     const sal_uInt32 nStat = pEditStatus->GetStatusWord();
     const bool bGrowX=(nStat & EE_STAT_TEXTWIDTHCHANGED) !=0;
     const bool bGrowY=(nStat & EE_STAT_TEXTHEIGHTCHANGED) !=0;
-    if(bTextFrame && (bGrowX || bGrowY))
+    const bool bOverflow = (nStat & 0x00000100) != 0;
+    if(bTextFrame && (bGrowX || bGrowY || bOverflow))
     {
         if ((bGrowX && IsAutoGrowWidth()) || (bGrowY && IsAutoGrowHeight()))
         {

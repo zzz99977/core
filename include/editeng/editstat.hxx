@@ -71,6 +71,7 @@
 #define EE_STAT_TEXTWIDTHCHANGED    0x00000020
 #define EE_STAT_TEXTHEIGHTCHANGED   0x00000040
 #define EE_STAT_WRONGWORDCHANGED    0x00000080
+#define EE_STAT_CHAININGSET     0x00000100
 // #define EE_STAT_MODIFIED         0x00000100
 
 /*
@@ -91,14 +92,15 @@ protected:
     sal_uLong   nStatusBits;
     sal_uLong   nControlBits;
     sal_Int32   nPrevPara;                  // for EE_STAT_CRSRLEFTPARA
-
     bool        bIsPageOverflow;
 
 public:
-            EditStatus()                { nStatusBits = 0; nControlBits = 0;
-                                          nPrevPara = -1; bIsPageOverflow = false; }
+            EditStatus()                { nStatusBits = 0;
+                                          nControlBits = 0;
+                                          nPrevPara = -1;
+                                          bIsPageOverflow = false; }
 
-    void    Clear()                     { nStatusBits = 0; /*bIsPageOverflow = false;*/ }
+    void    Clear()                     { nStatusBits = 0; bIsPageOverflow = false; }
     void    SetControlBits( sal_uLong nMask, bool bOn )
                 { SetFlags( nControlBits, nMask, bOn ); }
 
@@ -112,7 +114,7 @@ public:
     sal_Int32&  GetPrevParagraph()          { return nPrevPara; }
 
     bool        IsPageOverflow() const      { return bIsPageOverflow; }
-    void        SetPageOverflow(bool isOverflow) { bIsPageOverflow = isOverflow; }
+    void        SetPageOverflow(bool isOverflow) { GetStatusWord() |= EE_STAT_CHAININGSET; bIsPageOverflow = isOverflow; }
 };
 
 #define SPELLCMD_IGNOREWORD         0x0001

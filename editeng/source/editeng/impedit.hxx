@@ -475,6 +475,7 @@ private:
     // this should not happen immediately (critical section):
     Timer               aStatusTimer;
     Link                aStatusHdlLink;
+    Link                aStatusHdlLinkChaining;
     Link                aNotifyHdl;
     Link                aImportHdl;
     Link                aBeginMovingParagraphsHdl;
@@ -839,6 +840,7 @@ public:
 
     void            SetStatusEventHdl( const Link& rLink )  { aStatusHdlLink = rLink; }
     Link            GetStatusEventHdl() const               { return aStatusHdlLink; }
+    void            SetStatusEventHdlChaining( const Link& rLink )  { aStatusHdlLinkChaining = rLink; }
 
     void            SetNotifyHdl( const Link& rLink )       { aNotifyHdl = rLink; }
     Link            GetNotifyHdl() const            { return aNotifyHdl; }
@@ -876,6 +878,7 @@ public:
 
     InternalEditStatus& GetStatus() { return aStatus; }
     void                CallStatusHdl();
+    void                CallStatusHdlChaining();
     void                DelayedCallStatusHdl()  { aStatusTimer.Start(); }
 
     void                CallNotify( EENotify& rNotify );

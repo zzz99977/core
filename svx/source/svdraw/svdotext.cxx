@@ -1936,7 +1936,7 @@ void SdrTextObj::onEditOutlinerStatusEvent( EditStatus* pEditStatus )
     const bool bGrowX=(nStat & EE_STAT_TEXTWIDTHCHANGED) !=0;
     const bool bGrowY=(nStat & EE_STAT_TEXTHEIGHTCHANGED) !=0;
     const bool bOverflow = (nStat & 0x00000100) != 0;
-    if(bTextFrame && (bGrowX || bGrowY || !nStat))
+    if(bTextFrame && (bGrowX || bGrowY || bOverflow))
     {
         if ((bGrowX && IsAutoGrowWidth()) || (bGrowY && IsAutoGrowHeight()))
         {
@@ -1953,7 +1953,7 @@ void SdrTextObj::onEditOutlinerStatusEvent( EditStatus* pEditStatus )
             ImpAutoFitText(*pEdtOutl);
             mbInDownScale = false;
         }
-        else if ( GetNextLinkInChain() != NULL && !nStat ) // do it only if it is a call explicitly for chaining (status word already cleared)
+        else if ( GetNextLinkInChain() != NULL && bOverflow ) // do it only if it is a call explicitly for chaining (status word already cleared)
         {
             // set the need for chaining
             SetToBeChained( pEditStatus->IsPageOverflow() );

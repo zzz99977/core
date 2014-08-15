@@ -115,7 +115,7 @@ protected:
     bool ImpIsTextEditAllSelected() const;
     void ImpMakeTextCursorAreaVisible();
 
-    // Handler fuer AutoGrowing Text bei aktivem Outliner
+    // Handler fuer AutoGrowing und Chained Text bei aktivem Outliner
     DECL_LINK(ImpOutlinerStatusEventHdl,EditStatus*);
     DECL_LINK(ImpOutlinerCalcFieldValueHdl,EditFieldInfo*);
 

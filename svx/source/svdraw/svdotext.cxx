@@ -2028,6 +2028,13 @@ SdrTextObj* SdrTextObj::GetNextLinkInChain() const
 
 }
 
+IMPL_LINK(SdrTextObj,ImpDecomposeChainedText,EditStatus*,pEditStat)
+{
+    // XXX: Check on the outliner here?
+    onEditOutlinerStatusEvent( pEditStat );
+    return 0;
+}
+
 
 
 // The concept of the text object:

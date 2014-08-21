@@ -939,7 +939,14 @@ void GL3DBarChart::contextDestroyed()
 void GL3DBarChart::setOpenGLWindow(OpenGLWindow* pWindow)
 {
     if (mpWindow != pWindow)
+    {
         mpWindow = pWindow;
+        Size aSize = mpWindow->GetSizePixel();
+        mpRenderer->SetSize(aSize);
+        mpWindow->setRenderer(this);
+        mpRenderer->init();
+        mbValidContext = true;
+    }
 }
 
 }

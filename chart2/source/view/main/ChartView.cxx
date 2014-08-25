@@ -2446,6 +2446,8 @@ bool ChartView::isReal3DChart()
     return GL3DHelper::isGL3DDiagram(xDiagram);
 }
 
+const char* envChartDummyFactory = getenv("CHART_DUMMY_FACTORY");
+
 void ChartView::createShapes()
 {
     osl::ResettableMutexGuard aTimedGuard(maTimeMutex);
@@ -2499,7 +2501,7 @@ void ChartView::createShapes()
 
         // hide OpenGL window for now in normal charts
         OpenGLWindow* pWindow = mrChartModel.getOpenGLWindow();
-        if(pWindow && !getenv("CHART_DUMMY_FACTORY"))
+        if(pWindow && !envChartDummyFactory)
             pWindow->Show(false);
     }
 #endif

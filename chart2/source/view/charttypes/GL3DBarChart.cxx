@@ -455,7 +455,9 @@ GL3DBarChart::GL3DBarChart(
     }
     mpRenderer->SetSize(aSize);
     mpWindow->setRenderer(this);
+    mpWindow->getContext().makeCurrent();
     mpRenderer->init();
+    mpWindow->getContext().resetCurrent();
 }
 
 GL3DBarChart::BarInformation::BarInformation(const glm::vec3& rPos, float nVal,
@@ -944,7 +946,9 @@ void GL3DBarChart::setOpenGLWindow(OpenGLWindow* pWindow)
         Size aSize = mpWindow->GetSizePixel();
         mpRenderer->SetSize(aSize);
         mpWindow->setRenderer(this);
+        mpWindow->getContext().makeCurrent();
         mpRenderer->init();
+        mpWindow->getContext().resetCurrent();
         mbValidContext = true;
     }
 }

@@ -1494,6 +1494,12 @@ EditTextObject* EditEngine::CreateTextObject( const ESelection& rESelection )
     return pImpEditEngine->CreateTextObject( aSel );
 }
 
+EditTextObject* EditEngine::GetEmptyTextObject() const
+{
+    return pImpEditEngine->GetEmptyTextObject();
+}
+
+
 void EditEngine::SetText( const EditTextObject& rTextObject )
 {
     pImpEditEngine->EnterBlockNotifications();

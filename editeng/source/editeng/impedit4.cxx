@@ -991,6 +991,14 @@ sal_uInt32 ImpEditEngine::WriteHTML( SvStream&, EditSelection )
     return 0;
 }
 
+EditTextObject* ImpEditEngine::GetEmptyTextObject()
+{
+    EditSelection aEmptySel;
+    aEmptySel.Min() = aEditDoc.GetStartPaM();
+    aEmptySel.Max() = aEditDoc.GetStartPaM();
+
+    return CreateTextObject( aEmptySel );
+}
 
 EditTextObject* ImpEditEngine::CreateTextObject()
 {

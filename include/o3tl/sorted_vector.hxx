@@ -13,6 +13,7 @@
 #include <vector>
 #include <functional>
 #include <algorithm>
+#include <cassert>
 
 namespace o3tl
 {
@@ -160,11 +161,13 @@ public:
 
     const_iterator lower_bound( const Value& x ) const
     {
+        assert(mOffset == 0);
         return std::lower_bound( base_t::begin() + mOffset, base_t::end(), x, Compare() );
     }
 
     const_iterator upper_bound( const Value& x ) const
     {
+        assert(mOffset == 0);
         return std::upper_bound( base_t::begin() + mOffset, base_t::end(), x, Compare() );
     }
 

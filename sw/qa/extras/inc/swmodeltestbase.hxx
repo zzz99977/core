@@ -69,31 +69,13 @@ DBuriMap aDBuriMap;
 class SwModelTestBase : public test::BootstrapFixture, public unotest::MacrosTest
 {
 protected:
-    uno::Reference< lang::XComponent > mxComponent;
-    uno::Reference< lang::XComponent > mxMMComponent;
-    uno::Reference< com::sun::star::task::XJob > mxJob;
-    uno::Sequence< beans::NamedValue > mSeqMailMergeArgs;
-
-    xmlBufferPtr mpXmlBuffer;
-    const char* mpTestDocumentPath;
-    const char* mpFilter;
-
-    template<typename T>
-    struct MethodEntry
-    {
-        const char* pName;
-        void (T::*pMethod)();
-    };
-
-    utl::TempFile maTempDir;
-    sal_Int16 nCurOutputType;
-
-protected:
     virtual OUString getTestName() { return OUString(); }
 
 public:
-    SwModelTestBase()
+    SwModelTestBase(const char* pTestDocumentPath = "", const char* pFilter = "")
         : mpXmlBuffer(0)
+        , mpTestDocumentPath(pTestDocumentPath)
+        , nCurOutputType(0)
     {
     }
 
@@ -143,7 +125,9 @@ protected:
         load(mpTestDocumentPath, filename);
 
         const OUString aPrefix( "LOMM_" );
-        const OUString aWorkDir = maTempDir.GetURL();
+        utl::TempFile maTempDir(NULL, true);
+        maTempDir.EnableKillingFile();
+        const String aWorkDir = maTempDir.GetURL();
         const OUString aURI( getURLFromSrc(mpTestDocumentPath) + OUString::createFromAscii(datasource) );
         OUString aDBName = registerDBsource( aURI, aPrefix, aWorkDir );
         initMailMergeJobAndArgs( filename, tablename, aDBName, aPrefix, aWorkDir );
@@ -379,7 +363,7 @@ protected:
         if (mxComponent.is())
             mxComponent->dispose();
         // Output name early, so in the case of a hang, the name of the hanging input file is visible.
-        fprintf(stderr, "%s,", pName);
+        fprintf(stderr, "%s %s,", pDir, pName);
         m_nStartTime = osl_getGlobalTimer();
         mxComponent = loadFromDesktop(getURLFromSrc(pDir) + OUString::createFromAscii(pName), "com.sun.star.text.TextDocument");
         if (bCalcLayout)
@@ -449,13 +433,21 @@ protected:
     };
     sal_uInt32 m_nStartTime;
 
-    virtual OUString registerDBsource( const OUString &aURI, const OUString &aPrefix, const OUString &aWorkDir )
+    uno::Reference< lang::XComponent > mxMMComponent;
+    uno::Reference< com::sun::star::task::XJob > mxJob;
+    uno::Sequence< beans::NamedValue > mSeqMailMergeArgs;
+
+    const char* mpTestDocumentPath;
+
+    sal_Int16 nCurOutputType;
+
+    virtual OUString registerDBsource( const OUString &aURI, const OUString &aPrefix, const String &aWorkDir )
     {
         OUString aDBName;
         DBuriMap::const_iterator pos = aDBuriMap.find( aURI );
         if (pos == aDBuriMap.end())
         {
-            aDBName = SwDBManager::LoadAndRegisterDataSource( aURI, &aPrefix, &aWorkDir );
+            aDBName = SwNewDBMgr::LoadAndRegisterDataSource( aURI, &aPrefix, &aWorkDir );
             aDBuriMap.insert( std::pair< OUString, OUString >( aURI, aDBName ) );
             std::cout << "New datasource name: '" << aDBName << "'" << std::endl;
         }
@@ -469,7 +461,7 @@ protected:
     }
 
     virtual void initMailMergeJobAndArgs( const char* filename, const char* tablename, const OUString &aDBName,
-                                          const OUString &aPrefix, const OUString &aWorkDir )
+                                          const OUString &aPrefix, const String &aWorkDir )
     {
         uno::Reference< task::XJob > xJob( getMultiServiceFactory()->createInstance( "com.sun.star.text.MailMerge" ), uno::UNO_QUERY_THROW );
         mxJob.set( xJob );
@@ -478,17 +470,20 @@ protected:
         if (tablename) seq_id += 2;
         mSeqMailMergeArgs.realloc( seq_id );
 
+#define OUSTRING_FROM_PROP( prop ) \
+    OUString::createFromAscii(SW_PROP_NAME_STR( prop ) )
+
         seq_id = 0;
-        mSeqMailMergeArgs[ seq_id++ ] = beans::NamedValue( OUString( UNO_NAME_OUTPUT_TYPE ), uno::Any( text::MailMergeType::SHELL ) );
-        mSeqMailMergeArgs[ seq_id++ ] = beans::NamedValue( OUString( UNO_NAME_DOCUMENT_URL ), uno::Any(
+        mSeqMailMergeArgs[ seq_id++ ] = beans::NamedValue( OUSTRING_FROM_PROP( UNO_NAME_OUTPUT_TYPE ), uno::Any( text::MailMergeType::SHELL ) );
+        mSeqMailMergeArgs[ seq_id++ ] = beans::NamedValue( OUSTRING_FROM_PROP( UNO_NAME_DOCUMENT_URL ), uno::Any(
                                         ( OUString(getURLFromSrc(mpTestDocumentPath) + OUString::createFromAscii(filename)) ) ) );
-        mSeqMailMergeArgs[ seq_id++ ] = beans::NamedValue( OUString( UNO_NAME_DATA_SOURCE_NAME ), uno::Any( aDBName ) );
-        mSeqMailMergeArgs[ seq_id++ ] = beans::NamedValue( OUString( UNO_NAME_OUTPUT_URL ), uno::Any( aWorkDir ) );
-        mSeqMailMergeArgs[ seq_id++ ] = beans::NamedValue( OUString( UNO_NAME_FILE_NAME_PREFIX ), uno::Any( aPrefix ));
+        mSeqMailMergeArgs[ seq_id++ ] = beans::NamedValue( OUSTRING_FROM_PROP( UNO_NAME_DATA_SOURCE_NAME ), uno::Any( aDBName ) );
+        mSeqMailMergeArgs[ seq_id++ ] = beans::NamedValue( OUSTRING_FROM_PROP( UNO_NAME_OUTPUT_URL ), uno::Any( OUString( aWorkDir ) ) );
+        mSeqMailMergeArgs[ seq_id++ ] = beans::NamedValue( OUSTRING_FROM_PROP( UNO_NAME_FILE_NAME_PREFIX ), uno::Any( aPrefix ));
         if (tablename)
         {
-            mSeqMailMergeArgs[ seq_id++ ] = beans::NamedValue( OUString( UNO_NAME_DAD_COMMAND_TYPE ), uno::Any( sdb::CommandType::TABLE ) );
-            mSeqMailMergeArgs[ seq_id++ ] = beans::NamedValue( OUString( UNO_NAME_DAD_COMMAND ), uno::Any( OUString::createFromAscii(tablename) ) );
+            mSeqMailMergeArgs[ seq_id++ ] = beans::NamedValue( OUSTRING_FROM_PROP( UNO_NAME_DAD_COMMAND_TYPE ), uno::Any( sdb::CommandType::TABLE ) );
+            mSeqMailMergeArgs[ seq_id++ ] = beans::NamedValue( OUSTRING_FROM_PROP( UNO_NAME_DAD_COMMAND ), uno::Any( OUString::createFromAscii(tablename) ) );
         }
     }
 
@@ -507,11 +502,11 @@ protected:
             const uno::Any &rValue = pArguments[i].Value;
 
             // all error checking was already done by the MM job execution
-            if (rName == UNO_NAME_OUTPUT_URL)
+            if (rName.equalsAscii( GetPropName( UNO_NAME_OUTPUT_URL ) ))
                 bOk &= rValue >>= aCurOutputURL;
-            else if (rName == UNO_NAME_FILE_NAME_PREFIX)
+            else if (rName.equalsAscii( GetPropName( UNO_NAME_FILE_NAME_PREFIX ) ))
                 bOk &= rValue >>= aCurFileNamePrefix;
-            else if (rName == UNO_NAME_OUTPUT_TYPE)
+            else if (rName.equalsAscii( GetPropName( UNO_NAME_OUTPUT_TYPE ) ))
                 bOk &= rValue >>= nCurOutputType;
         }
 

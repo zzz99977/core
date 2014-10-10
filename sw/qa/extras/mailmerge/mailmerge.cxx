@@ -62,10 +62,10 @@ DECLARE_DFLT_MAILMERGE_TEST(testMultiPageAnchoredDraws, "multiple-page-anchored-
         sal_uInt16 nAnchorPageNo;
         xPropertySet.set(xDraws->getByIndex(i), uno::UNO_QUERY);
 
-        xPropertySet->getPropertyValue( UNO_NAME_ANCHOR_TYPE ) >>= nAnchorType;
+        xPropertySet->getPropertyValue( OUSTRING_FROM_PROP( UNO_NAME_ANCHOR_TYPE ) ) >>= nAnchorType;
         CPPUNIT_ASSERT_EQUAL( text::TextContentAnchorType_AT_PAGE, nAnchorType );
 
-        xPropertySet->getPropertyValue( UNO_NAME_ANCHOR_PAGE_NO ) >>= nAnchorPageNo;
+        xPropertySet->getPropertyValue( OUSTRING_FROM_PROP( UNO_NAME_ANCHOR_PAGE_NO ) ) >>= nAnchorPageNo;
         // are all shapes are on different page numbers?
         CPPUNIT_ASSERT(pages.insert(nAnchorPageNo).second);
     }

@@ -20,8 +20,10 @@ $(eval $(call gb_CppunitTest_use_libraries,sw_mailmerge, \
     sal \
     sw \
     test \
+    tl \
     unotest \
     utl \
+    $(gb_UWINAPI) \
 ))
 
 $(eval $(call gb_CppunitTest_use_externals,sw_mailmerge, \
@@ -44,8 +46,8 @@ $(eval $(call gb_CppunitTest_use_components,sw_mailmerge, \
     dbaccess/source/filter/xml/dbaxml \
     dbaccess/util/dba \
     embeddedobj/util/embobj \
+    fileaccess/source/fileacc \
     filter/source/config/cache/filterconfig1 \
-    filter/source/storagefilterdetect/storagefd \
     forms/util/frm \
     framework/util/fwk \
     i18npool/util/i18npool \
@@ -71,17 +73,15 @@ $(eval $(call gb_CppunitTest_use_components,sw_mailmerge, \
     unoxml/source/rdf/unordf \
     unoxml/source/service/unoxml \
     uui/util/uui \
-    $(if $(filter-out MACOSX WNT,$(OS)), \
-        $(if $(ENABLE_HEADLESS),, \
-            vcl/vcl.unx \
-        ) \
-    ) \
     xmloff/util/xo \
 ))
 
 $(eval $(call gb_CppunitTest_use_configuration,sw_mailmerge))
+$(eval $(call gb_CppunitTest_use_filter_configuration,sw_mailmerge))
+$(eval $(call gb_CppunitTest_use_unittest_configuration,sw_mailmerge))
+
 $(eval $(call gb_CppunitTest_use_ure,sw_mailmerge))
-$(eval $(call gb_CppunitTest_use_vcl,sw_mailmerge))
+#$(eval $(call gb_CppunitTest_use_vcl,sw_mailmerge))
 
 $(eval $(call gb_CppunitTest_set_include,sw_mailmerge,\
     -I$(SRCDIR)/sw/inc \

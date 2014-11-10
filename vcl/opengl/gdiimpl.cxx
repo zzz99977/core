@@ -909,7 +909,7 @@ SalBitmap* OpenGLSalGraphicsImpl::getBitmap( long nX, long nY, long nWidth, long
 
 SalColor OpenGLSalGraphicsImpl::getPixel( long nX, long nY )
 {
-    char pixel[3];
+    char pixel[3] = { 0, 0, 0 };
 
     PreDraw();
     glReadPixels( nX, nY, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, pixel);

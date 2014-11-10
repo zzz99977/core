@@ -324,7 +324,8 @@ Size OpenGLSalBitmap::GetSize() const
 
 GLuint OpenGLSalBitmap::CreateTexture()
 {
-    GLenum nFormat, nType;
+    GLenum nFormat = GL_RGBA;
+    GLenum nType = GL_UNSIGNED_BYTE;
     sal_uInt8* pData( NULL );
     bool bAllocated( false );
 

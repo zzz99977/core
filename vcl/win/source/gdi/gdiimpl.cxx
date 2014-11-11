@@ -2297,6 +2297,12 @@ bool WinSalGraphicsImpl::drawAlphaBitmap(
     return false;
 }
 
+bool WinSalGraphicsImpl::drawAlphaBitmap( const SalTwoRect& /*rTR*/,
+    const SalBitmap& /*rBitmap*/ )
+{
+    return false;
+}
+
 bool WinSalGraphicsImpl::drawTransformedBitmap(
     const basegfx::B2DPoint& rNull,
     const basegfx::B2DPoint& rX,

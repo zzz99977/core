@@ -81,7 +81,8 @@ private:
     Edit* mpOSVersion;
     Edit* mpPlatformVendor;
     Edit* mpDevice;
-    Edit* mpDriverVersion;
+    Edit* mpDriverVersionMin;
+    Edit* mpDriverVersionMax;
     PushButton* mpListEditButton;
     PushButton* mpListNewButton;
     PushButton* mpListDeleteButton;

@@ -101,6 +101,7 @@ protected:
 
 
 public:
+    OpenGLSalGraphicsImpl();
     virtual ~OpenGLSalGraphicsImpl ();
 
     OpenGLContext& GetOpenGLContext() { return maContext; }

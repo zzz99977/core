@@ -1143,7 +1143,7 @@ static bool lcl_InHeaderOrFooter( const SwFrmFmt& _rFmt )
     return bRetVal;
 }
 
-void AppendAllObjs( const SwFrmFmts *pTbl, const SwFrm* pSib )
+static void lcl_AppendAllObjs( const SwFrmFmts *pTbl, const SwFrm* pSib )
 {
     //Connecting of all Objects, which are described in the SpzTbl with the
     //layout.
@@ -1151,21 +1151,17 @@ void AppendAllObjs( const SwFrmFmts *pTbl, const SwFrm* pSib )
     //because we neither use character bound frames nor objects which
     //are anchored to character bounds.
 
-    // Optimization: This code used to make a copy of pTbl and erase() handled items, but using
-    // vector::erase() is a bad idea for performance (especially with large mailmerge documents
-    // it results in extensive repeated copying). Use another vector for marking whether the item
-    // has been handled and operate on the original data without altering them.
-    std::vector< bool > handled( pTbl->size(), false );
-    size_t handledCount = 0;
+    SwFrmFmts aCpy( *pTbl );
 
-    while ( handledCount < pTbl->size())
+    sal_uInt16 nOldCnt = USHRT_MAX;
+
+    while ( !aCpy.empty() && aCpy.size() != nOldCnt )
     {
-        bool changed = false;
-        for ( int i = 0; i < int(pTbl->size()); ++i )
+        nOldCnt = aCpy.size();
+        SwFrmFmts::iterator it = aCpy.begin();
+        while ( it != aCpy.end() )
         {
-            if( handled[ i ] )
-                continue;
-            SwFrmFmt *pFmt = (*pTbl)[ i ];
+            SwFrmFmt *pFmt = *it;
             const SwFmtAnchor &rAnch = pFmt->GetAnchor();
             bool bRemove = false;
             if ((rAnch.GetAnchorId() == FLY_AT_PAGE) ||
@@ -1189,14 +1185,20 @@ void AppendAllObjs( const SwFrmFmts *pTbl, const SwFrm* pSib )
             }
             if ( bRemove )
             {
-                handled[ i ] = true;
-                ++handledCount;
-                changed = true;
+                if ( (*it) != aCpy.back() ) {
+                    (*it) = aCpy.back();
+                    aCpy.pop_back();
+                }
+                else {
+                    aCpy.pop_back();
+                    it = aCpy.end();
+                }
             }
+            else
+                it++;
         }
-        if( !changed )
-            break;
     }
+    aCpy.clear();
 }
 
 /** local method to set 'working' position for newly inserted frames
@@ -1588,7 +1590,7 @@ void _InsertCnt( SwLayoutFrm *pLay, SwDoc *pDoc,
     if ( bPages ) // let the Flys connect to each other
     {
         if ( !bDontCreateObjects )
-            AppendAllObjs( pTbl, pLayout );
+            ::lcl_AppendAllObjs( pTbl, pLayout );
         bObjsDirect = true;
     }
 
@@ -1778,7 +1780,7 @@ void MakeFrms( SwDoc *pDoc, const SwNodeIndex &rSttIdx,
                 {
                     const SwFrmFmts *pTbl = pDoc->GetSpzFrmFmts();
                     if( !pTbl->empty() )
-                        AppendAllObjs( pTbl, pUpper );
+                        ::lcl_AppendAllObjs( pTbl, pUpper );
                 }
 
                 // If nothing was added (e.g. a hidden section), the split must be reversed.

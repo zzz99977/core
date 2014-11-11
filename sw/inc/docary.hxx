@@ -54,82 +54,102 @@ class SwFmtsBase
 {
 public:
     virtual size_t GetFmtCount() const = 0;
-    virtual const SwFmt* GetFmt(size_t idx) const = 0;
-    virtual SwFmt* GetFmt(size_t idx) = 0;
-    virtual ~SwFmtsBase() = 0;
+    virtual SwFmt* GetFmt(size_t idx) const = 0;
+    virtual ~SwFmtsBase() {};
 };
 
-class SwGrfFmtColls : public SwFmtsBase
+template<typename Value>
+class SwFmtsBaseModify : public std::vector<Value>, public SwFmtsBase
 {
+public:
+    typedef typename std::vector<Value>::const_iterator const_iterator;
+
 private:
-    std::vector<SwGrfFmtColl*> mvColls;
+    const bool mCleanup;
+
+protected:
+    SwFmtsBaseModify(bool cleanup = true) : mCleanup(cleanup) {}
 
 public:
-    virtual size_t GetFmtCount() const SAL_OVERRIDE { return size(); }
-    virtual const SwGrfFmtColl* GetFmt(size_t idx) const SAL_OVERRIDE { return operator[](idx); }
-    virtual SwGrfFmtColl* GetFmt(size_t idx) SAL_OVERRIDE { return operator[](idx); }
-    size_t size() const { return mvColls.size(); }
-    SwGrfFmtColl *operator[](size_t idx) const { return mvColls[idx]; }
-    void push_back(SwGrfFmtColl* pColl) { mvColls.push_back(pColl); }
-    void DeleteAndDestroy(int nStartIdx, int nEndIdx);
-    sal_uInt16 GetPos(const SwGrfFmtColl* pFmt) const;
-    /// free's any remaining child objects
-    virtual ~SwGrfFmtColls() {}
+    using std::vector<Value>::begin;
+    using std::vector<Value>::end;
+
+    // free any remaining child objects based on mCleanup
+    virtual ~SwFmtsBaseModify()
+    {
+        if (mCleanup)
+            for(const_iterator it = begin(); it != end(); ++it)
+                delete *it;
+    }
+
+    void DeleteAndDestroy(int aStartIdx, int aEndIdx)
+    {
+        if (aEndIdx < aStartIdx)
+            return;
+        for (const_iterator it = begin() + aStartIdx;
+                            it != begin() + aEndIdx; ++it)
+            delete *it;
+        erase( begin() + aStartIdx, begin() + aEndIdx);
+    }
+
+    sal_uInt16 GetPos(Value const& p) const
+    {
+        const_iterator const it = std::find(begin(), end(), p);
+        return it == end() ? USHRT_MAX : it - begin();
+    }
+    inline sal_uInt16 GetPos(const SwFmt *p) const
+        { return GetPos( static_cast<Value>( const_cast<SwFmt*>( p ) ) ); }
+
+    bool Contains(Value const& p) const
+        { return std::find(begin(), end(), p) != end(); }
+    inline bool Contains(const SwFmt *p) const
+        { return Contains( static_cast<Value>( const_cast<SwFmt*>( p ) ) ); }
+
+    virtual size_t GetFmtCount() const SAL_OVERRIDE
+        { return std::vector<Value>::size(); }
+
+    virtual Value GetFmt(size_t idx) const SAL_OVERRIDE
+        { return std::vector<Value>::operator[](idx); }
+
+    void dumpAsXml(xmlTextWriterPtr) const {};
 };
 
-/// stupid base class to work around MSVC dllexport mess
-class SAL_DLLPUBLIC_TEMPLATE SwFrmFmts_Base : public std::vector<SwFrmFmt*> {};
+class SwGrfFmtColls : public SwFmtsBaseModify<SwGrfFmtColl*>
+{
+public:
+    SwGrfFmtColls() : SwFmtsBaseModify( false ) {}
+};
 
 /// Specific frame formats (frames, DrawObjects).
-class SW_DLLPUBLIC SwFrmFmts : public SwFrmFmts_Base, public SwFmtsBase
+class SW_DLLPUBLIC SwFrmFmts : public SwFmtsBaseModify<SwFrmFmt*>
 {
 public:
-    virtual size_t GetFmtCount() const SAL_OVERRIDE { return size(); }
-    virtual const SwFrmFmt* GetFmt(size_t idx) const SAL_OVERRIDE { return operator[](idx); }
-    virtual SwFrmFmt* GetFmt(size_t idx) SAL_OVERRIDE { return operator[](idx); }
-    sal_uInt16 GetPos(const SwFrmFmt* pFmt) const;
-    bool Contains(const SwFrmFmt* pFmt) const;
     void dumpAsXml(xmlTextWriterPtr w, const char* pName) const;
-    /// free's any remaining child objects
-    virtual ~SwFrmFmts();
+
+    using SwFmtsBaseModify<SwFrmFmt*>::Contains;
+
+    inline bool Contains(const SwFrmFmt *p) const
+        { return Contains(const_cast<SwFrmFmt*>( p )); }
 };
 
-class SwCharFmts : public std::vector<SwCharFmt*>, public SwFmtsBase
+class SwCharFmts : public SwFmtsBaseModify<SwCharFmt*>
 {
 public:
-    virtual size_t GetFmtCount() const SAL_OVERRIDE { return size(); }
-    virtual const SwCharFmt* GetFmt(size_t idx) const SAL_OVERRIDE { return operator[](idx); }
-    virtual SwCharFmt* GetFmt(size_t idx) SAL_OVERRIDE { return operator[](idx); }
-    sal_uInt16 GetPos(const SwCharFmt* pFmt) const;
-    bool Contains(const SwCharFmt* pFmt) const;
     void dumpAsXml(xmlTextWriterPtr w) const;
-    /// free's any remaining child objects
-    virtual ~SwCharFmts();
 };
 
-class SwTxtFmtColls : public std::vector<SwTxtFmtColl*>, public SwFmtsBase
+class SwTxtFmtColls : public SwFmtsBaseModify<SwTxtFmtColl*>
 {
 public:
-    virtual size_t GetFmtCount() const SAL_OVERRIDE { return size(); }
-    virtual const SwTxtFmtColl* GetFmt(size_t idx) const SAL_OVERRIDE { return operator[](idx); }
-    virtual SwTxtFmtColl* GetFmt(size_t idx) SAL_OVERRIDE { return operator[](idx); }
-    sal_uInt16 GetPos(const SwTxtFmtColl* pFmt) const;
+    SwTxtFmtColls() : SwFmtsBaseModify( false ) {}
     void dumpAsXml(xmlTextWriterPtr w) const;
-    virtual ~SwTxtFmtColls() {}
 };
 
 /// Array of Undo-history.
-class SW_DLLPUBLIC SwSectionFmts : public std::vector<SwSectionFmt*>, public SwFmtsBase
+class SW_DLLPUBLIC SwSectionFmts : public SwFmtsBaseModify<SwSectionFmt*>
 {
 public:
-    virtual size_t GetFmtCount() const SAL_OVERRIDE { return size(); }
-    virtual const SwSectionFmt* GetFmt(size_t idx) const SAL_OVERRIDE { return operator[](idx); }
-    virtual SwSectionFmt* GetFmt(size_t idx) SAL_OVERRIDE { return operator[](idx); }
-    sal_uInt16 GetPos(const SwSectionFmt* pFmt) const;
-    bool Contains(const SwSectionFmt* pFmt) const;
     void dumpAsXml(xmlTextWriterPtr w) const;
-    /// free's any remaining child objects
-    virtual ~SwSectionFmts();
 };
 
 class SwFldTypes : public std::vector<SwFieldType*> {

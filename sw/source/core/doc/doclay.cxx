@@ -819,7 +819,7 @@ SwPosFlyFrms SwDoc::GetAllFlyFmts( const SwPaM* pCmpRange, bool bDrawAlso,
     SwFrmFmt *pFly;
 
     // collect all anchored somehow to paragraphs
-    for( sal_uInt16 n = 0; n < GetSpzFrmFmts()->size(); ++n )
+    for( sal_uInt32 n = 0; n < GetSpzFrmFmts()->size(); ++n )
     {
         pFly = (*GetSpzFrmFmts())[ n ];
         bool bDrawFmt = bDrawAlso && RES_DRAWFRMFMT == pFly->Which();
@@ -1758,6 +1758,7 @@ void SwDoc::SetAllUniqueFlyNames()
     OUString sGrfNm( nGrfId );
     OUString sOLENm( nOLEId );
 
+//LHM: was passiert hier? Warum kann hier kein größerer Wert zurückkommen?
     if( 255 < ( n = GetSpzFrmFmts()->size() ))
         n = 255;
     SwFrmFmtsV aArr;

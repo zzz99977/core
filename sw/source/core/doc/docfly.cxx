@@ -963,8 +963,8 @@ int SwDoc::Chainable( const SwFrmFmt &rSource, const SwFrmFmt &rDest )
         return SW_CHAIN_NOT_EMPTY;
     }
 
-    sal_uInt16 nArrLen = GetSpzFrmFmts()->size();
-    for( sal_uInt16 n = 0; n < nArrLen; ++n )
+    sal_uInt32 nArrLen = GetSpzFrmFmts()->size();
+    for( sal_uInt32 n = 0; n < nArrLen; ++n )
     {
         const SwFmtAnchor& rAnchor = (*GetSpzFrmFmts())[ n ]->GetAnchor();
         sal_uLong nTstSttNd;

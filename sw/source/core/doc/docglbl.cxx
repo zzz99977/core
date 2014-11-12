@@ -376,7 +376,7 @@ bool SwDoc::SplitDoc( sal_uInt16 eDocType, const OUString& rPath, bool bOutline,
                             CorrAbs( aSIdx, aEIdx, *aTmp.GetPoint(), true);
 
                             // If FlyFrames are still around, delete these too
-                            for( sal_uInt16 n = 0; n < GetSpzFrmFmts()->size(); ++n )
+                            for( sal_uInt32 n = 0; n < GetSpzFrmFmts()->size(); ++n )
                             {
                                 SwFrmFmt* pFly = (*GetSpzFrmFmts())[n];
                                 const SwFmtAnchor* pAnchor = &pFly->GetAnchor();

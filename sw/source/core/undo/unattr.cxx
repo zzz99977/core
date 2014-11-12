@@ -236,7 +236,7 @@ bool SwUndoFmtAttr::IsFmtInDoc( SwDoc* pDoc )
     const SwFmtsBase *fmts = NULL;
     bool bContains = false;
     sal_Int32 nPos;
-    sal_Int32 nMax = USHRT_MAX;
+    sal_Int32 nMax = UINT_MAX;
     switch ( m_nFmtWhich )
     {
         case RES_TXTFMTCOLL:

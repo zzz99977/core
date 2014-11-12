@@ -105,7 +105,7 @@ void SwEditShell::FillByEx(SwCharFmt* pCharFmt, bool bReset)
         pCharFmt->SetFmtAttr( *pCNd->GetpSwAttrSet() );
 }
 
-sal_uInt16 SwEditShell::GetTblFrmFmtCount(bool bUsed) const
+sal_uInt32 SwEditShell::GetTblFrmFmtCount(bool bUsed) const
 {
     return GetDoc()->GetTblFrmFmtCount(bUsed);
 }

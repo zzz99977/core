@@ -562,7 +562,7 @@ static void lcl_CpyBox( const SwTable& rCpyTbl, const SwTableBox* pCpyBox,
         }
 
         // If we still have FlyFrames hanging around, delete them too
-        for( sal_uInt16 n = 0; n < pDoc->GetSpzFrmFmts()->size(); ++n )
+        for( sal_uInt32 n = 0; n < pDoc->GetSpzFrmFmts()->size(); ++n )
         {
             SwFrmFmt *const pFly = (*pDoc->GetSpzFrmFmts())[n];
             SwFmtAnchor const*const pAnchor = &pFly->GetAnchor();

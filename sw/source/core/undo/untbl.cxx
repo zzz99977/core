@@ -131,7 +131,7 @@ public:
                 bool bSaveFml = true );
     ~_SaveTable();
 
-    sal_uInt16 AddFmt( SwFrmFmt* pFmt, bool bIsLine );
+    sal_uInt32 AddFmt( SwFrmFmt* pFmt, bool bIsLine );
     void NewFrmFmt( const SwTableLine* , const SwTableBox*, sal_uInt16 nFmtPos,
                     SwFrmFmt* pOldFmt );
 
@@ -168,7 +168,7 @@ class _SaveBox
     _SaveBox* pNext;
     sal_uLong nSttNode;
     long nRowSpan;
-    sal_uInt16 nItemSet;
+    sal_uInt32 nItemSet;
     union
     {
         SfxItemSets* pCntntAttrs;
@@ -889,10 +889,10 @@ _SaveTable::~_SaveTable()
     delete pLine;
 }
 
-sal_uInt16 _SaveTable::AddFmt( SwFrmFmt* pFmt, bool bIsLine )
+sal_uInt32 _SaveTable::AddFmt( SwFrmFmt* pFmt, bool bIsLine )
 {
-    sal_uInt16 nRet = aFrmFmts.GetPos( pFmt );
-    if( USHRT_MAX == nRet )
+    sal_uInt32 nRet = aFrmFmts.GetPos( pFmt );
+    if( UINT_MAX == nRet )
     {
         // Create copy of ItemSet
         boost::shared_ptr<SfxItemSet> pSet( new SfxItemSet( *pFmt->GetAttrSet().GetPool(),

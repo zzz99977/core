@@ -224,7 +224,7 @@ sal_uLong SwReader::Read( const Reader& rOptions )
             {
                 SwFrmFmt* pFrmFmt = *it;
                 const SwFmtAnchor& rAnchor = pFrmFmt->GetAnchor();
-                if( USHRT_MAX == aFlyFrmArr.GetPos( pFrmFmt) )
+                if( UINT_MAX == aFlyFrmArr.GetPos( pFrmFmt) )
                 {
                     SwPosition const*const pFrameAnchor(
                             rAnchor.GetCntntAnchor());

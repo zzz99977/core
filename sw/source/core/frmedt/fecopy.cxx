@@ -102,7 +102,7 @@ bool SwFEShell::Copy( SwDoc* pClpDoc, const OUString* pNewClpTxt )
     }
 
     // also delete surrounding FlyFrames if any
-    for( sal_uInt16 n = 0; n < pClpDoc->GetSpzFrmFmts()->size(); ++n )
+    for( sal_uInt32 n = 0; n < pClpDoc->GetSpzFrmFmts()->size(); ++n )
     {
         SwFlyFrmFmt* pFly = (SwFlyFrmFmt*)(*pClpDoc->GetSpzFrmFmts())[n];
         pClpDoc->getIDocumentLayoutAccess().DelLayoutFmt( pFly );
@@ -151,16 +151,8 @@ bool SwFEShell::Copy( SwDoc* pClpDoc, const OUString* pNewClpTxt )
         SwFrmFmts& rSpzFrmFmts = *(SwFrmFmts*)pClpDoc->GetSpzFrmFmts();
         if( rSpzFrmFmts[ 0 ] != pFlyFmt )
         {
-<<<<<<< HEAD
             bool inserted = rSpzFrmFmts.newDefault( pFlyFmt );
             OSL_ENSURE( !inserted, "Fly not contained in Spz-Array" );
-=======
-            sal_Int32 pos = rSpzFrmFmts.GetPos( pFlyFmt );
-            OSL_ENSURE( pos != rSpzFrmFmts.GetFmtCountMax(), "Fly not contained in Spz-Array" );
-
-            rSpzFrmFmts.erase( rSpzFrmFmts.begin() + pos );
-            rSpzFrmFmts.insert( rSpzFrmFmts.begin(), pFlyFmt );
->>>>>>> a778fd4... SwFrmFmts sal_uInt6 => salInt23 or iterator
         }
 
         if ( FLY_AS_CHAR == aAnchor.GetAnchorId() )
@@ -890,7 +882,7 @@ bool SwFEShell::Paste( SwDoc* pClpDoc, bool bIncludingPageFrames )
                 MakeDrawView();
 
             std::set<const SwFrmFmt*> aTextBoxes = SwTextBoxHelper::findTextBoxes(pClpDoc);
-            for ( sal_uInt16 i = 0; i < pClpDoc->GetSpzFrmFmts()->size(); ++i )
+            for ( sal_Int32 i = 0; i < pClpDoc->GetSpzFrmFmts()->size(); ++i )
             {
                 bool bInsWithFmt = true;
                 const SwFrmFmt& rCpyFmt = *(*pClpDoc->GetSpzFrmFmts())[i];
@@ -1086,7 +1078,7 @@ bool SwFEShell::Paste( SwDoc* pClpDoc, bool bIncludingPageFrames )
                 if( !Imp()->GetDrawView() )
                     MakeDrawView();
 
-                for ( sal_uInt16 i = 0; i < pClpDoc->GetSpzFrmFmts()->size(); ++i )
+                for ( sal_uInt32 i = 0; i < pClpDoc->GetSpzFrmFmts()->size(); ++i )
                 {
                     const SwFrmFmt& rCpyFmt = *(*pClpDoc->GetSpzFrmFmts())[i];
                     SwFmtAnchor aAnchor( rCpyFmt.GetAnchor() );
@@ -1187,7 +1179,7 @@ bool SwFEShell::PastePages( SwFEShell& rToFill, sal_uInt16 nStartPage, sal_uInt1
         if( !rToFill.Imp()->GetDrawView() )
             rToFill.MakeDrawView();
 
-        for ( sal_uInt16 i = 0; i < GetDoc()->GetSpzFrmFmts()->size(); ++i )
+        for ( sal_uInt32 i = 0; i < GetDoc()->GetSpzFrmFmts()->size(); ++i )
         {
             const SwFrmFmt& rCpyFmt = *(*GetDoc()->GetSpzFrmFmts())[i];
             SwFmtAnchor aAnchor( rCpyFmt.GetAnchor() );

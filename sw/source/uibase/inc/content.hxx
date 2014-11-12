@@ -155,7 +155,7 @@ class SwContentType : public SwTypeNumber
     OUString            sContentTypeName;   // name of content type
     OUString            sSingleContentTypeName; // name of content type, singular
     OUString            sTypeToken;         // attachment for URL
-    sal_uInt16          nMemberCount;       // content count
+    sal_Int32           nMemberCount;       // content count
     sal_uInt16          nContentType;       // content type's Id
     sal_uInt8           nOutlineLevel;
     bool                bDataValid :    1;
@@ -169,7 +169,7 @@ public:
 
         void                Init(bool* pbInvalidateWindow = 0);
         void                FillMemberList(bool* pbLevelChanged = NULL);
-        sal_uInt16          GetMemberCount() const
+        sal_Int32           GetMemberCount() const
                                 {return nMemberCount;};
         sal_uInt16          GetType() const {return nContentType;}
         const SwContent*    GetMember(sal_uInt16 nIndex);

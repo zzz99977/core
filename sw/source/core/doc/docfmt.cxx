@@ -760,13 +760,13 @@ SwDrawFrmFmt *SwDoc::MakeDrawFrmFmt( const OUString &rFmtName,
     return pFmt;
 }
 
-sal_uInt16 SwDoc::GetTblFrmFmtCount(bool bUsed) const
+sal_uInt32 SwDoc::GetTblFrmFmtCount(bool bUsed) const
 {
-    sal_uInt16 nCount = mpTblFrmFmtTbl->size();
+    sal_uInt32 nCount = mpTblFrmFmtTbl->size();
     if(bUsed)
     {
         SwAutoFmtGetDocNode aGetHt( &GetNodes() );
-        for ( sal_uInt16 i = nCount; i; )
+        for ( sal_uInt32 i = nCount; i; )
         {
             if((*mpTblFrmFmtTbl)[--i]->GetInfo( aGetHt ))
                 --nCount;

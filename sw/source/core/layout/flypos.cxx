@@ -37,7 +37,7 @@ bool SwPosFlyFrmCmp::operator()(const SwPosFlyFrmPtr& rA, const SwPosFlyFrmPtr& 
 }
 
 SwPosFlyFrm::SwPosFlyFrm( const SwNodeIndex& rIdx, const SwFrmFmt* pFmt,
-                            sal_uInt16 nArrPos )
+                            sal_uInt32 nArrPos )
     : pFrmFmt( pFmt ), pNdIdx( (SwNodeIndex*) &rIdx )
 {
     bool bFnd = false;

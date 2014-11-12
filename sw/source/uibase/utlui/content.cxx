@@ -522,7 +522,7 @@ void    SwContentType::FillMemberList(bool* pbLevelOrVisibilityChanged)
                        "MemberCount differs");
             Point aNullPt;
             nMemberCount =  pWrtShell->GetTblFrmFmtCount(true);
-            for(sal_uInt16 i = 0; i < nMemberCount; i++)
+            for(sal_Int32 i = 0; i < nMemberCount; i++)
             {
                 const SwFrmFmt& rTblFmt = pWrtShell->GetTblFrmFmt(i, true);
                 const OUString sTblName( rTblFmt.GetName() );

@@ -635,7 +635,7 @@ void SwDoc::ClearDoc()
     }
 
     // if there are still FlyFrames dangling around, delete them too
-    sal_uInt16 n;
+    sal_uInt32 n;
     while ( 0 != (n = GetSpzFrmFmts()->size()) )
         getIDocumentLayoutAccess().DelLayoutFmt((*mpSpzFrmFmtTbl)[n-1]);
     OSL_ENSURE( !GetDocumentDrawModelManager().GetDrawModel() || !GetDocumentDrawModelManager().GetDrawModel()->GetPage(0)->GetObjCount(),
@@ -1102,7 +1102,7 @@ else
 
         // finally copy page bound frames
         const SwFrmFmts *pSpzFrmFmts = rSource.GetSpzFrmFmts();
-        for ( sal_uInt16 i = 0; i < pSpzFrmFmts->size(); ++i )
+        for ( sal_Int32 i = 0; i < pSpzFrmFmts->size(); ++i )
         {
             const SwFrmFmt& rCpyFmt = *(*pSpzFrmFmts)[i];
             SwFmtAnchor aAnchor( rCpyFmt.GetAnchor() );

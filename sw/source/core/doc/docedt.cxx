@@ -86,7 +86,7 @@ void _RestFlyInRange( _SaveFlyArr & rArr, const SwNodeIndex& rSttIdx,
 void _SaveFlyInRange( const SwNodeRange& rRg, _SaveFlyArr& rArr )
 {
     SwFrmFmts& rFmts = *rRg.aStart.GetNode().GetDoc()->GetSpzFrmFmts();
-    for ( SwFrmFmts::iterator it = rFmts.begin(); it != rFmts.end(); it++ )
+    for ( SwFrmFmts::const_iterator it = rFmts.begin(); it != rFmts.end(); it++ )
     {
         SwFrmFmt *const pFmt = *it;
         SwFmtAnchor const*const pAnchor = &pFmt->GetAnchor();
@@ -123,7 +123,7 @@ void _SaveFlyInRange( const SwPaM& rPam, const SwNodeIndex& rInsPos,
 
     const SwNodeIndex* pCntntIdx;
 
-    for ( SwFrmFmts::iterator it = rFmts.begin(); it != rFmts.end(); it++ )
+    for ( SwFrmFmts::const_iterator it = rFmts.begin(); it != rFmts.end(); it++ )
     {
         bool bInsPos = false;
         SwFrmFmt* pFmt = *it;

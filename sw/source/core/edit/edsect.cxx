@@ -109,7 +109,7 @@ const SwSection* SwEditShell::GetAnySection( bool bOutOfTab, const Point* pPt ) 
     return NULL;
 }
 
-sal_uInt32 SwEditShell::GetSectionFmtCount() const
+sal_Int32 SwEditShell::GetSectionFmtCount() const
 {
     return GetDoc()->GetSections().size();
 }
@@ -139,18 +139,18 @@ bool SwEditShell::IsAnySectionInDoc( bool bChkReadOnly, bool bChkHidden, bool bC
     return n != nCnt;
 }
 
-sal_uInt32 SwEditShell::GetSectionFmtPos( const SwSectionFmt& rFmt ) const
+sal_Int32 SwEditShell::GetSectionFmtPos( const SwSectionFmt& rFmt ) const
 {
     SwSectionFmt* pFmt = (SwSectionFmt*)&rFmt;
     return GetDoc()->GetSections().GetPos( pFmt );
 }
 
-const SwSectionFmt& SwEditShell::GetSectionFmt( sal_uInt32 nFmt ) const
+const SwSectionFmt& SwEditShell::GetSectionFmt( sal_Int32 nFmt ) const
 {
     return *GetDoc()->GetSections()[ nFmt ];
 }
 
-void SwEditShell::DelSectionFmt( sal_uInt32 nFmt )
+void SwEditShell::DelSectionFmt( sal_Int32 nFmt )
 {
     StartAllAction();
     GetDoc()->DelSectionFmt( GetDoc()->GetSections()[ nFmt ] );

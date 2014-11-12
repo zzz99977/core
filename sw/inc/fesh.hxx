@@ -375,9 +375,9 @@ public:
     bool GotoPrevFly( sal_uInt16 /*GOTOOBJ_...*/ eType = GOTOOBJ_FLY_ANY)
                                 { return GotoObj( false, eType); }
 
-   /// Iterate over flys  - for Basic-collections.
-    sal_Int32 GetFlyCount( FlyCntType eType = FLYCNTTYPE_ALL ) const;
-    const SwFrmFmt* GetFlyNum(sal_Int32 nIdx, FlyCntType eType = FLYCNTTYPE_ALL) const;
+    /// Iterate over flys  - for Basic-collections.
+    sal_Int32 GetFlyCount( FlyCntType eType = FLYCNTTYPE_ALL, bool bIgnoreTextBoxes = false ) const;
+    const SwFrmFmt* GetFlyNum(sal_Int32 nIdx, FlyCntType eType = FLYCNTTYPE_ALL, bool bIgnoreTextBoxes = false) const;
 
     /// If a fly is selected, it draws cursor into the first CntntFrm.
     const SwFrmFmt* SelFlyGrabCrsr();

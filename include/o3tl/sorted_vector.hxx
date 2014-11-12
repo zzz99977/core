@@ -53,6 +53,7 @@ private:
 
 public:
     typedef typename std::vector<Value>::const_iterator const_iterator;
+    typedef typename std::vector<Value>::const_reverse_iterator const_reverse_iterator;
     typedef typename std::vector<Value>::size_type size_type;
     typedef typename std::vector<Value>::value_type value_type;
     typedef typename std::pair<const_iterator, bool> find_insert_type;
@@ -141,6 +142,18 @@ public:
     const_iterator end() const
     {
         return base_t::end();
+    }
+
+    // Only return a const iterator, so that the vector cannot be directly updated.
+    const_reverse_iterator rbegin() const
+    {
+        return base_t::rbegin();
+    }
+
+    // Only return a const iterator, so that the vector cannot be directly updated.
+    const_reverse_iterator rend() const
+    {
+        return base_t::rend();
     }
 
     const Value& front() const

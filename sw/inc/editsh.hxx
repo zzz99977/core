@@ -826,10 +826,10 @@ public:
      and not an inner one. */
     const SwSection* GetAnySection( bool bOutOfTab = false, const Point* pPt = 0 ) const;
 
-    sal_uInt16 GetSectionFmtCount() const;
-    sal_uInt16 GetSectionFmtPos( const SwSectionFmt& ) const;
-    const SwSectionFmt& GetSectionFmt(sal_uInt16 nFmt) const;
-    void DelSectionFmt( sal_uInt32 nFmt );
+    sal_Int32 GetSectionFmtCount() const;
+    sal_Int32 GetSectionFmtPos( const SwSectionFmt& ) const;
+    const SwSectionFmt& GetSectionFmt(sal_Int32 nFmt) const;
+    void DelSectionFmt( sal_Int32 nFmt );
     void UpdateSection(sal_uInt32 const nSect, SwSectionData &,
             SfxItemSet const*const  = 0);
     bool IsAnySectionInDoc( bool bChkReadOnly = false,

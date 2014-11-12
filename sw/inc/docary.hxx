@@ -56,7 +56,6 @@ public:
     virtual size_t GetFmtCount() const = 0;
     virtual size_t GetFmtCountMax() const = 0;
     virtual SwFmt* GetFmt(size_t) const = 0;
-    virtual size_t GetPos(SwFmt* const& p) const = 0;
     virtual bool Contains(SwFmt* const& p) const = 0;
     virtual ~SwFmtsBase() {}
 };
@@ -110,7 +109,7 @@ public:
 
     bool Contains(Value const& p) const
         { return std::find(begin(), end(), p) != end(); }
-    inline bool Contains(const SwFmt *p) const
+    virtual bool Contains(SwFmt* const& p) const
         { return Contains( static_cast<Value>( const_cast<SwFmt*>( p ) ) ); }
 
     virtual size_t GetFmtCount() const SAL_OVERRIDE
@@ -163,6 +162,7 @@ class SW_DLLPUBLIC SwFrmFmts : public SwFrmFmtsBase, public SwFmtsBase
 {
 public:
     typedef typename SwFrmFmtsBase::const_iterator const_iterator;
+    typedef typename SwFrmFmtsBase::const_reverse_iterator const_reverse_iterator;
     typedef typename SwFrmFmtsBase::size_type size_type;
     typedef typename SwFrmFmtsBase::value_type value_type;
     typedef typename SwFrmFmtsBase::find_insert_type find_insert_type;
@@ -188,11 +188,15 @@ public:
                    bool& root, sal_Int32 length=-1 ) const;
 
     bool Contains( const value_type& x ) const;
-    inline bool Contains(const SwFmt *p) const
+    virtual bool Contains(SwFmt* const& p) const
+        { return Contains( static_cast<SwFrmFmt*>( const_cast<SwFmt*>( p ) ) ); }
+    bool Contains(const SwFmt* p) const
         { return Contains( static_cast<SwFrmFmt*>( const_cast<SwFmt*>( p ) ) ); }
 
     virtual size_t GetFmtCount() const SAL_OVERRIDE
         { return SwFrmFmtsBase::size(); }
+    virtual size_t GetFmtCountMax() const SAL_OVERRIDE
+        { return INT_MAX; }
     virtual SwFrmFmt* GetFmt(size_t idx) const SAL_OVERRIDE
         { return SwFrmFmtsBase::operator[](idx); }
 
@@ -205,9 +209,8 @@ public:
 class SwFrmFmtsV : public SwFmtsBaseModify<SwFrmFmt*>
 {
 public:
-    SwFrmFmts() : SwFmtsBaseModify( true, false ) {}
-    virtual ~SwFrmFmts() {}
-    void dumpAsXml(xmlTextWriterPtr w, const char* pName);
+    SwFrmFmtsV() : SwFmtsBaseModify( false, true ) {}
+    virtual ~SwFrmFmtsV() {}
 };
 
 class SwCharFmts : public SwFmtsBaseModify<SwCharFmt*>

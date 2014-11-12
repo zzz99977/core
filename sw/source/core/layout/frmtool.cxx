@@ -1006,7 +1006,7 @@ void AppendObjs( const SwFrmFmts *pTbl, sal_uLong nIndex,
     std::list<SwFrmFmt*> checkFmts;
     for ( SwFrmFmts::const_iterator it = pTbl->begin(); it != pTbl->end(); it++ )
     {
-        SwFrmFmt *pFmt = (*pTbl)[i];
+        SwFrmFmt *pFmt = *it;
         const SwFmtAnchor &rAnch = pFmt->GetAnchor();
         if ( rAnch.GetCntntAnchor() &&
              (rAnch.GetCntntAnchor()->nNode.GetIndex() == nIndex) )

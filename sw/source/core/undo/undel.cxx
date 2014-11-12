@@ -718,7 +718,6 @@ static void lcl_ReAnchorAtCntntFlyFrames( const SwFrmFmts& rSpzArr, SwPosition &
     if( !rSpzArr.empty() )
     {
         SwFlyFrmFmt* pFmt;
-        const SwFmtAnchor* pAnchor;
         const SwPosition* pAPos;
         for ( SwFrmFmts::const_iterator it = rSpzArr.begin(); it != rSpzArr.end(); it++ )
         {

@@ -1032,7 +1032,7 @@ void WinSalGraphics::BeginPaint()
     return mpImpl->beginPaint();
 }
 
-void WinSalGraphics::BeginPaint()
+void WinSalGraphics::EndPaint()
 {
     return mpImpl->endPaint();
 }

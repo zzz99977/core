@@ -102,6 +102,8 @@ public:
     void SetEmpty();
     void SetNull();
 
+    bool IsRectangle() const;
+
     Rectangle GetBoundRect() const;
     bool HasPolyPolygonOrB2DPolyPolygon() const { return (getB2DPolyPolygon() || getPolyPolygon()); }
     void GetRegionRectangles(RectangleVector& rTarget) const;

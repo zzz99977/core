@@ -615,7 +615,7 @@ WinSalGraphics::~WinSalGraphics()
     // delete cache data
     delete [] mpStdClipRgnData;
 
-    delete mpFontKernPairs;
+    delete [] mpFontKernPairs;
 }
 
 bool WinSalGraphics::isPrinter() const

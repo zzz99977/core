@@ -581,7 +581,6 @@ WinSalGraphics::WinSalGraphics(WinSalGraphics::Type eType, bool bScreen, HWND hW
     mhDefFont(0),
     mhDefPal(0),
     mpStdClipRgnData(NULL),
-    mpLogFont(NULL),
     mpFontCharSets(NULL),
     mpFontAttrCache(NULL),
     mnFontCharSetCount(0),
@@ -617,8 +616,6 @@ WinSalGraphics::~WinSalGraphics()
 
     // delete cache data
     delete [] mpStdClipRgnData;
-
-    delete mpLogFont;
 
     delete mpFontCharSets;
 

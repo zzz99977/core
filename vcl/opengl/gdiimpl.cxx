@@ -1386,6 +1386,7 @@ bool OpenGLSalGraphicsImpl::drawGradient(const tools::PolyPolygon& rPolyPoly,
         glDisable( GL_STENCIL_TEST );
     PostDraw();
 
+    CHECK_GL_ERROR();
     return true;
 }
 
@@ -1404,6 +1405,8 @@ void OpenGLSalGraphicsImpl::endPaint()
         maContext.makeCurrent();
         glFlush();
     }
+
+    CHECK_GL_ERROR();
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

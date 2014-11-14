@@ -112,6 +112,7 @@ bool X11OpenGLSalGraphicsImpl::FillPixmapFromScreen( X11Pixmap* pPixmap, int nX,
     XFreeGC( pDisplay, aGC );
     XDestroyImage( pImage );
 
+    CHECK_GL_ERROR();
     return true;
 }
 
@@ -159,6 +160,7 @@ bool X11OpenGLSalGraphicsImpl::RenderPixmapToScreen( X11Pixmap* pPixmap, int nX,
 
     PostDraw();
 
+    CHECK_GL_ERROR();
     return true;
 }
 

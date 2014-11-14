@@ -15,6 +15,7 @@
 #include "unx/salgdi.h"
 #include "unx/salvd.h"
 
+#include "opengl/texture.hxx"
 #include "opengl/x11/gdiimpl.hxx"
 
 #include <vcl/opengl/OpenGLContext.hxx>
@@ -124,7 +125,6 @@ bool X11OpenGLSalGraphicsImpl::RenderPixmapToScreen( X11Pixmap* pPixmap, int nX,
     Display* pDisplay = mrParent.GetXDisplay();
     GLXFBConfig pFbConfig;
     GLXPixmap pGlxPixmap;
-    GLuint nTexture;
     SalTwoRect aPosAry;
     bool bInverted;
 
@@ -144,21 +144,18 @@ bool X11OpenGLSalGraphicsImpl::RenderPixmapToScreen( X11Pixmap* pPixmap, int nX,
 
     PreDraw();
 
-    glGenTextures( 1, &nTexture );
+    OpenGLTexture aTexture( pPixmap->GetWidth(), pPixmap->GetHeight(), false );
     glActiveTexture( GL_TEXTURE0 );
-    glBindTexture( GL_TEXTURE_2D, nTexture );
+    aTexture.Bind();
 
     //TODO: lfrb: glXGetProc to get the functions
     glXBindTexImageEXT( pDisplay, pGlxPixmap, GLX_FRONT_LEFT_EXT, NULL );
 
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-
-    DrawTexture( nTexture, pPixmap->GetSize(), aPosAry, !bInverted );
+    DrawTexture( aTexture, aPosAry, !bInverted );
 
     glXReleaseTexImageEXT( pDisplay, pGlxPixmap, GLX_FRONT_LEFT_EXT );
-    glDeleteTextures( 1, &nTexture );
     glXDestroyPixmap( pDisplay, pGlxPixmap );
+    aTexture.Unbind();
 
     PostDraw();
 

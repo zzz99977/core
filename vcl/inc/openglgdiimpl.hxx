@@ -46,7 +46,7 @@ protected:
 
     bool mbOffscreen;
     GLuint mnFramebufferId;
-    OpenGLTextureSharedPtr mpOffscreenTex;
+    OpenGLTexture maOffscreenTex;
 
     SalColor mnLineColor;
     SalColor mnFillColor;
@@ -99,10 +99,10 @@ protected:
     void DrawRect( const Rectangle& rRect );
     void DrawPolygon( sal_uInt32 nPoints, const SalPoint* pPtAry );
     void DrawPolyPolygon( const basegfx::B2DPolyPolygon& rPolyPolygon );
-    void DrawTextureRect( const Size& rSize, const SalTwoRect& rPosAry, bool bInverted = false );
-    void DrawTexture( GLuint nTexture, const Size& rSize, const SalTwoRect& rPosAry, bool bInverted = false );
-    void DrawTextureWithMask( GLuint nTexture, GLuint nMask, const Size& rSize, const SalTwoRect& rPosAry );
-    void DrawMask( GLuint nMask, SalColor nMaskColor, const SalTwoRect& rPosAry );
+    void DrawTextureRect( OpenGLTexture& rTexture, const SalTwoRect& rPosAry, bool bInverted = false );
+    void DrawTexture( OpenGLTexture& rTexture, const SalTwoRect& rPosAry, bool bInverted = false );
+    void DrawTextureWithMask( OpenGLTexture& rTexture, OpenGLTexture& rMask, const SalTwoRect& rPosAry );
+    void DrawMask( OpenGLTexture& rTexture, SalColor nMaskColor, const SalTwoRect& rPosAry );
     void DrawLinearGradient( const Gradient& rGradient, const Rectangle& rRect );
     void DrawRadialGradient( const Gradient& rGradient, const Rectangle& rRect );
 

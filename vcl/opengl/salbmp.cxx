@@ -37,7 +37,6 @@ static bool isValidBitCount( sal_uInt16 nBitCount )
 
 OpenGLSalBitmap::OpenGLSalBitmap()
 : mpContext(NULL)
-, mpTexture()
 , mbDirtyTexture(true)
 , mnBits(0)
 , mnBytesPerRow(0)
@@ -56,7 +55,7 @@ OpenGLSalBitmap::~OpenGLSalBitmap()
     SAL_INFO( "vcl.opengl", "~OpenGLSalBitmap" );
 }
 
-bool OpenGLSalBitmap::Create( OpenGLContext& rContext, OpenGLTextureSharedPtr pTex, long nX, long nY, long nWidth, long nHeight )
+bool OpenGLSalBitmap::Create( OpenGLContext& rContext, const OpenGLTexture& rTex, long nX, long nY, long nWidth, long nHeight )
 {
     static const BitmapPalette aEmptyPalette;
 
@@ -73,13 +72,12 @@ bool OpenGLSalBitmap::Create( OpenGLContext& rContext, OpenGLTextureSharedPtr pT
     mnBits = 32;
     maPalette = aEmptyPalette;
 
-    // TODO: lfrb: Crop texture if size doesn't match the texture one
-    if( pTex )
-        mpTexture = pTex;
+    if( rTex )
+        maTexture = OpenGLTexture( rTex, nX, nY, nWidth, nHeight );
     else
-        mpTexture.reset( new OpenGLTexture( nX, nY, nWidth, nHeight ) );
+        maTexture = OpenGLTexture( nX, nY, nWidth, nHeight );
     mbDirtyTexture = false;
-    SAL_INFO( "vcl.opengl", "Created texture " << mpTexture->Id() );
+    SAL_INFO( "vcl.opengl", "Created texture " << maTexture.Id() );
 
     return true;
 }
@@ -128,7 +126,7 @@ bool OpenGLSalBitmap::Create( const SalBitmap& rSalBmp, sal_uInt16 nNewBitCount 
         mnBufHeight = rSourceBitmap.mnBufHeight;
         maPalette = rSourceBitmap.maPalette;
         mpContext = rSourceBitmap.mpContext;
-        mpTexture = rSourceBitmap.mpTexture;
+        maTexture = rSourceBitmap.maTexture;
         mbDirtyTexture = false;
         maUserBuffer = rSourceBitmap.maUserBuffer;
 
@@ -144,36 +142,22 @@ bool OpenGLSalBitmap::Create( const ::com::sun::star::uno::Reference< ::com::sun
     return false;
 }
 
-bool OpenGLSalBitmap::Draw( OpenGLContext& rContext, const SalTwoRect& /*rPosAry*/ )
+OpenGLTexture& OpenGLSalBitmap::GetTexture( OpenGLContext& rContext ) const
 {
+    OpenGLSalBitmap* pThis = const_cast<OpenGLSalBitmap*>(this);
     if( !mpContext )
-        mpContext = &rContext;
-
-    if( !mpTexture || mbDirtyTexture )
-    {
-        if( !CreateTexture() )
-            return false;
-    }
-
-    //DrawTexture( mnTexture, rPosAry );
-    return true;
-}
-
-GLuint OpenGLSalBitmap::GetTexture( OpenGLContext& rContext ) const
-{
-    if( !mpContext )
-        const_cast<OpenGLSalBitmap*>(this)->mpContext = &rContext;
-    if( !mpTexture || mbDirtyTexture )
-        const_cast<OpenGLSalBitmap*>(this)->CreateTexture();
-    SAL_INFO( "vcl.opengl", "Got texture " << mpTexture->Id() );
-    return mpTexture->Id();
+        pThis->mpContext = &rContext;
+    if( !maTexture || mbDirtyTexture )
+        pThis->CreateTexture();
+    SAL_INFO( "vcl.opengl", "Got texture " << maTexture.Id() );
+    return pThis->maTexture;
 }
 
 void OpenGLSalBitmap::Destroy()
 {
     SAL_INFO( "vcl.opengl", "Destroy OpenGLSalBitmap" );
     maPendingOps.clear();
-    mpTexture.reset();
+    maTexture = OpenGLTexture();
     maUserBuffer.reset();
 }
 
@@ -402,8 +386,8 @@ GLuint OpenGLSalBitmap::CreateTexture()
     }
 
     mpContext->makeCurrent();
-    mpTexture.reset( new OpenGLTexture (mnBufWidth, mnBufHeight, nFormat, nType, pData ) );
-    SAL_INFO( "vcl.opengl", "Created texture " << mpTexture->Id() );
+    maTexture = OpenGLTexture (mnBufWidth, mnBufHeight, nFormat, nType, pData );
+    SAL_INFO( "vcl.opengl", "Created texture " << maTexture.Id() );
 
     if( bAllocated )
         delete[] pData;
@@ -418,12 +402,11 @@ GLuint OpenGLSalBitmap::CreateTexture()
     mbDirtyTexture = false;
 
     CHECK_GL_ERROR();
-    return mpTexture->Id();
+    return maTexture.Id();
 }
 
 bool OpenGLSalBitmap::ReadTexture()
 {
-    GLuint nFramebufferId;
     sal_uInt8* pData = maUserBuffer.get();
     GLenum nFormat, nType;
 
@@ -450,18 +433,16 @@ bool OpenGLSalBitmap::ReadTexture()
                     break;
         }
     }
+    else
+    {
+        return false;
+    }
 
     mpContext->makeCurrent();
-    glGenFramebuffers( 1, &nFramebufferId );
-    glBindFramebuffer( GL_FRAMEBUFFER, nFramebufferId );
+    maTexture.Read( nFormat, nType, pData );
+    mnBufWidth = mnWidth;
+    mnBufHeight = mnHeight;
 
-    glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mpTexture->Id(), 0 );
-    glReadPixels( 0, 0, mnWidth, mnHeight, nFormat, nType, pData );
-
-    glBindFramebuffer( GL_FRAMEBUFFER, 0 );
-    glDeleteFramebuffers( 1, &nFramebufferId );
-
-    CHECK_GL_ERROR();
     return true;
 }
 
@@ -476,7 +457,7 @@ BitmapBuffer* OpenGLSalBitmap::AcquireBuffer( bool /*bReadOnly*/ )
     {
         if( !AllocateUserData() )
             return NULL;
-        if( mpTexture && !ReadTexture() )
+        if( maTexture && !ReadTexture() )
             return NULL;
     }
 
@@ -524,6 +505,7 @@ void OpenGLSalBitmap::ReleaseBuffer( BitmapBuffer* pBuffer, bool bReadOnly )
 {
     if( !bReadOnly )
     {
+        maTexture = OpenGLTexture();
         mbDirtyTexture = true;
     }
     delete pBuffer;
@@ -531,6 +513,7 @@ void OpenGLSalBitmap::ReleaseBuffer( BitmapBuffer* pBuffer, bool bReadOnly )
 
 bool OpenGLSalBitmap::GetSystemData( BitmapSystemData& /*rData*/ )
 {
+    SAL_WARN( "vcl.opengl", "*** NOT IMPLEMENTED *** GetSystemData" );
 #if 0
     // TODO Implement for ANDROID/OSX/IOS/WIN32
     X11SalBitmap rBitmap;

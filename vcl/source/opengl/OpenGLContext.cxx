@@ -754,39 +754,31 @@ bool OpenGLContext::init(HDC hDC, HWND hWnd)
 bool OpenGLContext::ImplInit()
 {
     SAL_INFO("vcl.opengl", "OpenGLContext::ImplInit----start");
+
     // PixelFormat tells Windows how we want things to be
-    PIXELFORMATDESCRIPTOR PixelFormatFront =
-    {
-        sizeof(PIXELFORMATDESCRIPTOR),
-        1,                              // Version Number
-        PFD_SUPPORT_OPENGL,
-        PFD_TYPE_RGBA,                  // Request An RGBA Format
-        (BYTE)32,                       // Select Our Color Depth
-        0, 0, 0, 0, 0, 0,               // Color Bits Ignored
-        0,                              // No Alpha Buffer
-        0,                              // Shift Bit Ignored
-        0,                              // No Accumulation Buffer
-        0, 0, 0, 0,                     // Accumulation Bits Ignored
-        64,                             // 32 bit Z-BUFFER
-        0,                              // 0 bit stencil buffer
-        0,                              // No Auxiliary Buffer
-        0,                              // now ignored
-        0,                              // Reserved
-        0, 0, 0                         // Layer Masks Ignored
-    };
+    PIXELFORMATDESCRIPTOR pfd;
+    ZeroMemory(&pfd, sizeof(pfd));
+
+    pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+    pfd.nVersion = 1;
+    pfd.dwFlags = PFD_SUPPORT_OPENGL;
+    pfd.iPixelType = PFD_TYPE_RGBA;
+    pfd.cColorBits = 24;
+    pfd.cDepthBits = 32;
+    pfd.iLayerType = PFD_MAIN_PLANE;
 
     // interestingly we need this flag being set even if we use single buffer
     // rendering - otherwise we get errors with virtual devices
-    PixelFormatFront.dwFlags |= PFD_DOUBLEBUFFER;
+    pfd.dwFlags |= PFD_DOUBLEBUFFER;
 
     if (mbRequestVirtualDevice)
-        PixelFormatFront.dwFlags |= PFD_DRAW_TO_BITMAP;
+        pfd.dwFlags |= PFD_DRAW_TO_BITMAP | PFD_SUPPORT_GDI;
     else
-        PixelFormatFront.dwFlags |= PFD_DRAW_TO_WINDOW;
+        pfd.dwFlags |= PFD_DRAW_TO_WINDOW;
 
     //  we must check whether can set the MSAA
     int WindowPix = 0;
-    bool bMultiSampleSupport = InitMultisample(PixelFormatFront, WindowPix,
+    bool bMultiSampleSupport = InitMultisample(pfd, WindowPix,
             mbUseDoubleBufferedRendering, mbRequestVirtualDevice);
     if (bMultiSampleSupport && WindowPix != 0)
     {
@@ -794,7 +786,7 @@ bool OpenGLContext::ImplInit()
     }
     else
     {
-        WindowPix = ChoosePixelFormat(m_aGLWin.hDC, &PixelFormatFront);
+        WindowPix = ChoosePixelFormat(m_aGLWin.hDC, &pfd);
     }
 
     if (WindowPix == 0)
@@ -803,7 +795,7 @@ bool OpenGLContext::ImplInit()
         return false;
     }
 
-    if (!SetPixelFormat(m_aGLWin.hDC, WindowPix, &PixelFormatFront))
+    if (!SetPixelFormat(m_aGLWin.hDC, WindowPix, &pfd))
     {
         ImplWriteLastError(GetLastError(), "SetPixelFormat in OpenGLContext::ImplInit");
         SAL_WARN("vcl.opengl", "SetPixelFormat failed");

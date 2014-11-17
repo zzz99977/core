@@ -874,6 +874,15 @@ bool OpenGLContext::InitGLEW()
 
 #endif
 
+#if 0 // TODO make this to compile
+#ifdef WNT
+    if (!WGLEW_EXT_swap_control || !wglSwapIntervalEXT(0))
+    {
+        SAL_WARN("vcl.opengl", "Failed to set swap interval to 0, rendering will be extremely slow.");
+    }
+#endif
+#endif
+
     SAL_INFO("vcl.opengl", "OpenGLContext::ImplInit----end");
     mbInitialized = true;
     return true;

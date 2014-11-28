@@ -1128,8 +1128,8 @@ SalBitmap* OpenGLSalGraphicsImpl::getBitmap( long nX, long nY, long nWidth, long
     OpenGLSalBitmap* pBitmap = new OpenGLSalBitmap;
     SAL_INFO( "vcl.opengl", "::getBitmap " << nX << "," << nY <<
               " " << nWidth << "x" << nHeight );
+    //TODO really needed?
     PreDraw();
-    nY = GetHeight() - nHeight - nY;
     if( !pBitmap->Create( maOffscreenTex, nX, nY, nWidth, nHeight ) )
     {
         delete pBitmap;
@@ -1144,6 +1144,7 @@ SalColor OpenGLSalGraphicsImpl::getPixel( long nX, long nY )
     char pixel[3] = { 0, 0, 0 };
 
     PreDraw();
+    nY = GetHeight() - nY;
     glReadPixels( nX, nY, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, pixel);
     PostDraw();
 

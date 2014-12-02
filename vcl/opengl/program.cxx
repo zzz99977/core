@@ -127,6 +127,12 @@ GLuint OpenGLProgram::GetUniformLocation( const OString& rName )
     return it->second;
 }
 
+void OpenGLProgram::SetUniform1f( const OString& rName, GLfloat v1 )
+{
+    GLuint nUniform = GetUniformLocation( rName );
+    glUniform1f( nUniform, v1 );
+}
+
 void OpenGLProgram::SetUniform2f( const OString& rName, GLfloat v1, GLfloat v2 )
 {
     GLuint nUniform = GetUniformLocation( rName );
@@ -168,6 +174,19 @@ void OpenGLProgram::SetColorf( const OString& rName, SalColor nColor, double fTr
                  (1.0f - fTransparency) );
 
     if( fTransparency > 0.0 )
+        SetBlendMode( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+}
+
+void OpenGLProgram::SetColor( const OString& rName, const Color& rColor )
+{
+    GLuint nUniform = GetUniformLocation( rName );
+    glUniform4f( nUniform,
+                 ((float) rColor.GetRed()) / 255,
+                 ((float) rColor.GetGreen()) / 255,
+                 ((float) rColor.GetBlue()) / 255,
+                 1.0f - ((float) rColor.GetTransparency()) / 255 );
+
+    if( rColor.GetTransparency() > 0 )
         SetBlendMode( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 }
 

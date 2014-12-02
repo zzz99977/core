@@ -61,6 +61,11 @@ OpenGLContext* OpenGLSalGraphicsImpl::GetOpenGLContext()
     return mpContext;
 }
 
+OpenGLContext* OpenGLSalGraphicsImpl::GetDefaultContext()
+{
+    return ImplGetDefaultWindow()->GetGraphics()->GetOpenGLContext();
+}
+
 bool OpenGLSalGraphicsImpl::AcquireContext( )
 {
     ImplSVData* pSVData = ImplGetSVData();
@@ -80,7 +85,7 @@ bool OpenGLSalGraphicsImpl::AcquireContext( )
     if( pContext )
         pContext->AddRef();
     else
-        pContext = mbOffscreen ? CreatePixmapContext() : CreateWinContext();
+        pContext = mbOffscreen ? GetDefaultContext() : CreateWinContext();
 
     mpContext = pContext;
     return (mpContext != NULL);
@@ -111,15 +116,6 @@ void OpenGLSalGraphicsImpl::Init()
         maOffscreenTex.GetHeight() != GetHeight() )
     {
         maOffscreenTex = OpenGLTexture();
-#if defined(WNT)
-        // URGH ... VirtualDevice may have destroyed the underlying resource
-        // our context is associated with - FIXME: can we do better here ?
-        if (mpContext)
-        {
-            mpContext->resetToReInitialize();
-            ReleaseContext();
-        }
-#endif
     }
 }
 

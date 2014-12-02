@@ -636,14 +636,6 @@ bool OpenGLContext::init(SystemChildWindow* pChildWindow)
     return ImplInit();
 }
 
-void OpenGLContext::resetToReInitialize()
-{
-    if( !mbInitialized )
-        return;
-    resetCurrent();
-    mbInitialized = false;
-}
-
 #if defined( UNX ) && !defined MACOSX && !defined IOS && !defined ANDROID
 bool OpenGLContext::init(Display* dpy, Window win, int screen)
 {

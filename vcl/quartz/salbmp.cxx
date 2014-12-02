@@ -982,4 +982,9 @@ bool QuartzSalBitmap::Scale( const double& /*rScaleX*/, const double& /*rScaleY*
     return false;
 }
 
+bool QuartzSalBitmap::Replace( const Color& /*rSearchColor*/, const Color& /*rReplaceColor*/, sal_uLong /*nTol*/ )
+{
+    return false;
+}
+
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

@@ -203,6 +203,7 @@ public:
 #elif defined( _WIN32 )
     bool init( HDC hDC, HWND hWnd );
 #endif
+    void reset();
 
     void AddRef();
     void DeRef();
@@ -218,6 +219,7 @@ public:
     OpenGLProgram*      GetProgram( const OUString& rVertexShader, const OUString& rFragmentShader );
     OpenGLProgram*      UseProgram( const OUString& rVertexShader, const OUString& rFragmentShader );
 
+    bool isCurrent();
     void makeCurrent();
     void resetCurrent();
     void swapBuffers();

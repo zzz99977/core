@@ -56,8 +56,8 @@ OpenGLSalGraphicsImpl::~OpenGLSalGraphicsImpl()
 
 OpenGLContext* OpenGLSalGraphicsImpl::GetOpenGLContext()
 {
-    if( !mpContext )
-        AcquireContext();
+    if( !AcquireContext() )
+        return NULL;
     return mpContext;
 }
 
@@ -71,7 +71,11 @@ bool OpenGLSalGraphicsImpl::AcquireContext( )
     ImplSVData* pSVData = ImplGetSVData();
 
     if( mpContext )
+    {
+        if( mpContext->isInitialized() )
+            return true;
         mpContext->DeRef();
+    }
 
     OpenGLContext* pContext = pSVData->maGDIData.mpLastContext;
     while( pContext )
@@ -121,7 +125,7 @@ void OpenGLSalGraphicsImpl::Init()
 
 void OpenGLSalGraphicsImpl::PreDraw()
 {
-    if( !mpContext && !AcquireContext() )
+    if( !AcquireContext() )
     {
         SAL_WARN( "vcl.opengl", "Couldn't acquire context" );
         return;
@@ -160,11 +164,6 @@ void OpenGLSalGraphicsImpl::PostDraw()
     mpFramebuffer = NULL;
 
     CHECK_GL_ERROR();
-
-    // release the context as there is no guarantee the underlying window
-    // will still be valid for the next draw operation
-    if( mbOffscreen )
-        ReleaseContext();
 }
 
 void OpenGLSalGraphicsImpl::freeResources()
@@ -1427,7 +1426,7 @@ bool OpenGLSalGraphicsImpl::drawGradient(const tools::PolyPolygon& rPolyPoly,
 
 void OpenGLSalGraphicsImpl::beginPaint()
 {
-    if( !mpContext && !AcquireContext() )
+    if( !AcquireContext() )
         return;
 
     mpContext->mnPainting++;
@@ -1435,7 +1434,7 @@ void OpenGLSalGraphicsImpl::beginPaint()
 
 void OpenGLSalGraphicsImpl::endPaint()
 {
-    if( !mpContext && !AcquireContext() )
+    if( !AcquireContext() )
         return;
 
     mpContext->mnPainting--;

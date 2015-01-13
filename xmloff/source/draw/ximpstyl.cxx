@@ -969,6 +969,19 @@ SdXMLStylesContext::SdXMLStylesContext(
     mpNumFmtHelper = new SvXMLNumFmtHelper( mpNumFormatter, xContext );
 }
 
+SdXMLStylesContext::SdXMLStylesContext(
+    SdXMLImport& rImport,
+    sal_Int32 Element,
+    const uno::Reference< xml::sax::XFastAttributeList >& xAttrList,
+    bool bIsAutoStyle)
+:   SvXMLStylesContext(rImport, Element, xAttrList),
+    mbIsAutoStyle(bIsAutoStyle)
+{
+    Reference< uno::XComponentContext > xContext = rImport.GetComponentContext();
+    mpNumFormatter = new SvNumberFormatter( xContext, LANGUAGE_SYSTEM );
+    mpNumFmtHelper = new SvXMLNumFmtHelper( mpNumFormatter, xContext );
+}
+
 SdXMLStylesContext::~SdXMLStylesContext()
 {
     delete mpNumFmtHelper;
@@ -1044,6 +1057,13 @@ SvXMLStyleContext* SdXMLStylesContext::CreateStyleChildContext(
     return pContext;
 }
 
+SvXMLStyleContext* SdXMLStylesContext::CreateStyleChildContext(
+    sal_Int32 /*Element*/,
+    const uno::Reference< xml::sax::XFastAttributeList>& /*xAttrList*/)
+{
+    return 0;
+}
+
 SvXMLStyleContext* SdXMLStylesContext::CreateStyleStyleChildContext(
     sal_uInt16 nFamily,
     sal_uInt16 nPrefix,
@@ -1071,6 +1091,13 @@ SvXMLStyleContext* SdXMLStylesContext::CreateStyleStyleChildContext(
     return pContext;
 }
 
+SvXMLStyleContext* SdXMLStylesContext::CreateStyleStyleChildContext(
+    sal_uInt16 /*nFamily*/, sal_Int32 /*Element*/,
+    const uno::Reference< xml::sax::XFastAttributeList >& /*xAttrList*/)
+{
+    return 0;
+}
+
 SvXMLStyleContext* SdXMLStylesContext::CreateDefaultStyleStyleChildContext(
     sal_uInt16 nFamily,
     sal_uInt16 nPrefix,
@@ -1091,6 +1118,13 @@ SvXMLStyleContext* SdXMLStylesContext::CreateDefaultStyleStyleChildContext(
         pContext = SvXMLStylesContext::CreateDefaultStyleStyleChildContext(nFamily, nPrefix, rLocalName, xAttrList);
 
     return pContext;
+}
+
+SvXMLStyleContext* SdXMLStylesContext::CreateDefaultStyleStyleChildContext(
+    sal_uInt16 /*nFamily*/, sal_Int32 /*Element*/,
+    const uno::Reference< xml::sax::XFastAttributeList >& /*xAttrList*/)
+{
+    return 0;
 }
 
 sal_uInt16 SdXMLStylesContext::GetFamily( const OUString& rFamily ) const
@@ -1200,6 +1234,11 @@ void SdXMLStylesContext::EndElement()
         }
 
     }
+}
+
+void SAL_CALL SdXMLStylesContext::endFastElement( sal_Int32 /*Element*/ )
+    throw (uno::RuntimeException, xml::sax::SAXException, std::exception)
+{
 }
 
 // set master-page styles (all with family="presentation" and a special

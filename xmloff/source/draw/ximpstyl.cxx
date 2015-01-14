@@ -1692,6 +1692,14 @@ SdXMLHeaderFooterDeclContext::SdXMLHeaderFooterDeclContext(SvXMLImport& rImport,
     }
 }
 
+SdXMLHeaderFooterDeclContext::SdXMLHeaderFooterDeclContext(
+    SvXMLImport& rImport, sal_Int32 Element,
+    const uno::Reference< xml::sax::XFastAttributeList >& xAttrList )
+:   SvXMLStyleContext( rImport, Element, xAttrList ),
+    mbFixed( false )
+{
+}
+
 bool SdXMLHeaderFooterDeclContext::IsTransient() const
 {
     return true;
@@ -1714,7 +1722,18 @@ void SdXMLHeaderFooterDeclContext::EndElement()
     }
 }
 
+void SAL_CALL SdXMLHeaderFooterDeclContext::endFastElement( sal_Int32 /*Element*/ )
+    throw(uno::RuntimeException, xml::sax::SAXException, std::exception)
+{
+}
+
 void SdXMLHeaderFooterDeclContext::Characters( const OUString& rChars )
+{
+    maStrText += rChars;
+}
+
+void SAL_CALL SdXMLHeaderFooterDeclContext::characters( const OUString& rChars )
+    throw(uno::RuntimeException, xml::sax::SAXException, std::exception)
 {
     maStrText += rChars;
 }

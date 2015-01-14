@@ -51,6 +51,13 @@ XMLGraphicsDefaultStyle::XMLGraphicsDefaultStyle( SvXMLImport& rImport, sal_uInt
 {
 }
 
+XMLGraphicsDefaultStyle::XMLGraphicsDefaultStyle(
+    SvXMLImport& rImport, sal_Int32 Element,
+    const Reference< XFastAttributeList >& xAttrList, SvXMLStylesContext& rStyles )
+:   XMLPropStyleContext( rImport, Element, xAttrList, rStyles, XML_STYLE_FAMILY_SD_GRAPHICS_ID, true )
+{
+}
+
 XMLGraphicsDefaultStyle::~XMLGraphicsDefaultStyle()
 {
 }
@@ -81,6 +88,14 @@ SvXMLImportContext *XMLGraphicsDefaultStyle::CreateChildContext( sal_uInt16 nPre
 
     return pContext;
 }
+
+Reference< XFastContextHandler > SAL_CALL XMLGraphicsDefaultStyle::createFastChildContext(
+    sal_Int32 /*Element*/, const Reference< XFastAttributeList >& /*xAttrList*/ )
+    throw(RuntimeException, SAXException, std::exception)
+{
+    return Reference< XFastContextHandler >();
+}
+
 
 struct XMLPropertyByIndex {
     sal_Int32 const m_nIndex;

@@ -193,14 +193,25 @@ public:
                                     SvXMLNumFormatContext& rParentContext,
                                     const ::com::sun::star::uno::Reference<
                                         ::com::sun::star::xml::sax::XAttributeList>& xAttrList );
+    SvXMLNumFmtMapContext( SvXMLImport& rImport, sal_Int32 Element,
+        SvXMLNumFormatContext& rParentContext,
+        const css::uno::Reference< css::xml::sax::XFastAttributeList >& xAttrList );
     virtual     ~SvXMLNumFmtMapContext();
 
     virtual SvXMLImportContext *CreateChildContext( sal_uInt16 nPrefix,
                                     const OUString& rLocalName,
                                     const ::com::sun::star::uno::Reference<
                                           ::com::sun::star::xml::sax::XAttributeList>& xAttrList ) SAL_OVERRIDE;
+    virtual css::uno::Reference< css::xml::sax::XFastContextHandler > SAL_CALL
+        createFastChildContext( sal_Int32 Element,
+        const css::uno::Reference< css::xml::sax::XFastAttributeList >& xAttrList )
+        throw(css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) SAL_OVERRIDE;
     virtual void Characters( const OUString& rChars ) SAL_OVERRIDE;
+    virtual void characters( const OUString& rChars )
+        throw(css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) SAL_OVERRIDE;
     virtual void EndElement() SAL_OVERRIDE;
+    virtual void SAL_CALL endFastElement( sal_Int32 Element )
+        throw(css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) SAL_OVERRIDE;
 };
 
 class SvXMLNumFmtPropContext : public SvXMLImportContext
@@ -706,6 +717,14 @@ SvXMLNumFmtMapContext::SvXMLNumFmtMapContext( SvXMLImport& rImport,
     }
 }
 
+SvXMLNumFmtMapContext::SvXMLNumFmtMapContext( SvXMLImport& rImport,
+    sal_Int32 /*Element*/, SvXMLNumFormatContext& rParentContext,
+    const uno::Reference< xml::sax::XFastAttributeList >& /*xAttrList*/ )
+:   SvXMLImportContext( rImport ),
+    rParent( rParentContext )
+{
+}
+
 SvXMLNumFmtMapContext::~SvXMLNumFmtMapContext()
 {
 }
@@ -718,7 +737,21 @@ SvXMLImportContext* SvXMLNumFmtMapContext::CreateChildContext(
     return new SvXMLImportContext( GetImport(), nPrfx, rLName );
 }
 
+uno::Reference< xml::sax::XFastContextHandler > SAL_CALL
+    SvXMLNumFmtMapContext::createFastChildContext( sal_Int32 /*Element*/,
+    const uno::Reference< xml::sax::XFastAttributeList >& /*xAttrList*/ )
+    throw(css::uno::RuntimeException, css::xml::sax::SAXException, std::exception)
+{
+    // no elements supported - use default context
+    return new SvXMLImportContext( GetImport() );
+}
+
 void SvXMLNumFmtMapContext::Characters( const OUString& )
+{
+}
+
+void SAL_CALL SvXMLNumFmtMapContext::characters( const OUString& )
+    throw(css::uno::RuntimeException, css::xml::sax::SAXException, std::exception)
 {
 }
 
@@ -727,6 +760,11 @@ void SvXMLNumFmtMapContext::EndElement()
     rParent.AddCondition( sCondition, sName );
 }
 
+void SAL_CALL SvXMLNumFmtMapContext::endFastElement( sal_Int32 /*Element*/ )
+    throw(css::uno::RuntimeException, css::xml::sax::SAXException, std::exception)
+{
+    rParent.AddCondition( sCondition, sName );
+}
 
 //  SvXMLNumFmtPropContext
 

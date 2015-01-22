@@ -147,14 +147,25 @@ public:
                                     SvXMLNumFormatContext& rParentContext, sal_uInt16 nNewType,
                                     const ::com::sun::star::uno::Reference<
                                         ::com::sun::star::xml::sax::XAttributeList>& xAttrList );
+    SvXMLNumFmtElementContext( SvXMLImport& rImport, sal_Int32 Element,
+        SvXMLNumFormatContext& rParentContext, sal_uInt16 nNewType,
+        const css::uno::Reference< css::xml::sax::XFastAttributeList >& xAttrList );
     virtual     ~SvXMLNumFmtElementContext();
 
     virtual SvXMLImportContext *CreateChildContext( sal_uInt16 nPrefix,
                                     const OUString& rLocalName,
                                     const ::com::sun::star::uno::Reference<
                                           ::com::sun::star::xml::sax::XAttributeList>& xAttrList ) SAL_OVERRIDE;
+    virtual css::uno::Reference< css::xml::sax::XFastContextHandler > SAL_CALL
+        createFastChildContext( sal_Int32 Element,
+        const css::uno::Reference< css::xml::sax::XFastAttributeList >& xAttrList )
+        throw(css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) SAL_OVERRIDE;
     virtual void Characters( const OUString& rChars ) SAL_OVERRIDE;
+    virtual void SAL_CALL characters( const OUString& rChars )
+        throw(css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) SAL_OVERRIDE;
     virtual void EndElement() SAL_OVERRIDE;
+    virtual void SAL_CALL endFastElement( sal_Int32 Element )
+        throw(css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) SAL_OVERRIDE;
 
     void    AddEmbeddedElement( sal_Int32 nFormatPos, const OUString& rContent );
 };
@@ -1152,6 +1163,18 @@ SvXMLNumFmtElementContext::SvXMLNumFmtElementContext( SvXMLImport& rImport,
     }
 }
 
+SvXMLNumFmtElementContext::SvXMLNumFmtElementContext( SvXMLImport& rImport,
+    sal_Int32 /*Element*/, SvXMLNumFormatContext& rParentContext, sal_uInt16 nNewType,
+    const uno::Reference< xml::sax::XFastAttributeList >& /*xAttrList*/ )
+:   SvXMLImportContext( rImport ),
+    rParent( rParentContext ),
+    nType( nNewType ),
+    nElementLang( LANGUAGE_SYSTEM ),
+    bLong( false ),
+    bTextual( false )
+{
+}
+
 SvXMLNumFmtElementContext::~SvXMLNumFmtElementContext()
 {
 }
@@ -1171,7 +1194,21 @@ SvXMLImportContext* SvXMLNumFmtElementContext::CreateChildContext(
         return new SvXMLImportContext( GetImport(), nPrfx, rLName );
 }
 
+uno::Reference< xml::sax::XFastContextHandler > SAL_CALL
+    SvXMLNumFmtElementContext::createFastChildContext( sal_Int32 /*Element*/,
+    const uno::Reference< xml::sax::XFastAttributeList >& /*xAttrList*/ )
+    throw(uno::RuntimeException, xml::sax::SAXException, std::exception)
+{
+    return uno::Reference< xml::sax::XFastContextHandler >();
+}
+
 void SvXMLNumFmtElementContext::Characters( const OUString& rChars )
+{
+    aContent.append( rChars );
+}
+
+void SAL_CALL SvXMLNumFmtElementContext::characters( const OUString& rChars )
+    throw(uno::RuntimeException, xml::sax::SAXException, std::exception)
 {
     aContent.append( rChars );
 }
@@ -1408,6 +1445,10 @@ sal_uInt16 SvXMLNumFmtDefaults::GetDefaultDateFormat( SvXMLDateElementAttributes
     return NF_INDEX_TABLE_ENTRIES;  // invalid
 }
 
+void SAL_CALL SvXMLNumFmtElementContext::endFastElement( sal_Int32 /*Element*/ )
+    throw(uno::RuntimeException, xml::sax::SAXException, std::exception)
+{
+}
 
 //  SvXMLNumFormatContext
 

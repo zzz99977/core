@@ -191,14 +191,22 @@ public:
                                     ::com::sun::star::xml::sax::XAttributeList>& xAttrList,
                                     com::sun::star::uno::Any& rAny,
                                     XMLConfigBaseContext* pBaseContext);
+    XMLConfigItemSetContext(SvXMLImport& rImport,
+        const uno::Reference< xml::sax::XFastAttributeList >& xAttrList,
+        uno::Any& rAny, XMLConfigBaseContext* pBaseContext);
     virtual ~XMLConfigItemSetContext();
 
     virtual SvXMLImportContext *CreateChildContext( sal_uInt16 nPrefix,
                                                     const OUString& rLocalName,
                                                     const ::com::sun::star::uno::Reference<
                                           ::com::sun::star::xml::sax::XAttributeList>& xAttrList ) SAL_OVERRIDE;
+    virtual uno::Reference< xml::sax::XFastContextHandler > SAL_CALL createFastChildContext(
+        sal_Int32 Element, const uno::Reference< xml::sax::XFastAttributeList >& xAttrList )
+        throw (uno::RuntimeException, xml::sax::SAXException, std::exception) SAL_OVERRIDE;
 
     virtual void EndElement() SAL_OVERRIDE;
+    virtual void SAL_CALL endFastElement( sal_Int32 Element )
+        throw (uno::RuntimeException, xml::sax::SAXException, std::exception) SAL_OVERRIDE;
 };
 
 class XMLConfigItemMapNamedContext : public XMLConfigBaseContext
@@ -209,6 +217,9 @@ public:
                                     ::com::sun::star::xml::sax::XAttributeList>& xAttrList,
                                     com::sun::star::uno::Any& rAny,
                                     XMLConfigBaseContext* pBaseContext);
+    XMLConfigItemMapNamedContext(SvXMLImport& rImport, sal_Int32 Element,
+        const uno::Reference< xml::sax::XFastAttributeList >& xAttrList,
+        uno::Any& rAny, XMLConfigBaseContext* pBaseContext);
     virtual ~XMLConfigItemMapNamedContext();
 
     virtual SvXMLImportContext *CreateChildContext( sal_uInt16 nPrefix,
@@ -217,6 +228,13 @@ public:
                                           ::com::sun::star::xml::sax::XAttributeList>& xAttrList ) SAL_OVERRIDE;
 
     virtual void EndElement() SAL_OVERRIDE;
+
+    virtual uno::Reference< xml::sax::XFastContextHandler > SAL_CALL createFastChildContext(
+        sal_Int32 Element, const uno::Reference< xml::sax::XFastAttributeList >& xAttrList )
+        throw (uno::RuntimeException, xml::sax::SAXException, std::exception) SAL_OVERRIDE;
+
+    virtual void SAL_CALL endFastElement( sal_Int32 Element )
+        throw (uno::RuntimeException, xml::sax::SAXException, std::exception) SAL_OVERRIDE;
 };
 
 class XMLConfigItemMapIndexedContext : public XMLConfigBaseContext
@@ -232,6 +250,10 @@ public:
                                     com::sun::star::uno::Any& rAny,
                                     const OUString& rConfigItemName,
                                     XMLConfigBaseContext* pBaseContext);
+    XMLConfigItemMapIndexedContext(SvXMLImport& rImport, sal_Int32 Element,
+        const uno::Reference< xml::sax::XFastAttributeList >& xAttrList,
+        uno::Any& rAny, const OUString& rConfigItemName, XMLConfigBaseContext* pBaseContext);
+
     virtual ~XMLConfigItemMapIndexedContext();
 
     virtual SvXMLImportContext *CreateChildContext( sal_uInt16 nPrefix,
@@ -240,6 +262,13 @@ public:
                                         ::com::sun::star::xml::sax::XAttributeList>& xAttrList ) SAL_OVERRIDE;
 
     virtual void EndElement() SAL_OVERRIDE;
+
+    virtual uno::Reference< xml::sax::XFastContextHandler > SAL_CALL createFastChildContext(
+        sal_Int32 Element, const uno::Reference< xml::sax::XFastAttributeList >& xAttrList )
+        throw (uno::RuntimeException, xml::sax::SAXException, std::exception) SAL_OVERRIDE;
+
+    virtual void SAL_CALL endFastElement( sal_Int32 Element )
+        throw (uno::RuntimeException, xml::sax::SAXException, std::exception) SAL_OVERRIDE;
 };
 
 SvXMLImportContext *CreateSettingsContext(SvXMLImport& rImport, sal_uInt16 p_nPrefix,
@@ -282,6 +311,34 @@ SvXMLImportContext *CreateSettingsContext(SvXMLImport& rImport, sal_uInt16 p_nPr
     if( !pContext )
         pContext = new SvXMLImportContext( rImport, p_nPrefix, rLocalName );
 
+    return pContext;
+}
+
+uno::Reference< xml::sax::XFastContextHandler > CreateSettingsContext(
+    SvXMLImport& rImport, sal_Int32 Element,
+    const uno::Reference< xml::sax::XFastAttributeList >& xAttrList,
+    beans::PropertyValue& rProp, XMLConfigBaseContext* pBaseContext)
+{
+    SvXMLImportContext *pContext = 0;
+    rProp.Name.clear();
+
+    if( xAttrList->hasAttribute( FastToken::NAMESPACE | XML_NAMESPACE_CONFIG | XML_name ) )
+    {
+        rProp.Name = xAttrList->getValue( FastToken::NAMESPACE | XML_NAMESPACE_CONFIG | XML_name );
+    }
+
+    if( Element == (FastToken::NAMESPACE | XML_NAMESPACE_CONFIG | XML_config_item) )
+        pContext = new XMLConfigItemContext(rImport, Element, xAttrList, rProp.Value, rProp.Name, pBaseContext);
+    else if( Element ==  (FastToken::NAMESPACE | XML_NAMESPACE_CONFIG | XML_config_item_set) ||
+            Element == (FastToken::NAMESPACE | XML_NAMESPACE_CONFIG | XML_config_item_map_entry) )
+        pContext = new XMLConfigItemSetContext(rImport, xAttrList, rProp.Value, pBaseContext);
+    else if( Element == (FastToken::NAMESPACE | XML_NAMESPACE_CONFIG | XML_config_item_map_named) )
+        pContext = new XMLConfigItemMapNamedContext(rImport, Element, xAttrList, rProp.Value, pBaseContext);
+    else if( Element == (FastToken::NAMESPACE | XML_NAMESPACE_CONFIG | XML_config_item_map_indexed) )
+        pContext = new XMLConfigItemMapIndexedContext(rImport, Element, xAttrList, rProp.Value, rProp.Name, pBaseContext);
+
+    if( !pContext )
+        pContext = new SvXMLImportContext( rImport );
     return pContext;
 }
 
@@ -489,6 +546,14 @@ XMLConfigItemSetContext::XMLConfigItemSetContext(SvXMLImport& rImport, sal_uInt1
     // here are no attributes
 }
 
+XMLConfigItemSetContext::XMLConfigItemSetContext(SvXMLImport& rImport,
+    const uno::Reference< xml::sax::XFastAttributeList >&,
+    uno::Any& rAny, XMLConfigBaseContext* pBaseContext)
+    : XMLConfigBaseContext( rImport, rAny, pBaseContext )
+{
+    // here are no attributes
+}
+
 XMLConfigItemSetContext::~XMLConfigItemSetContext()
 {
 }
@@ -501,7 +566,22 @@ SvXMLImportContext *XMLConfigItemSetContext::CreateChildContext( sal_uInt16 nPre
     return CreateSettingsContext(GetImport(), nPrefix, rLocalName, xAttrList, maProp, this);
 }
 
+uno::Reference< xml::sax::XFastContextHandler > SAL_CALL XMLConfigItemSetContext::createFastChildContext(
+    sal_Int32 Element, const uno::Reference< xml::sax::XFastAttributeList >& xAttrList)
+    throw (uno::RuntimeException, xml::sax::SAXException, std::exception)
+{
+    return CreateSettingsContext(GetImport(), Element, xAttrList, maProp, this);
+}
+
 void XMLConfigItemSetContext::EndElement()
+{
+    mrAny <<= maProps.GetSequence();
+    if (mpBaseContext)
+        mpBaseContext->AddPropertyValue();
+}
+
+void SAL_CALL XMLConfigItemSetContext::endFastElement( sal_Int32 /*Element*/ )
+    throw (uno::RuntimeException, xml::sax::SAXException, std::exception)
 {
     mrAny <<= maProps.GetSequence();
     if (mpBaseContext)
@@ -770,6 +850,14 @@ XMLConfigItemMapNamedContext::XMLConfigItemMapNamedContext(SvXMLImport& rImport,
 {
 }
 
+XMLConfigItemMapNamedContext::XMLConfigItemMapNamedContext(SvXMLImport& rImport,
+    sal_Int32 /*Element*/,
+    const uno::Reference< xml::sax::XFastAttributeList >&,
+    uno::Any& rAny, XMLConfigBaseContext* pBaseContext)
+    : XMLConfigBaseContext(rImport, rAny, pBaseContext)
+{
+}
+
 XMLConfigItemMapNamedContext::~XMLConfigItemMapNamedContext()
 {
 }
@@ -782,7 +870,27 @@ SvXMLImportContext *XMLConfigItemMapNamedContext::CreateChildContext( sal_uInt16
     return CreateSettingsContext(GetImport(), nPrefix, rLocalName, xAttrList, maProp, this);
 }
 
+uno::Reference< xml::sax::XFastContextHandler > SAL_CALL XMLConfigItemMapNamedContext::createFastChildContext(
+    sal_Int32 Element, const uno::Reference< xml::sax::XFastAttributeList >& xAttrList )
+    throw (uno::RuntimeException, xml::sax::SAXException, std::exception)
+{
+    return CreateSettingsContext(GetImport(), Element, xAttrList, maProp, this);
+}
+
 void XMLConfigItemMapNamedContext::EndElement()
+{
+    if (mpBaseContext)
+    {
+        mrAny <<= maProps.GetNameContainer();
+        mpBaseContext->AddPropertyValue();
+    }
+    else {
+        OSL_FAIL("no BaseContext");
+    }
+}
+
+void SAL_CALL XMLConfigItemMapNamedContext::endFastElement( sal_Int32 /*Element*/ )
+    throw (uno::RuntimeException, xml::sax::SAXException, std::exception)
 {
     if (mpBaseContext)
     {
@@ -806,6 +914,16 @@ XMLConfigItemMapIndexedContext::XMLConfigItemMapIndexedContext(SvXMLImport& rImp
 {
 }
 
+XMLConfigItemMapIndexedContext::XMLConfigItemMapIndexedContext(
+    SvXMLImport& rImport, sal_Int32 /*Element*/,
+    const uno::Reference< xml::sax::XFastAttributeList >& ,
+    uno::Any& rAny, const OUString& rConfigItemName,
+    XMLConfigBaseContext* pBaseContext)
+    : XMLConfigBaseContext(rImport, rAny, pBaseContext),
+    maConfigItemName( rConfigItemName )
+{
+}
+
 XMLConfigItemMapIndexedContext::~XMLConfigItemMapIndexedContext()
 {
 }
@@ -818,7 +936,20 @@ SvXMLImportContext *XMLConfigItemMapIndexedContext::CreateChildContext( sal_uInt
     return CreateSettingsContext(GetImport(), nPrefix, rLocalName, xAttrList, maProp, this);
 }
 
+uno::Reference< xml::sax::XFastContextHandler > SAL_CALL XMLConfigItemMapIndexedContext::createFastChildContext(
+    sal_Int32 Element, const uno::Reference< xml::sax::XFastAttributeList >& xAttrList)
+    throw (uno::RuntimeException, xml::sax::SAXException, std::exception)
+{
+    return CreateSettingsContext(GetImport(), Element, xAttrList, maProp, this);
+}
+
 void XMLConfigItemMapIndexedContext::EndElement()
+{
+    endFastElement( 0 );
+}
+
+void SAL_CALL XMLConfigItemMapIndexedContext::endFastElement( sal_Int32 /*Element*/ )
+    throw (uno::RuntimeException, xml::sax::SAXException, std::exception)
 {
     if (mpBaseContext)
     {

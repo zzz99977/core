@@ -33,6 +33,7 @@
 #include <xmloff/xmltoken.hxx>
 #include <xmloff/xmluconv.hxx>
 #include <xmloff/xmlement.hxx>
+#include <xmloff/token/tokens.hxx>
 #include "XMLStringBufferImportContext.hxx"
 #include <xmloff/XMLEventsImportContext.hxx>
 #include <com/sun/star/xml/sax/XAttributeList.hpp>
@@ -57,6 +58,7 @@
 #include <com/sun/star/text/BibliographyDataField.hpp>
 #include <com/sun/star/util/XUpdatable.hpp>
 #include <com/sun/star/sdb/CommandType.hpp>
+#include <com/sun/star/xml/sax/FastToken.hpp>
 
 #include <sax/tools/converter.hxx>
 
@@ -77,6 +79,8 @@ using namespace ::com::sun::star::document;
 using namespace ::com::sun::star::util;
 using namespace ::com::sun::star::xml::sax;
 using namespace ::xmloff::token;
+using namespace xmloff;
+using css::xml::sax::FastToken::NAMESPACE;
 
 
 
@@ -807,7 +811,7 @@ static SvXMLEnumMapEntry const lcl_aSelectPageAttrMap[] =
     { XML_PREVIOUS,     PageNumberType_PREV },
     { XML_CURRENT,      PageNumberType_CURRENT },
     { XML_NEXT,         PageNumberType_NEXT },
-    { XML_TOKEN_INVALID, 0 },
+    { xmloff::token::XML_TOKEN_INVALID, 0 },
 };
 
 XMLPageContinuationImportContext::XMLPageContinuationImportContext(
@@ -1355,7 +1359,7 @@ SvXMLImportContext* XMLDatabaseFieldImportContext::CreateChildContext(
         }
 
         // we call ProcessAttribute in order to set bValid appropriately
-        ProcessAttribute( XML_TOKEN_INVALID, OUString() );
+        ProcessAttribute( xmloff::token::XML_TOKEN_INVALID, OUString() );
     }
 
     return SvXMLImportContext::CreateChildContext(p_nPrefix, rLocalName,
@@ -2236,7 +2240,7 @@ static const SvXMLEnumMapEntry aFilenameDisplayMap[] =
     { XML_NAME,                 FilenameDisplayFormat::NAME },
     { XML_NAME_AND_EXTENSION,   FilenameDisplayFormat::NAME_AND_EXT },
     { XML_FULL,                 FilenameDisplayFormat::FULL },
-    { XML_TOKEN_INVALID, 0 }
+    { xmloff::token::XML_TOKEN_INVALID, 0 }
 };
 
 XMLFileNameImportContext::XMLFileNameImportContext(
@@ -2326,7 +2330,7 @@ static const SvXMLEnumMapEntry aTemplateDisplayMap[] =
     { XML_NAME_AND_EXTENSION,   TemplateDisplayFormat::NAME_AND_EXT },
     { XML_AREA,                 TemplateDisplayFormat::AREA },
     { XML_TITLE,                TemplateDisplayFormat::TITLE },
-    { XML_TOKEN_INVALID, 0 }
+    { xmloff::token::XML_TOKEN_INVALID, 0 }
 };
 
 TYPEINIT1( XMLTemplateNameImportContext, XMLTextFieldImportContext );
@@ -2387,7 +2391,7 @@ static const SvXMLEnumMapEntry aChapterDisplayMap[] =
     { XML_NUMBER_AND_NAME,          ChapterFormat::NAME_NUMBER },
     { XML_PLAIN_NUMBER_AND_NAME,    ChapterFormat::NO_PREFIX_SUFFIX },
     { XML_PLAIN_NUMBER,             ChapterFormat::DIGIT },
-    { XML_TOKEN_INVALID, 0 }
+    { xmloff::token::XML_TOKEN_INVALID, 0 }
 };
 
 XMLChapterImportContext::XMLChapterImportContext(
@@ -2854,7 +2858,7 @@ static SvXMLEnumMapEntry const lcl_aReferenceTypeTokenMap[] =
     { XML_NUMBER,               ReferenceFieldPart::NUMBER },
     { XML_NUMBER_NO_SUPERIOR,   ReferenceFieldPart::NUMBER_NO_CONTEXT },
     { XML_NUMBER_ALL_SUPERIOR,  ReferenceFieldPart::NUMBER_FULL_CONTEXT },
-    { XML_TOKEN_INVALID, 0 }
+    { xmloff::token::XML_TOKEN_INVALID, 0 }
 };
 
 void XMLReferenceFieldImportContext::StartElement(
@@ -2974,11 +2978,16 @@ enum DdeFieldDeclAttrs
 
 static const SvXMLTokenMapEntry aDdeDeclAttrTokenMap[] =
 {
-    { XML_NAMESPACE_OFFICE, XML_NAME, XML_TOK_DDEFIELD_NAME },
-    { XML_NAMESPACE_OFFICE, XML_DDE_APPLICATION, XML_TOK_DDEFIELD_APPLICATION },
-    { XML_NAMESPACE_OFFICE, XML_DDE_TOPIC, XML_TOK_DDEFIELD_TOPIC },
-    { XML_NAMESPACE_OFFICE, XML_DDE_ITEM, XML_TOK_DDEFIELD_ITEM },
-    { XML_NAMESPACE_OFFICE, XML_AUTOMATIC_UPDATE, XML_TOK_DDEFIELD_UPDATE },
+    { XML_NAMESPACE_OFFICE, XML_NAME, XML_TOK_DDEFIELD_NAME,
+        (NAMESPACE | XML_NAMESPACE_OFFICE | XML_name) },
+    { XML_NAMESPACE_OFFICE, XML_DDE_APPLICATION, XML_TOK_DDEFIELD_APPLICATION,
+        (NAMESPACE | XML_NAMESPACE_OFFICE | XML_dde_application) },
+    { XML_NAMESPACE_OFFICE, XML_DDE_TOPIC, XML_TOK_DDEFIELD_TOPIC,
+        (NAMESPACE | XML_NAMESPACE_OFFICE | XML_dde_topic) },
+    { XML_NAMESPACE_OFFICE, XML_DDE_ITEM, XML_TOK_DDEFIELD_ITEM,
+        (NAMESPACE | XML_NAMESPACE_OFFICE | XML_dde_item) },
+    { XML_NAMESPACE_OFFICE, XML_AUTOMATIC_UPDATE, XML_TOK_DDEFIELD_UPDATE,
+        (NAMESPACE | XML_NAMESPACE_OFFICE | XML_automatic_update) },
     XML_TOKEN_MAP_END
 };
 
@@ -3369,7 +3378,7 @@ static SvXMLEnumMapEntry const aBibliographyDataTypeMap[] =
     { XML_TECHREPORT,       BibliographyDataType::TECHREPORT },
     { XML_UNPUBLISHED,      BibliographyDataType::UNPUBLISHED },
     { XML_WWW,              BibliographyDataType::WWW },
-    { XML_TOKEN_INVALID, 0 }
+    { xmloff::token::XML_TOKEN_INVALID, 0 }
 };
 
 

@@ -747,6 +747,15 @@ SvXMLShapeContext* XMLShapeImportHelper::CreateFrameChildContext(
     return pContext;
 }
 
+SvXMLShapeContext* XMLShapeImportHelper::CreateFrameChildContext(
+    SvXMLImport& rImport, sal_Int32 Element,
+    const uno::Reference< xml::sax::XFastAttributeList >& rAttrList,
+    uno::Reference< drawing::XShapes >& rShapes,
+    const uno::Reference< xml::sax::XFastAttributeList >& rFrameAttrList )
+{
+    return 0;
+}
+
 SvXMLImportContext *XMLShapeImportHelper::CreateFrameChildContext(
     SvXMLImportContext *pThisContext,
     sal_uInt16 nPrefix,
@@ -760,6 +769,13 @@ SvXMLImportContext *XMLShapeImportHelper::CreateFrameChildContext(
         pContext = pFrameContext->CreateChildContext( nPrefix, rLocalName, xAttrList );
 
     return pContext;
+}
+
+SvXMLImportContext *XMLShapeImportHelper::CreateFrameChildContext(
+    SvXMLImportContext *pThisContext, sal_Int32 Element,
+    const uno::Reference< xml::sax::XFastAttributeList >& xAttrList )
+{
+    return 0;
 }
 
 /** this function is called whenever the implementation classes like to add this new

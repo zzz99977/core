@@ -224,13 +224,13 @@ XMLShapeImportHelper::~XMLShapeImportHelper()
     if(mpStylesContext)
     {
         mpStylesContext->Clear();
-        mpStylesContext->ReleaseRef();
+        mpStylesContext->release();
     }
 
     if(mpAutoStylesContext)
     {
         mpAutoStylesContext->Clear();
-        mpAutoStylesContext->ReleaseRef();
+        mpAutoStylesContext->release();
     }
 
     delete mpImpl;
@@ -517,14 +517,14 @@ void XMLShapeImportHelper::SetStylesContext(SvXMLStylesContext* pNew)
 {
     mpStylesContext = pNew;
     if (mpStylesContext)
-        mpStylesContext->AddFirstRef();
+        mpStylesContext->acquire();
 }
 
 void XMLShapeImportHelper::SetAutoStylesContext(SvXMLStylesContext* pNew)
 {
     mpAutoStylesContext = pNew;
     if (mpAutoStylesContext)
-        mpAutoStylesContext->AddFirstRef();
+        mpAutoStylesContext->acquire();
 }
 
 SvXMLShapeContext* XMLShapeImportHelper::CreateGroupChildContext(

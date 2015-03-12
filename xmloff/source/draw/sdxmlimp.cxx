@@ -422,7 +422,7 @@ SdXMLImport::~SdXMLImport() throw ()
 {
     // Styles or AutoStyles context?
     if(mpMasterStylesContext)
-        mpMasterStylesContext->ReleaseRef();
+        mpMasterStylesContext->release();
 
     // delete all token maps
     if(mpDocElemTokenMap)
@@ -796,7 +796,7 @@ SvXMLImportContext* SdXMLImport::CreateMasterStylesContext(const OUString& rLoca
 
     mpMasterStylesContext = new SdXMLMasterStylesContext(
         *this, XML_NAMESPACE_OFFICE, rLocalName);
-    mpMasterStylesContext->AddFirstRef();
+    mpMasterStylesContext->acquire();
 
     return mpMasterStylesContext;
 }

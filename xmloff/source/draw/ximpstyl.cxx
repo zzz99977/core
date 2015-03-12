@@ -572,7 +572,7 @@ SdXMLPageMasterContext::~SdXMLPageMasterContext()
     // release remembered contexts, they are no longer needed
     if(mpPageMasterStyle)
     {
-        mpPageMasterStyle->ReleaseRef();
+        mpPageMasterStyle->release();
         mpPageMasterStyle = 0L;
     }
 }
@@ -591,7 +591,7 @@ SvXMLImportContext *SdXMLPageMasterContext::CreateChildContext(
         // remember SdXMLPresentationPlaceholderContext for later evaluation
         if(pContext)
         {
-            pContext->AddFirstRef();
+            pContext->acquire();
             DBG_ASSERT(!mpPageMasterStyle, "PageMasterStyle is set, there seem to be two of them (!)");
             mpPageMasterStyle = static_cast<SdXMLPageMasterStyleContext*>(pContext);
         }
@@ -616,7 +616,7 @@ uno::Reference< xml::sax::XFastContextHandler > SAL_CALL
         // remember SdXMLPresentationPlaceholderContext for later evaluation
         if( pContext.is() )
         {
-            static_cast<SvXMLImportContext*>(pContext.get())->AddFirstRef();
+            pContext.get()->acquire();
             DBG_ASSERT(!mpPageMasterStyle, "PageMasterStyle is set, there seem to be two of them (!)");
             mpPageMasterStyle = static_cast<SdXMLPageMasterStyleContext*>(pContext.get());
         }
@@ -692,7 +692,7 @@ SvXMLImportContext *SdXMLPresentationPageLayoutContext::CreateChildContext(
         // remember SdXMLPresentationPlaceholderContext for later evaluation
         if(pContext)
         {
-            pContext->AddFirstRef();
+            pContext->acquire();
             maList.push_back( static_cast<SdXMLPresentationPlaceholderContext*>(pContext) );
         }
     }
@@ -720,7 +720,7 @@ uno::Reference< xml::sax::XFastContextHandler > SAL_CALL
         // remember SdXMLPresentationPlaceholderContext for later evaluation
         if( pContext.is() )
         {
-            static_cast< SvXMLStyleContext* >(pContext.get())->AddFirstRef();
+            pContext.get()->acquire();
             maList.push_back( static_cast<SdXMLPresentationPlaceholderContext*>(pContext.get()) );
         }
     }
@@ -940,7 +940,7 @@ void SAL_CALL SdXMLPresentationPageLayoutContext::endFastElement( sal_Int32 /*El
 
     // release remembered contexts, they are no longer needed
     for ( size_t i = maList.size(); i > 0; )
-        maList[ --i ]->ReleaseRef();
+        maList[ --i ]->release();
     maList.clear();
     }
 }
@@ -1152,7 +1152,7 @@ void SdXMLPresentationPageLayoutContext::EndElement()
 
         // release remembered contexts, they are no longer needed
         for ( size_t i = maList.size(); i > 0; )
-            maList[ --i ]->ReleaseRef();
+            maList[ --i ]->release();
         maList.clear();
     }
 }
@@ -2156,7 +2156,7 @@ SdXMLMasterStylesContext::SdXMLMasterStylesContext(
 SdXMLMasterStylesContext::~SdXMLMasterStylesContext()
 {
     for ( size_t i = maMasterPageList.size(); i > 0; )
-        maMasterPageList[ --i ]->ReleaseRef();
+        maMasterPageList[ --i ]->release();
     maMasterPageList.clear();
 }
 
@@ -2200,7 +2200,7 @@ SvXMLImportContext* SdXMLMasterStylesContext::CreateChildContext(
 
                     if(pContext)
                     {
-                        pContext->AddFirstRef();
+                        pContext->acquire();
                         maMasterPageList.push_back( static_cast<SdXMLMasterPageContext*>(pContext) );
                     }
                 }

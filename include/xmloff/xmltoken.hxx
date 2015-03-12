@@ -3251,6 +3251,8 @@ namespace xmloff { namespace token {
     XMLOFF_DLLPUBLIC const OUString& GetXMLToken(
         enum XMLTokenEnum eToken );
 
+    XMLOFF_DLLPUBLIC const OUString& GetXMLToken( sal_Int32 Element );
+
     /// compare eToken to the string
     XMLOFF_DLLPUBLIC bool IsXMLToken(
         const OUString& rString,

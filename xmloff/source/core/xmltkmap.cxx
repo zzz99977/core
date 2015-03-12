@@ -78,7 +78,7 @@ SvXMLTokenMapEntry_Impl *SvXMLTokenMap::_Find( sal_uInt16 nKeyPrefix,
 SvXMLTokenMapEntry_Impl *SvXMLTokenMap::_Find( sal_Int32 nTok ) const
 {
     SvXMLTokenMapEntry_Impl *pRet = 0;
-    SvXMLTokenMapEntry_Impl aTst( 0, "", nTok );
+    SvXMLTokenMapEntry_Impl aTst( nTok & 0x7F000, GetXMLToken(nTok), nTok );
 
     SvXMLTokenMap_Impl::iterator it = pImpl->find( aTst );
     if( it != pImpl->end() )

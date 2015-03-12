@@ -23,12 +23,12 @@
 #include <sal/types.h>
 
 #define XML_NAMESPACE( prefix, key ) \
-const sal_uInt16 XML_NAMESPACE_##prefix         = key; \
-const sal_uInt16 XML_NAMESPACE_##prefix##_IDX   = key;
+const sal_uInt16 XML_NAMESPACE_##prefix         = static_cast<sal_uInt16>(key << 12); \
+const sal_uInt16 XML_NAMESPACE_##prefix##_IDX   = static_cast<sal_uInt16>(key << 12);
 
 #define XML_OLD_NAMESPACE( prefix, index ) \
 const sal_uInt16 XML_OLD_NAMESPACE_##prefix##_IDX = \
-    (_XML_OLD_NAMESPACE_BASE+index);
+    static_cast<sal_uInt16>((_XML_OLD_NAMESPACE_BASE+index) << 12);
 
 // current namespaces
 // These namespaces have the same index in the namespace table as prefix used.
@@ -74,8 +74,8 @@ XML_NAMESPACE( GRDDL,           36U )
 // namespaces for odf extended formats
 
 #define XML_NAMESPACE_EXT( prefix, key ) \
-const sal_uInt16 XML_NAMESPACE_##prefix##_EXT       = key; \
-const sal_uInt16 XML_NAMESPACE_##prefix##_EXT_IDX   = key;
+const sal_uInt16 XML_NAMESPACE_##prefix##_EXT       = static_cast<sal_uInt16>(key << 12); \
+const sal_uInt16 XML_NAMESPACE_##prefix##_EXT_IDX   = static_cast<sal_uInt16>(key << 12);
 
 XML_NAMESPACE_EXT( OFFICE,      37U )
 XML_NAMESPACE_EXT( TABLE,       38U )

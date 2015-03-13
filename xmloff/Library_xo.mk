@@ -91,6 +91,7 @@ $(eval $(call gb_Library_add_exception_objects,xo,\
     xmloff/source/core/DocumentSettingsContext \
     xmloff/source/core/DomBuilderContext \
     xmloff/source/core/DomExport \
+	xmloff/source/core/fastparser \
 	xmloff/source/core/fasttokenhandler \
     xmloff/source/core/ProgressBarHelper \
     xmloff/source/core/PropertySetMerger \

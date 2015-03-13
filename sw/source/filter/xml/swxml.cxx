@@ -62,8 +62,7 @@
 #include <swmodule.hxx>
 #include <SwXMLSectionList.hxx>
 #include <statstr.hrc>
-#include <xmloff/xmlnmspe.hxx>
-#include <xmloff/fasttokenhandler.hxx>
+#include <xmloff/fastparser.hxx>
 
 #include <SwStyleNameMapper.hxx>
 #include <poolfmt.hxx>
@@ -150,12 +149,9 @@ sal_Int32 ReadThroughComponent(
     aParserInput.sSystemId = rName;
     aParserInput.aInputStream = xInputStream;
 
-    // get parser
-    uno::Reference< xml::sax::XParser > xParser = xml::sax::Parser::create(rxContext);
-    SAL_INFO( "sw.filter", "parser created" );
     // get filter
     const OUString aFilterName(OUString::createFromAscii(pFilterName));
-    uno::Reference< xml::sax::XDocumentHandler > xFilter(
+    uno::Reference< xml::sax::XFastDocumentHandler > xFilter(
         rxContext->getServiceManager()->createInstanceWithArgumentsAndContext(aFilterName, rFilterArguments, rxContext),
         UNO_QUERY);
     SAL_WARN_IF(!xFilter.is(), "sw", "Can't instantiate filter component: " << aFilterName);
@@ -163,7 +159,8 @@ sal_Int32 ReadThroughComponent(
         return ERR_SWG_READ_ERROR;
     SAL_INFO( "sw.filter", "" << pFilterName << " created" );
     // connect parser and filter
-    xParser->setDocumentHandler( xFilter );
+    xmloff::core::FastParser* xParser = new xmloff::core::FastParser( rxContext, xFilter );
+    SAL_INFO( "sw.filter", "parser created" );
 
     // connect model and filter
     uno::Reference < XImporter > xImporter( xFilter, UNO_QUERY );
@@ -1010,15 +1007,9 @@ size_t XMLReader::GetSectionList( SfxMedium& rMedium,
 
             // get filter
             uno::Reference< xml::sax::XFastDocumentHandler > xFilter = new SwXMLSectionList( xContext, rStrings );
-            uno::Reference< xml::sax::XFastTokenHandler > xTokenHandler = new xmloff::token::FastTokenHandler();
 
             // connect parser and filter
-            uno::Reference< xml::sax::XFastParser > xParser = xml::sax::FastParser::create(xContext);
-            xParser->setFastDocumentHandler( xFilter );
-            xParser->setTokenHandler( xTokenHandler );
-
-            xParser->registerNamespace( "urn:oasis:names:tc:opendocument:xmlns:office:1.0", FastToken::NAMESPACE | XML_NAMESPACE_OFFICE );
-            xParser->registerNamespace( "urn:oasis:names:tc:opendocument:xmlns:text:1.0", FastToken::NAMESPACE | XML_NAMESPACE_TEXT );
+            xmloff::core::FastParser* xParser = new xmloff::core::FastParser( xContext, xFilter );
 
             // parse
             xParser->parseStream( aParserInput );

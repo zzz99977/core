@@ -54,6 +54,7 @@
 #include <comphelper/processfactory.hxx>
 #include <comphelper/documentconstants.hxx>
 #include <comphelper/storagehelper.hxx>
+#include <comphelper/attributelist.hxx>
 #include <unotools/fontcvt.hxx>
 
 #include <com/sun/star/rdf/XMetadatable.hpp>
@@ -346,10 +347,16 @@ SvXMLImportContext *SvXMLImport::CreateContext( sal_uInt16 nPrefix,
     return new SvXMLImportContext( *this, nPrefix, rLocalName );
 }
 
-SvXMLImportContext *SvXMLImport::CreateFastContext( sal_Int32 /*Element*/,
-        const uno::Reference< xml::sax::XFastAttributeList >& /*xAttrList*/ )
+SvXMLImportContext *SvXMLImport::CreateFastContext( sal_Int32 Element,
+        const uno::Reference< xml::sax::XFastAttributeList >& xAttrList )
 {
-    return new SvXMLImportContext( *this );
+    comphelper::AttributeList *pAttrList = new comphelper::AttributeList();
+    uno::Sequence< xml::FastAttribute > attributes = xAttrList->getFastAttributes();
+    for( xml::FastAttribute attribute : attributes )
+    {
+        pAttrList->AddAttribute( GetXMLToken( attribute.Token ), "", attribute.Value );
+    }
+    return CreateContext( 0x7F000 & Element, GetXMLToken( Element ), pAttrList );
 }
 
 void SvXMLImport::_InitCtor()

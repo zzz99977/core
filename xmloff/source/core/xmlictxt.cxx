@@ -26,8 +26,11 @@
 #include <xmloff/nmspmap.hxx>
 #include <xmloff/xmlimp.hxx>
 #include <xmloff/xmlictxt.hxx>
+#include <xmloff/xmltoken.hxx>
+#include <comphelper/attributelist.hxx>
 
 using namespace ::com::sun::star;
+using namespace comphelper;
 
 TYPEINIT0( SvXMLImportContext );
 SvXMLImportContext::SvXMLImportContext( SvXMLImport& rImp, sal_uInt16 nPrfx,
@@ -70,9 +73,16 @@ void SvXMLImportContext::Characters( const OUString& )
 }
 
 // ::com::sun::star::xml::sax::XFastContextHandler:
-void SAL_CALL SvXMLImportContext::startFastElement(sal_Int32, const uno::Reference< xml::sax::XFastAttributeList > &)
+void SAL_CALL SvXMLImportContext::startFastElement(sal_Int32, const uno::Reference< xml::sax::XFastAttributeList > &xAttrList)
     throw (uno::RuntimeException, xml::sax::SAXException, std::exception)
 {
+    AttributeList* pAttrList = new AttributeList();
+    uno::Sequence< xml::FastAttribute > attributes = xAttrList->getFastAttributes();
+    for( xml::FastAttribute attribute : attributes )
+    {
+        pAttrList->AddAttribute( xmloff::token::GetXMLToken( attribute.Token ), "", attribute.Value );
+    }
+    StartElement( pAttrList );
 }
 
 void SAL_CALL SvXMLImportContext::startUnknownElement(const OUString &, const OUString &,
@@ -84,6 +94,7 @@ void SAL_CALL SvXMLImportContext::startUnknownElement(const OUString &, const OU
 void SAL_CALL SvXMLImportContext::endFastElement(sal_Int32)
     throw (uno::RuntimeException, xml::sax::SAXException, std::exception)
 {
+    EndElement();
 }
 
 void SAL_CALL SvXMLImportContext::endUnknownElement (const OUString & , const OUString & )
@@ -92,10 +103,16 @@ void SAL_CALL SvXMLImportContext::endUnknownElement (const OUString & , const OU
 }
 
 uno::Reference< xml::sax::XFastContextHandler > SAL_CALL SvXMLImportContext::createFastChildContext
-    (sal_Int32 Element, const uno::Reference< xml::sax::XFastAttributeList > & Attribs)
+    (sal_Int32 Element, const uno::Reference< xml::sax::XFastAttributeList > & xAttrList)
     throw (uno::RuntimeException, xml::sax::SAXException, std::exception)
 {
-    return mrImport.CreateFastContext( Element, Attribs );
+    AttributeList* pAttrList = new AttributeList();
+    uno::Sequence< xml::FastAttribute > attributes = xAttrList->getFastAttributes();
+    for( xml::FastAttribute attribute : attributes )
+    {
+        pAttrList->AddAttribute( xmloff::token::GetXMLToken( attribute.Token ), "", attribute.Value );
+    }
+    return CreateChildContext( Element & 0x7F000, xmloff::token::GetXMLToken( Element ), pAttrList );
 }
 
 uno::Reference< xml::sax::XFastContextHandler > SAL_CALL SvXMLImportContext::createUnknownChildContext
@@ -105,9 +122,10 @@ uno::Reference< xml::sax::XFastContextHandler > SAL_CALL SvXMLImportContext::cre
     return 0;
 }
 
-void SAL_CALL SvXMLImportContext::characters(const OUString &)
+void SAL_CALL SvXMLImportContext::characters(const OUString & rChars)
     throw (uno::RuntimeException, xml::sax::SAXException, std::exception)
 {
+    Characters( rChars );
 }
 
 void SvXMLImportContext::onDemandRescueUsefulDataFromTemporary( const SvXMLImportContext& )

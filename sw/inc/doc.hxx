@@ -337,6 +337,7 @@ class SW_DLLPUBLIC SwDoc :
     mutable std::unordered_map<OUString, SwNumRule *, OUStringHash> maNumRuleMap;
 
     SwUnoCrsrTbl    *mpUnoCrsrTbl;
+    std::list< std::weak_ptr<SwUnoCrsr> > mvUnoCrsrTbl2;
 
     SwPagePreviewPrtData *mpPgPViewPrtData;  //< Indenting / spacing for printing of page view.
     SwPaM           *mpExtInputRing;
@@ -1501,6 +1502,7 @@ public:
     // Uno - Interfaces
     const SwUnoCrsrTbl& GetUnoCrsrTbl() const       { return *mpUnoCrsrTbl; }
     SwUnoCrsr* CreateUnoCrsr( const SwPosition& rPos, bool bTblCrsr = false );
+    std::shared_ptr<SwUnoCrsr> CreateUnoCrsr2( const SwPosition& rPos, bool bTblCrsr = false );
 
     // FeShell - Interfaces
     // !!! These assume always an existing layout !!!

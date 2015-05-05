@@ -1686,6 +1686,17 @@ SwUnoCrsr* SwDoc::CreateUnoCrsr( const SwPosition& rPos, bool bTblCrsr )
     mpUnoCrsrTbl->insert( pNew );
     return pNew;
 }
+std::shared_ptr<SwUnoCrsr> SwDoc::CreateUnoCrsr2( const SwPosition& rPos, bool bTblCrsr )
+{
+    std::shared_ptr<SwUnoCrsr> pNew;
+    if( bTblCrsr )
+        pNew.reset(new SwUnoTableCrsr( rPos ));
+    else
+        pNew.reset(new SwUnoCrsr( rPos ));
+
+    mvUnoCrsrTbl2.push_back( pNew );
+    return pNew;
+}
 
 void SwDoc::ChkCondColls()
 {

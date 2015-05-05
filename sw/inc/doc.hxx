@@ -337,7 +337,6 @@ class SW_DLLPUBLIC SwDoc :
     mutable std::unordered_map<OUString, SwNumRule *, OUStringHash> maNumRuleMap;
 
     SwUnoCrsrTbl    *mpUnoCrsrTbl;
-    std::list< std::weak_ptr<SwUnoCrsr> > mvUnoCrsrTbl2;
 
     SwPagePreviewPrtData *mpPgPViewPrtData;  //< Indenting / spacing for printing of page view.
     SwPaM           *mpExtInputRing;
@@ -1676,6 +1675,7 @@ public:
     void dumpAsXml(struct _xmlTextWriter* = 0) const;
 
     std::set<Color> GetDocColors();
+    std::list< std::weak_ptr<SwUnoCrsr> > mvUnoCrsrTbl2;
 
 private:
     // Copies master header to left / first one, if necessary - used by ChgPageDesc().

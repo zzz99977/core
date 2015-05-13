@@ -527,8 +527,8 @@ static sal_Int32 lcl_GetCountOrName(const SwDoc &rDoc,
         {
             sal_uInt16 nBaseCount = RES_POOLPAGE_END - RES_POOLPAGE_BEGIN;
             nIndex = nIndex - nBaseCount;
-            const sal_uInt16 nArrLen = rDoc.GetPageDescCnt();
-            for(sal_uInt16 i = 0; i < nArrLen; ++i)
+            const size_t nArrLen = rDoc.GetPageDescCnt();
+            for(size_t i = 0; i < nArrLen; ++i)
             {
                 const SwPageDesc& rDesc = rDoc.GetPageDesc(i);
 
@@ -3104,7 +3104,7 @@ void SAL_CALL SwXStyle::setAllPropertiesToDefault(  )
         {
             rtl::Reference< SwDocStyleSheet > xStyle( new SwDocStyleSheet( *static_cast<SwDocStyleSheet*>(pBase) ) );
             SwFmt *pTargetFmt = 0;
-            sal_uInt16 nPgDscPos = USHRT_MAX;
+            size_t nPgDscPos = SIZE_MAX;
             switch(eFamily)
             {
                 case SFX_STYLE_FAMILY_CHAR:
@@ -3144,7 +3144,8 @@ void SAL_CALL SwXStyle::setAllPropertiesToDefault(  )
 
             if(pTargetFmt)
             {
-                if(USHRT_MAX != nPgDscPos)
+                //FIXME: Contains too ?
+                if(SIZE_MAX != nPgDscPos)
                 {
                     SwPageDesc& rPageDesc = m_pDoc->GetPageDesc(nPgDscPos);
                     rPageDesc.ResetAllMasterAttr();
@@ -3194,7 +3195,8 @@ void SAL_CALL SwXStyle::setAllPropertiesToDefault(  )
                     pTargetFmt->ResetAllFmtAttr();
                 }
 
-                if(USHRT_MAX != nPgDscPos)
+                // FIXME: Contains ?
+                if(SIZE_MAX != nPgDscPos)
                 {
                     m_pDoc->ChgPageDesc(nPgDscPos, m_pDoc->GetPageDesc(nPgDscPos));
                 }

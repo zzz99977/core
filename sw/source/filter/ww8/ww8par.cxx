@@ -4915,7 +4915,7 @@ sal_uLong SwWW8ImplReader::CoreLoad(WW8Glossary *pGloss, const SwPosition &rPos)
 
     pAnchorStck = new SwWW8FltAnchorStack(&rDoc, nFieldFlags);
 
-    sal_uInt16 nPageDescOffset = rDoc.GetPageDescCnt();
+    size_t nPageDescOffset = rDoc.GetPageDescCnt();
 
     SwNodeIndex aSttNdIdx( rDoc.GetNodes() );
     SwRelNumRuleSpaces aRelNumRule(rDoc, mbNewDoc);

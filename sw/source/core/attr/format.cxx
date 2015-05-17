@@ -243,6 +243,7 @@ SwFmt::~SwFmt()
             SwIterator<SwClient,SwFmt> aIter(*this);
             for(SwClient* pClient = aIter.First(); pClient && pParentFmt; pClient = aIter.Next())
             {
+                SAL_INFO("sw.core", "reparenting " << typeid(*pClient).name() << " at " << pClient << " from " << typeid(*this).name() << " at " << this << " to "  << typeid(*pParentFmt).name() << " at " << pParentFmt);
                 pParentFmt->Add( pClient );
                 pClient->ModifyNotification( &aOldFmt, &aNewFmt );
             }

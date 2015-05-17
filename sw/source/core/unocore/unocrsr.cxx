@@ -53,12 +53,6 @@ SwUnoCrsr::~SwUnoCrsr()
                 OSL_ENSURE( false, "UNO Cursor nicht mehr im Array" );
             }
         }
-        // then remove cursor from array
-        SwUnoCrsrTbl& rTbl = (SwUnoCrsrTbl&)pDoc->GetUnoCrsrTbl();
-        if( !rTbl.erase( this ) )
-        {
-            OSL_ENSURE( false, "UNO Cursor nicht mehr im Array" );
-        }
     }
 
     // delete the whole ring

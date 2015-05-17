@@ -517,6 +517,11 @@ SwDoc::~SwDoc()
     // Optimization: Based on the fact that Standard is always 2nd in the
     // array, we should delete it as the last. With this we avoid
     // reparenting the Formats all the time!
+    for(auto pTxtxFmtColl: *mpTxtFmtCollTbl)
+    {
+        if(pTxtxFmtColl->GetRegisteredIn())
+            pTxtxFmtColl->GetRegisteredIn()->Remove(pTxtxFmtColl);
+    }
     if( 2 < mpTxtFmtCollTbl->size() )
         mpTxtFmtCollTbl->DeleteAndDestroy(2, mpTxtFmtCollTbl->size());
     mpTxtFmtCollTbl->DeleteAndDestroy(1, mpTxtFmtCollTbl->size());
@@ -566,6 +571,11 @@ SwDoc::~SwDoc()
 
     delete mpStyleAccess;
 
+    for(auto pCharFmt: *mpCharFmtTbl)
+    {
+        if(pCharFmt->GetRegisteredIn())
+            pCharFmt->GetRegisteredIn()->Remove(pCharFmt);
+    }
     delete mpCharFmtTbl;
     delete mpSectionFmtTbl;
     delete mpTblFrmFmtTbl;

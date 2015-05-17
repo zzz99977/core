@@ -3018,8 +3018,7 @@ SwXTextCursor::createEnumeration() throw (uno::RuntimeException, std::exception)
         throw uno::RuntimeException();
     }
 
-    ::std::unique_ptr<SwUnoCrsr> pNewCrsr(
-        rUnoCursor.GetDoc()->CreateUnoCrsr(*rUnoCursor.GetPoint()) );
+    auto pNewCrsr(rUnoCursor.GetDoc()->CreateUnoCrsr2(*rUnoCursor.GetPoint()) );
     if (rUnoCursor.HasMark())
     {
         pNewCrsr->SetMark();
@@ -3032,11 +3031,7 @@ SwXTextCursor::createEnumeration() throw (uno::RuntimeException, std::exception)
             : 0);
     SwTable const*const pTable(
             (pStartNode) ? & pStartNode->GetTable() : 0 );
-    const uno::Reference< container::XEnumeration > xRet =
-        new SwXParagraphEnumeration(
-            pParentText, std::move(pNewCrsr), eSetType, pStartNode, pTable);
-
-    return xRet;
+    return new SwXParagraphEnumeration(pParentText, pNewCrsr, eSetType, pStartNode, pTable);
 }
 
 uno::Type SAL_CALL

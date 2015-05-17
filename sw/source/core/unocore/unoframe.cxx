@@ -3258,17 +3258,13 @@ uno::Reference< text::XTextCursor >  SwXTextFrame::createTextCursorByRange(const
 uno::Reference< container::XEnumeration >  SwXTextFrame::createEnumeration(void) throw( uno::RuntimeException, std::exception )
 {
     SolarMutexGuard aGuard;
-    uno::Reference< container::XEnumeration >  aRef;
     SwFrmFmt* pFmt = GetFrmFmt();
-    if(pFmt)
-    {
-        SwPosition aPos(pFmt->GetCntnt().GetCntntIdx()->GetNode());
-        ::std::unique_ptr<SwUnoCrsr> pUnoCursor(
-                GetDoc()->CreateUnoCrsr(aPos, false));
-        pUnoCursor->Move(fnMoveForward, fnGoNode);
-        aRef = new SwXParagraphEnumeration(this, std::move(pUnoCursor), CURSOR_FRAME);
-    }
-    return aRef;
+    if(!pFmt)
+        return nullptr;
+    SwPosition aPos(pFmt->GetCntnt().GetCntntIdx()->GetNode());
+    auto pUnoCursor(GetDoc()->CreateUnoCrsr2(aPos, false));
+    pUnoCursor->Move(fnMoveForward, fnGoNode);
+    return new SwXParagraphEnumeration(this, pUnoCursor, CURSOR_FRAME);
 }
 
 uno::Type  SwXTextFrame::getElementType(void) throw( uno::RuntimeException, std::exception )

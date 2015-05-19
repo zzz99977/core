@@ -69,6 +69,7 @@ const char BASE_URL[] =           "private:factory/sdatabase?Interactive";
 const char MATH_URL[] =           "private:factory/smath";
 const char TEMPLATE_URL[] =       ".uno:NewDoc";
 const char OPEN_URL[] =           ".uno:Open";
+const char REMOTE_URL[] =         ".uno:OpenRemote";
 const char SERVICENAME_CFGREADACCESS[] = "com.sun.star.configuration.ConfigurationAccess";
 
 float fMultiplier = 1.4f;
@@ -102,6 +103,7 @@ BackingWindow::BackingWindow( vcl::Window* i_pParent ) :
     m_pUIBuilder = new VclBuilder(this, getUIRootDir(), "sfx/ui/startcenter.ui", "StartCenter" );
 
     get(mpOpenButton, "open_all");
+    get(mpRemoteButton, "open_remote");
     get(mpRecentButton, "open_recent");
     get(mpTemplateButton, "templates_all");
 
@@ -218,6 +220,7 @@ void BackingWindow::dispose()
     }
     disposeBuilder();
     mpOpenButton.clear();
+    mpRemoteButton.clear();
     mpRecentButton.clear();
     mpTemplateButton.clear();
     mpCreateLabel.clear();
@@ -298,6 +301,7 @@ void BackingWindow::initControls()
     mpLocalView->setOpenTemplateHdl(LINK(this,BackingWindow,OpenTemplateHdl));
 
     setupButton( mpOpenButton );
+    setupButton( mpRemoteButton );
     setupButton( mpRecentButton );
     setupButton( mpTemplateButton );
     setupButton( mpWriterAllButton );
@@ -579,6 +583,14 @@ IMPL_LINK( BackingWindow, ClickHdl, Button*, pButton )
         pArg[0].Value <<= OUString("private:user");
 
         dispatchURL( OPEN_URL, OUString(), xFrame, aArgs );
+    }
+    else if( pButton == mpRemoteButton )
+    {
+        Reference< XDispatchProvider > xFrame( mxFrame, UNO_QUERY );
+
+        Sequence< com::sun::star::beans::PropertyValue > aArgs(0);
+
+        dispatchURL( REMOTE_URL, OUString(), xFrame, aArgs );
     }
     else if( pButton == mpRecentButton )
     {

@@ -62,6 +62,7 @@ class BackingWindow
     com::sun::star::uno::Reference< com::sun::star::datatransfer::dnd::XDropTargetListener > mxDropTargetListener;
 
     VclPtr<PushButton>                     mpOpenButton;
+    VclPtr<PushButton>                     mpRemoteButton;
     VclPtr<PushButton>                     mpRecentButton;
     VclPtr<MenuButton>                     mpTemplateButton;
 

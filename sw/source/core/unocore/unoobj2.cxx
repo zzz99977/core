@@ -466,7 +466,8 @@ public:
     }
 
     virtual ~Impl() {
-        m_pCrsr->Remove(this);
+        if(m_pCrsr)
+            m_pCrsr->Remove(this);
     }
 
     SwUnoCrsr * GetCursor() {
@@ -493,7 +494,7 @@ void SwXParagraphEnumeration::Impl::SwClientNotify(const SwModify& rModify, cons
 {
     assert(m_pCrsr->m_bSaneOwnership);
     SwClient::SwClientNotify(rModify, rHint);
-    if(typeid(rHint) == typeid(sw::DocDisposingHint))
+    if(m_pCrsr && typeid(rHint) == typeid(sw::DocDisposingHint))
     {
         m_pCrsr->Remove(this);
         m_pCrsr.reset();

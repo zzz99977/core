@@ -2579,7 +2579,7 @@ void SwXTextTable::setPropertyValue(const OUString& rPropertyName, const uno::An
                     const SwStartNode* pSttNd = pTLBox->GetSttNd();
                     SwPosition aPos(*pSttNd);
                     // set cursor to top left cell
-                    SwUnoCrsr* pUnoCrsr = pDoc->CreateUnoCrsr(aPos, true);
+                    auto pUnoCrsr(pDoc->CreateUnoCrsr2(aPos, true));
                     pUnoCrsr->Move( fnMoveForward, fnGoNode );
                     pUnoCrsr->SetRemainInSection( false );
 
@@ -2623,7 +2623,6 @@ void SwXTextTable::setPropertyValue(const OUString& rPropertyName, const uno::An
                     aSet.Put(aBoxInfo);
 
                     pDoc->SetTabBorders(rCrsr, aSet);
-                    delete pUnoCrsr;
                 }
                 break;
 
@@ -2769,7 +2768,7 @@ uno::Any SwXTextTable::getPropertyValue(const OUString& rPropertyName)
                     const SwStartNode* pSttNd = pTLBox->GetSttNd();
                     SwPosition aPos(*pSttNd);
                     // set cursor to top left cell
-                    SwUnoCrsr* pUnoCrsr = pDoc->CreateUnoCrsr(aPos, true);
+                    auto pUnoCrsr(pDoc->CreateUnoCrsr2(aPos, true));
                     pUnoCrsr->Move( fnMoveForward, fnGoNode );
                     pUnoCrsr->SetRemainInSection( false );
 
@@ -2830,7 +2829,6 @@ uno::Any SwXTextTable::getPropertyValue(const OUString& rPropertyName)
                         aTableBorder.IsDistanceValid        = rBoxInfoItem.IsValid(SvxBoxInfoItemValidFlags::DISTANCE);
                         aRet <<= aTableBorder;
                     }
-                    delete pUnoCrsr;
                 }
                 break;
 

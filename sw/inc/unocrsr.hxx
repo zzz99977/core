@@ -92,7 +92,7 @@ public:
                                   nsSwCursorSelOverFlags::SELOVER_TOGGLE |
                                   nsSwCursorSelOverFlags::SELOVER_CHANGEPOS )) SAL_OVERRIDE;
 
-    SwUnoTableCrsr * Clone() const;
+    std::shared_ptr<SwUnoCrsr> Clone() const;
 
     void MakeBoxSels();
 

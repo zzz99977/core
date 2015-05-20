@@ -1948,7 +1948,7 @@ SwChartDataSequence::SwChartDataSequence( const SwChartDataSequence &rObj ) :
     aColLabelText( SW_RES(STR_CHART2_COL_LABEL_TEXT) ),
     xDataProvider( rObj.pDataProvider ),
     pDataProvider( rObj.pDataProvider ),
-    pTblCrsr( rObj.pTblCrsr->Clone() ),
+    pTblCrsr( dynamic_cast<SwUnoTableCrsr*>(rObj.pTblCrsr.get())->Clone() ),
     aCursorDepend( this, pTblCrsr.get() ),
     _pPropSet( rObj._pPropSet )
 {
@@ -2033,7 +2033,7 @@ uno::Sequence< uno::Any > SAL_CALL SwChartDataSequence::getData()
                 // keep original cursor and make copy of it that gets handed
                 // over to the SwXCellRange object which takes ownership and
                 // thus will destroy the copy later.
-                SwXCellRange aRange( pTblCrsr->Clone(), *pTblFmt, aDesc );
+                SwXCellRange aRange( dynamic_cast<SwUnoTableCrsr*>(pTblCrsr.get())->Clone(), *pTblFmt, aDesc );
                 aRange.GetDataSequence( &aRes, 0, 0 );
             }
         }
@@ -2193,7 +2193,7 @@ uno::Sequence< OUString > SAL_CALL SwChartDataSequence::getTextualData()
                 // keep original cursor and make copy of it that gets handed
                 // over to the SwXCellRange object which takes ownership and
                 // thus will destroy the copy later.
-                SwXCellRange aRange( pTblCrsr->Clone(), *pTblFmt, aDesc );
+                SwXCellRange aRange( dynamic_cast<SwUnoTableCrsr*>(pTblCrsr.get())->Clone(), *pTblFmt, aDesc );
                 aRange.GetDataSequence( 0, &aRes, 0 );
             }
         }
@@ -2222,7 +2222,7 @@ uno::Sequence< double > SAL_CALL SwChartDataSequence::getNumericalData()
                 // keep original cursor and make copy of it that gets handed
                 // over to the SwXCellRange object which takes ownership and
                 // thus will destroy the copy later.
-                SwXCellRange aRange( pTblCrsr->Clone(), *pTblFmt, aDesc );
+                SwXCellRange aRange( dynamic_cast<SwUnoTableCrsr*>(pTblCrsr.get())->Clone(), *pTblFmt, aDesc );
 
                 // get numerical values and make an effort to return the
                 // numerical value for text formatted cells

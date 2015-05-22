@@ -1409,7 +1409,7 @@ void SwXTextPortionEnumeration::Modify( const SfxPoolItem* pOld, const SfxPoolIt
 void SwXTextPortionEnumeration::SwClientNotify(const SwModify& rModify, const SfxHint& rHint)
 {
     SwClient::SwClientNotify(rModify, rHint);
-    if(m_pUnoCrsr && typeid(rHint) == typeid(sw::DocDisposingHint))
+    if(!GetRegisteredIn() || typeid(rHint) == typeid(sw::DocDisposingHint))
     {
         assert(m_pUnoCrsr->m_bSaneOwnership);
         m_pUnoCrsr->Remove(this);

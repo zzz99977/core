@@ -110,7 +110,7 @@ uno::Reference<text::XTextCursor> SwXRedlineText::createTextCursor(void)
     SwPosition aPos(aNodeIndex);
     SwXTextCursor *const pXCursor =
         new SwXTextCursor(*GetDoc(), this, CURSOR_REDLINE, aPos);
-    SwUnoCrsr *const pUnoCursor = pXCursor->GetCursor();
+    auto pUnoCursor(pXCursor->GetCursor());
     pUnoCursor->Move(fnMoveForward, fnGoNode);
 
     // #101929# prevent a newly created text cursor from running inside a table
@@ -567,7 +567,7 @@ uno::Reference< text::XTextCursor >  SwXRedline::createTextCursor(void) throw( u
         SwPosition aPos(*pNodeIndex);
         SwXTextCursor *const pXCursor =
             new SwXTextCursor(*pDoc, this, CURSOR_REDLINE, aPos);
-        SwUnoCrsr *const pUnoCrsr = pXCursor->GetCursor();
+        auto pUnoCrsr(pXCursor->GetCursor());
         pUnoCrsr->Move(fnMoveForward, fnGoNode);
 
         // is here a table?

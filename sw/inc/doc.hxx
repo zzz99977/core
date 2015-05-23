@@ -146,7 +146,6 @@ class SwTxtFmtColl;
 class SwTxtFmtColls;
 class SwURLStateChanged;
 class SwUnoCrsr;
-class SwUnoCrsrTbl;
 class SwViewShell;
 class _SetGetExpFld;
 class SwDrawContact;

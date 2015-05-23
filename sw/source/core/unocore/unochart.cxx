@@ -412,8 +412,7 @@ static void GetFormatAndCreateCursorFromRangeRep(
                 SwPosition aPos(*pSttNd);
 
                 // set cursor to top left box of range
-                SwUnoCrsr* pUnoCrsr = pTableFormat->GetDoc()->CreateUnoCrsr(aPos, true);
-                auto pUnoCrsr = pTableFormat->GetDoc()->CreateUnoCrsr2(aPos, true);
+                auto pUnoCrsr = pTableFormat->GetDoc()->CreateUnoCrsr(aPos, true);
                 pUnoCrsr->Move( fnMoveForward, fnGoNode );
                 pUnoCrsr->SetRemainInSection( false );
 
@@ -2033,7 +2032,7 @@ uno::Sequence< uno::Any > SAL_CALL SwChartDataSequence::getData()
                 // keep original cursor and make copy of it that gets handed
                 // over to the SwXCellRange object which takes ownership and
                 // thus will destroy the copy later.
-                SwXCellRange aRange( dynamic_cast<SwUnoTableCrsr*>(pTblCrsr.get())->Clone(), *pTblFmt, aDesc );
+                SwXCellRange aRange( dynamic_cast<SwUnoTableCrsr*>(pTableCrsr.get())->Clone(), *pTableFormat, aDesc );
                 aRange.GetDataSequence( &aRes, 0, 0 );
             }
         }

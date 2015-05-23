@@ -379,7 +379,7 @@ void CntntIdxStoreImpl::RestoreFlys(SwDoc* pDoc, updater_t& rUpdater, bool bAuto
 
 void CntntIdxStoreImpl::SaveUnoCrsrs(SwDoc* pDoc, sal_uLong nNode, sal_Int32 nCntnt)
 {
-    for (auto pWeakUnoCrsr : pDoc->mvUnoCrsrTbl2)
+    for (auto pWeakUnoCrsr : pDoc->mvUnoCrsrTbl)
     {
         auto pUnoCrsr(pWeakUnoCrsr.lock());
         if(!pUnoCrsr)

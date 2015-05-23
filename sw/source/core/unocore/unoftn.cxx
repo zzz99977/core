@@ -478,7 +478,7 @@ SwXFootnote::createEnumeration() throw (uno::RuntimeException, std::exception)
 
     SwTxtFtn const*const pTxtFtn = rFmt.GetTxtFtn();
     SwPosition aPos( *pTxtFtn->GetStartNode() );
-    auto pUnoCursor(GetDoc()->CreateUnoCrsr2(aPos, false));
+    auto pUnoCursor(GetDoc()->CreateUnoCrsr(aPos, false));
     pUnoCursor->Move(fnMoveForward, fnGoNode);
     return new SwXParagraphEnumeration(this, pUnoCursor, CURSOR_FOOTNOTE);
 }

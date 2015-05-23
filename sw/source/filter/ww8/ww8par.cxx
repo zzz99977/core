@@ -4898,7 +4898,7 @@ sal_uLong SwWW8ImplReader::CoreLoad(WW8Glossary *pGloss, const SwPosition &rPos)
             pDocShell->SetReadOnlyUI(true);
     }
 
-    mpCrsr = rDoc.CreateUnoCrsr2(rPos);
+    mpCrsr = rDoc.CreateUnoCrsr(rPos);
     pPaM = mpCrsr.get();
 
 

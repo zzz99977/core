@@ -161,7 +161,7 @@ uno::Reference<container::XEnumeration> SwXRedlineText::createEnumeration(void)
     SolarMutexGuard aGuard;
     SwPaM aPam(aNodeIndex);
     aPam.Move(fnMoveForward, fnGoNode);
-    auto pUnoCursor(GetDoc()->CreateUnoCrsr2(*aPam.Start(), false));
+    auto pUnoCursor(GetDoc()->CreateUnoCrsr(*aPam.Start(), false));
     return new SwXParagraphEnumeration(this, pUnoCursor, CURSOR_REDLINE);
 }
 
@@ -538,7 +538,7 @@ uno::Reference< container::XEnumeration >  SwXRedline::createEnumeration(void) t
         return nullptr;
     SwPaM aPam(*pNodeIndex);
     aPam.Move(fnMoveForward, fnGoNode);
-    auto pUnoCursor(GetDoc()->CreateUnoCrsr2(*aPam.Start(), false));
+    auto pUnoCursor(GetDoc()->CreateUnoCrsr(*aPam.Start(), false));
     return new SwXParagraphEnumeration(this, pUnoCursor, CURSOR_REDLINE);
 }
 

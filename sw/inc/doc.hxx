@@ -336,8 +336,6 @@ class SW_DLLPUBLIC SwDoc :
     // Hash map to find numrules by name
     mutable std::unordered_map<OUString, SwNumRule *, OUStringHash> maNumRuleMap;
 
-    SwUnoCrsrTbl    *mpUnoCrsrTbl;
-
     SwPagePreviewPrtData *mpPgPViewPrtData;  //< Indenting / spacing for printing of page view.
     SwPaM           *mpExtInputRing;
 
@@ -1499,8 +1497,6 @@ public:
     void SetOLEObjModified();
 
     // Uno - Interfaces
-    const SwUnoCrsrTbl& GetUnoCrsrTbl() const       { return *mpUnoCrsrTbl; }
-    SwUnoCrsr* CreateUnoCrsr( const SwPosition& rPos, bool bTblCrsr = false );
     std::shared_ptr<SwUnoCrsr> CreateUnoCrsr2( const SwPosition& rPos, bool bTblCrsr = false );
 
     // FeShell - Interfaces

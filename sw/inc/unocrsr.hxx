@@ -37,7 +37,6 @@ private:
 public:
     SwUnoCrsr( const SwPosition &rPos, SwPaM* pRing = 0 );
     virtual ~SwUnoCrsr();
-    bool m_bSaneOwnership;
 
 protected:
 

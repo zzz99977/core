@@ -1959,23 +1959,10 @@ void SdrTextObj::onEditOutlinerStatusEvent( EditStatus* pEditStatus )
             SetToBeChained( pEditStatus->IsPageOverflow() );
             fprintf(stderr, "[CHAINING] Need for Chaining is %s\n",
                 pEditStatus->IsPageOverflow() ? "TRUE" : "FALSE");
+            // Trying to copy stuff right away
+            SdrTextObj *pNextTextObj = GetNextLinkInChain();
+            impCopyTextInTextObj(pNextTextObj);
 
-            /*
-             *  XXX: I can see problems with circular chains here:
-             *        If there is such a circular chain we get back
-             *        to the first box and so on...
-            */
-
-            //if ( IsRecursiveChaining() ) {
-                // set non overflowing text
-
-                /*
-                 * XXX: what's with the Outliner?
-                 * It may be that we are calling it in the wrong moment.
-                 * But if we don't call it here, where?
-                */
-
-            //}
         }
     }
 }

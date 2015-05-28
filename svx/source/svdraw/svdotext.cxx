@@ -1962,8 +1962,7 @@ void SdrTextObj::onEditOutlinerStatusEvent( EditStatus* pEditStatus )
             // Trying to copy stuff right away
 
             if (pEditStatus->IsPageOverflow()) {
-                SdrOutliner& rOutliner = ImpGetDrawOutliner();
-                mpOverflowingText = rOutliner.GetOverflowingParaObject();
+                mpOverflowingText = pEdtOutl->GetOverflowingParaObject();
                 SdrTextObj *pNextTextObj = GetNextLinkInChain();
                 impCopyTextInTextObj(pNextTextObj);
             }

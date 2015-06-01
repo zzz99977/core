@@ -1966,7 +1966,7 @@ void SdrTextObj::onEditOutlinerStatusEvent( EditStatus* pEditStatus )
             if ( pEditStatus->IsPageOverflow() ) {
                 mpOverflowingText = pEdtOutl->GetOverflowingParaObject();
                 SdrTextObj *pNextTextObj = GetNextLinkInChain();
-                impCopyTextInTextObj(pNextTextObj);
+                impCopyTextInTextObj2(pNextTextObj);
             }
 
         }

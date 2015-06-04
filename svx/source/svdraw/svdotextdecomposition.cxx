@@ -730,7 +730,7 @@ void SdrTextObj::impDecomposeContourTextPrimitive(
 
 void SdrTextObj::impLeaveOnlyNonOverflowingText() const
 {
-    // Cut non overflowing text // FIXME: Move this in separate function
+    // Cut non overflowing text
     NonOverflowingText *pNonOverflowingTxt =
         pEdtOutl->GetNonOverflowingText();
     SdrOutliner &rOutliner = ImpGetDrawOutliner();
@@ -756,6 +756,7 @@ void SdrTextObj::impLeaveOnlyNonOverflowingText() const
 
     OutlinerParaObject *pNewText = rOutliner.CreateParaObject();
     const_cast<SdrTextObj*>(this)->NbcSetOutlinerParaObject(pNewText);
+    const_cast<SdrTextObj*>(this)->ReformatText();
 }
 
 

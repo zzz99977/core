@@ -36,7 +36,7 @@ Now, just enter the name under which you want to register the data source in %PR
         <child>
           <object class="GtkCheckButton" id="embed">
             <property name="label" translatable="yes">Embed this address book definition into the current document.</property>
-            <property name="visible">False</property>
+            <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
             <property name="xalign">0</property>

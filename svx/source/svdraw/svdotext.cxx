@@ -2052,9 +2052,9 @@ SdrTextObj* SdrTextObj::GetNextLinkInChain() const
 
 }
 
-IMPL_LINK(SdrTextObj,ImpDecomposeChainedText,bool,bIsPageOverflow)
+IMPL_LINK(SdrTextObj,ImpDecomposeChainedText,bool*,bIsPageOverflow)
 {
-    onOverflowStatusEvent( bIsPageOverflow );
+    onOverflowStatusEvent( *bIsPageOverflow );
     return 0;
 }
 

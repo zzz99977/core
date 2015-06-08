@@ -194,6 +194,8 @@ bool SdrTextObj::NbcAdjustTextFrameWidthAndHeight(bool bHgt, bool bWdt)
         if (HAS_BASE(SdrCaptionObj,this)) { // this is a hack
             ((SdrCaptionObj*)this)->ImpRecalcTail();
         }
+    } else {
+        //ImpGetDrawOutliner().SetStatusEventHdl1(LINK(this,SdrTextObj,ImpDecomposeChainedText));
     }
     return bRet;
 }

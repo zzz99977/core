@@ -847,7 +847,8 @@ public:
 
     void            SetStatusEventHdl( const Link& rLink )  { aStatusHdlLink = rLink; }
     Link            GetStatusEventHdl() const               { return aStatusHdlLink; }
-    void            SetStatusEventHdlChaining( const Link& rLink )  { aStatusHdlLinkChaining = rLink; }
+
+    void            SetChainingEventHdl( const Link& rLink )  { aStatusHdlLinkChaining = rLink; }
 
     void            SetNotifyHdl( const Link& rLink )       { aNotifyHdl = rLink; }
     Link            GetNotifyHdl() const            { return aNotifyHdl; }

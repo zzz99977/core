@@ -778,7 +778,7 @@ void SdrTextObj::impMoveChainedTextToNextLink(SdrTextObj *pNextTextObj) const
 
     SdrOutliner &rOutliner = ImpGetDrawOutliner();
 
-    rOutliner.SetStatusEventHdl1(LINK(this,SdrTextObj,ImpDecomposeChainedText));
+    //rOutliner.SetChainingEventHdl(LINK(this,SdrTextObj,ImpDecomposeChainedText));
 
     if (mpOverflowingText != NULL) {
         // XXX: Not sure if necessary
@@ -836,7 +836,7 @@ void SdrTextObj::impMoveChainedTextToNextLink(SdrTextObj *pNextTextObj) const
         pNextTextObj->NbcSetOutlinerParaObject(pNewText);
     }
 
-    rOutliner.SetStatusEventHdl1(Link());
+//    rOutliner.SetChainingEventHdl(Link());
 
 }
 

@@ -1528,9 +1528,9 @@ void EditEngine::SetStatusEventHdl( const Link& rLink )
     pImpEditEngine->SetStatusEventHdl( rLink );
 }
 
-void EditEngine::SetStatusEventHdl1( const Link& rLink )
+void EditEngine::SetChainingEventHdl( const Link& rLink )
 {
-    pImpEditEngine->SetStatusEventHdlChaining( rLink );
+    pImpEditEngine->SetChainingEventHdl( rLink );
 }
 
 Link EditEngine::GetStatusEventHdl() const

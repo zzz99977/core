@@ -1936,8 +1936,7 @@ void SdrTextObj::onEditOutlinerStatusEvent( EditStatus* pEditStatus )
     const sal_uInt32 nStat = pEditStatus->GetStatusWord();
     const bool bGrowX=(nStat & EE_STAT_TEXTWIDTHCHANGED) !=0;
     const bool bGrowY=(nStat & EE_STAT_TEXTHEIGHTCHANGED) !=0;
-    const bool bChainingSet = (nStat & EE_STAT_CHAININGSET) != 0;
-    if(bTextFrame && (bGrowX || bGrowY || bChainingSet))
+    if(bTextFrame && (bGrowX || bGrowY) )
     {
         if ((bGrowX && IsAutoGrowWidth()) || (bGrowY && IsAutoGrowHeight()))
         {
@@ -1954,30 +1953,41 @@ void SdrTextObj::onEditOutlinerStatusEvent( EditStatus* pEditStatus )
             ImpAutoFitText(*pEdtOutl);
             mbInDownScale = false;
         }
-        else if ( GetNextLinkInChain() != NULL ) // is this a chainable object?
-        {
-            // set whether there is need for chaining
-            // (used in EndTextEdit to crop the overflowing part)
-            // XXX: might be removed later when we remove text in real time
-            SetToBeChained( pEditStatus->IsPageOverflow() );
-            fprintf(stderr, "[CHAINING] Need for Chaining is %s\n",
-                pEditStatus->IsPageOverflow() ? "TRUE" : "FALSE");
-
-            // Pushes text in next link on the fly
-            if ( pEditStatus->IsPageOverflow() ) {
-                mpOverflowingText = pEdtOutl->GetOverflowingText();
-                SdrTextObj *pNextTextObj = GetNextLinkInChain();
-
-                impLeaveOnlyNonOverflowingText();
-
-                // Transfer overflowing text
-                impMoveChainedTextToNextLink(pNextTextObj);
-            }
-
-        }
     }
 }
 
+void SdrTextObj::onOverflowStatusEvent( bool bIsPageOverflow )
+{
+    // FIXME: Should have a IsChainable or something.
+    if (IsAutoGrowWidth() || IsAutoGrowHeight() || IsAutoFit())
+        return;
+
+    if ( GetNextLinkInChain() != NULL ) // is this a chainable object?
+    {
+        // set whether there is need for chaining
+        // (used in EndTextEdit to crop the overflowing part)
+        // XXX: might be removed later when we remove text in real time
+        SetToBeChained( bIsPageOverflow );
+        fprintf(stderr, "[CHAINING] Need for Chaining is %s\n",
+            bIsPageOverflow ? "TRUE" : "FALSE");
+
+        // Pushes text in next link on the fly
+        if ( bIsPageOverflow ) {
+            if (pEdtOutl != NULL)
+                mpOverflowingText = pEdtOutl->GetOverflowingText();
+            else
+                mpOverflowingText = ImpGetDrawOutliner().GetOverflowingText();
+
+            SdrTextObj *pNextTextObj = GetNextLinkInChain();
+
+            impLeaveOnlyNonOverflowingText();
+
+            // Transfer overflowing text
+            impMoveChainedTextToNextLink(pNextTextObj);
+        }
+
+    }
+}
 
 /** returns the currently active text. */
 SdrText* SdrTextObj::getActiveText() const
@@ -2042,10 +2052,9 @@ SdrTextObj* SdrTextObj::GetNextLinkInChain() const
 
 }
 
-IMPL_LINK(SdrTextObj,ImpDecomposeChainedText,EditStatus*,pEditStat)
+IMPL_LINK(SdrTextObj,ImpDecomposeChainedText,bool,bIsPageOverflow)
 {
-    // XXX: Check on the outliner here?
-    onEditOutlinerStatusEvent( pEditStat );
+    onOverflowStatusEvent( bIsPageOverflow );
     return 0;
 }
 

@@ -118,6 +118,18 @@ Link Outliner::GetModifyHdl() const
     return pEditEngine->GetModifyHdl();
 }
 
+void Outliner::SetChainingEventHdl( const Link& rLink )
+{
+    pEditEngine->SetChainingEventHdl( rLink );
+}
+
+/*
+Link Outliner::GetChainingEventHdl() const
+{
+    return pEditEngine->GetChainingEventHdl();
+}
+*/
+
 void Outliner::SetNotifyHdl( const Link& rLink )
 {
     pEditEngine->aOutlinerNotifyHdl = rLink;
@@ -137,11 +149,6 @@ void Outliner::SetStatusEventHdl( const Link& rLink )
 Link Outliner::GetStatusEventHdl() const
 {
     return pEditEngine->GetStatusEventHdl();
-}
-
-void Outliner::SetStatusEventHdl1( const Link& rLink )
-{
-    pEditEngine->SetStatusEventHdl1( rLink );
 }
 
 void Outliner::SetDefTab( sal_uInt16 nTab )

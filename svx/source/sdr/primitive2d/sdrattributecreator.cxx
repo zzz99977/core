@@ -523,6 +523,8 @@ namespace drawinglayer
 
             // FIXME(matteocam)
             bool bToBeChained = rTextObj.IsToBeChained();
+            bool bChainable = rTextObj.IsChainable();
+
 
             if(rText.GetOutlinerParaObject() && rText.GetModel())
             {
@@ -583,10 +585,11 @@ namespace drawinglayer
                     bInEditMode,
                     ((const SdrTextFixedCellHeightItem&)rSet.Get(SDRATTR_TEXT_USEFIXEDCELLHEIGHT)).GetValue(),
                     bWrongSpell,
-                    bToBeChained);
+                    bToBeChained,
+                    bChainable);
             }
 
-            return attribute::SdrTextAttribute(bToBeChained);
+            return attribute::SdrTextAttribute();
         }
 
         attribute::FillGradientAttribute createNewTransparenceGradientAttribute(const SfxItemSet& rSet)

@@ -2089,6 +2089,11 @@ bool Outliner::HasParaFlag( const Paragraph* pPara, sal_uInt16 nFlag ) const
     return pPara && pPara->HasFlag( nFlag );
 }
 
+bool Outliner::IsPageOverflow()
+{
+    return pEditEngine->IsPageOverflow();
+}
+
 NonOverflowingText *Outliner::GetNonOverflowingText() const
 {
     /* XXX:

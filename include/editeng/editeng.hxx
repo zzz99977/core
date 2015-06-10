@@ -604,6 +604,7 @@ public:
     sal_Int32 GetOverflowingParaNum() const;
     sal_Int32 GetOverflowingLineNum() const;
     void ClearOverflowingParaNum();
+    bool IsPageOverflow();
 };
 
 #endif // INCLUDED_EDITENG_EDITENG_HXX

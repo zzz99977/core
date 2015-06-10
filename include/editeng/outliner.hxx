@@ -763,6 +763,7 @@ public:
     NonOverflowingText *GetNonOverflowingText() const;
     OverflowingText *GetOverflowingText() const;
     void ClearOverflowingParaNum();
+    bool IsPageOverflow();
 
     virtual void    DepthChangedHdl();
     void            SetDepthChangedHdl(const Link& rLink){aDepthChangedHdl=rLink;}

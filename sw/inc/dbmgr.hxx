@@ -183,6 +183,7 @@ struct SwMergeDescriptor
 struct SwDBManager_Impl;
 class SwConnectionDisposedListener_Impl;
 class AbstractMailMergeDlg;
+class SwDoc;
 
 class SW_DLLPUBLIC SwDBManager
 {
@@ -204,6 +205,9 @@ friend class SwConnectionDisposedListener_Impl;
     /// Name of the embedded database that's included in the current document.
     OUString     m_sEmbeddedName;
 
+    /// The document that owns this manager.
+    SwDoc* m_pDoc;
+
     SAL_DLLPRIVATE SwDSParam*          FindDSData(const SwDBData& rData, bool bCreate);
     SAL_DLLPRIVATE SwDSParam*          FindDSConnection(const OUString& rSource, bool bCreate);
 
@@ -221,7 +225,7 @@ friend class SwConnectionDisposedListener_Impl;
     SAL_DLLPRIVATE bool          ToNextRecord(SwDSParam* pParam);
 
 public:
-    SwDBManager();
+    SwDBManager(SwDoc* pDoc);
     ~SwDBManager();
 
     enum DBConnURITypes {
@@ -420,6 +424,10 @@ public:
                                         const css::uno::Reference<css::embed::XStorage>& xStorage,
                                         const OUString& rStreamRelPath,
                                         const OUString& rOwnURL);
+
+    SwDoc* getDoc() const;
+    /// Stop reacting to removed database registrations.
+    void releaseRevokeListener();
 };
 
 #endif

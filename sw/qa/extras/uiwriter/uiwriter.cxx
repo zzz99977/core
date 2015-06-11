@@ -1020,6 +1020,11 @@ void SwUiWriterTest::testEmbeddedDataSource()
     mxComponent->dispose();
     mxComponent.clear();
     CPPUNIT_ASSERT(!xDatabaseContext->hasByName("calc-data-source"));
+
+    // Now open again the saved result, and instead of 'save as', just 'save'.
+    mxComponent = loadFromDesktop(maTempFile.GetURL(), "com.sun.star.text.TextDocument");
+    uno::Reference<frame::XStorable> xStorable(mxComponent, uno::UNO_QUERY);
+    xStorable->store();
 }
 
 CPPUNIT_TEST_SUITE_REGISTRATION(SwUiWriterTest);

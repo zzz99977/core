@@ -985,7 +985,6 @@ void SwUiWriterTest::testTdf90883TableBoxGetCoordinates()
 
 void SwUiWriterTest::testEmbeddedDataSource()
 {
-#if !defined(MACOSX)
     // Initially no data source.
     uno::Reference<uno::XComponentContext> xComponentContext(comphelper::getProcessComponentContext());
     uno::Reference<sdb::XDatabaseContext> xDatabaseContext = sdb::DatabaseContext::create(xComponentContext);
@@ -1021,7 +1020,6 @@ void SwUiWriterTest::testEmbeddedDataSource()
     mxComponent->dispose();
     mxComponent.clear();
     CPPUNIT_ASSERT(!xDatabaseContext->hasByName("calc-data-source"));
-#endif
 }
 
 CPPUNIT_TEST_SUITE_REGISTRATION(SwUiWriterTest);

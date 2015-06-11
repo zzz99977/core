@@ -212,6 +212,10 @@ void SdrModel::ImpCtor(SfxItemPool* pPool, ::comphelper::IEmbeddedHelper* _pEmbe
     pHitTestOutliner = SdrMakeOutliner( OUTLINERMODE_TEXTOBJECT, this );
     ImpSetOutlinerDefaults(pHitTestOutliner, true);
 
+    pChainingOutliner = SdrMakeOutliner( OUTLINERMODE_TEXTOBJECT, this );
+    ImpSetOutlinerDefaults(pChainingOutliner, true);
+
+
     ImpCreateTables();
 }
 
@@ -768,6 +772,12 @@ SdrOutliner& SdrModel::GetDrawOutliner(const SdrTextObj* pObj) const
 {
     pDrawOutliner->SetTextObj(pObj);
     return *pDrawOutliner;
+}
+
+SdrOutliner& SdrModel::GetChainingOutliner(const SdrTextObj* pObj) const
+{
+    pChainingOutliner->SetTextObj(pObj);
+    return *pChainingOutliner;
 }
 
 const SdrTextObj* SdrModel::GetFormattingTextObj() const

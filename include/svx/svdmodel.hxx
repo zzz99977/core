@@ -170,6 +170,7 @@ protected:
                     m_pEmbeddedHelper; // helper for embedded objects to get rid of the SfxObjectShell
     SdrOutliner*    pDrawOutliner;  // an Outliner for outputting text
     SdrOutliner*    pHitTestOutliner;// an Outliner for the HitTest
+    SdrOutliner*    pChainingOutliner; // an Outliner for chaining overflowing text
     sal_uIntPtr           nDefTextHgt;    // Default text heigth in logical units
     OutputDevice*   pRefOutDev;     // ReferenceDevice for the EditEngine
     sal_uIntPtr           nProgressAkt;   // for the
@@ -325,6 +326,8 @@ public:
     SfxItemPool&         GetItemPool()                          { return *pItemPool; }
 
     SdrOutliner&         GetDrawOutliner(const SdrTextObj* pObj=NULL) const;
+
+    SdrOutliner&         GetChainingOutliner(const SdrTextObj* pObj=NULL) const;
 
     SdrOutliner&         GetHitTestOutliner() const { return *pHitTestOutliner; }
     const SdrTextObj*    GetFormattingTextObj() const;

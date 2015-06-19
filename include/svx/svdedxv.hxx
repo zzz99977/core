@@ -117,6 +117,7 @@ protected:
 
     // Handler fuer AutoGrowing und Chained Text bei aktivem Outliner
     DECL_LINK(ImpOutlinerStatusEventHdl,EditStatus*);
+    DECL_LINK(ImpChainingEventHdl,void*);
     DECL_LINK(ImpOutlinerCalcFieldValueHdl,EditFieldInfo*);
 
     // link for EndTextEditHdl

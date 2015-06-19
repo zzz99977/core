@@ -1986,16 +1986,6 @@ void SdrTextObj::onOverflowStatusEvent( )
 
 void SdrTextObj::onUnderflowStatusEvent( )
 {
-    // Underflow:
-    /*
-     *
-     * If there is no overflow and other guy has text then:
-     * 1) get the text of the other guy and add it to the last paragraph
-     * (if the paragraphs are to be merged, no otherwise).
-     * 2) Set the text of the other guy to what is left
-     *
-    */
-
     SdrTextObj *pNextLink = GetNextLinkInChain();
     SdrOutliner &aDrawOutliner = ImpGetDrawOutliner();
 
@@ -2008,14 +1998,13 @@ void SdrTextObj::onUnderflowStatusEvent( )
     if (!pNextLink->HasText())
         return;
 
-
-
     //  1) get the text of the other guy and add it to the last paragraph
     // XXX: For now it's not merging anything just adding the while thing as a separate para
     OutlinerParaObject *pNextLinkWholeText = pNextLink->GetOutlinerParaObject();
     if (pNextLinkWholeText) {
-        // Set text from this object
+
         OutlinerParaObject *pCurText = GetOutlinerParaObject();
+        // NewTextForCurBox = Txt(CurBox) ++ Txt(NextBox)
         aDrawOutliner.SetText(*pCurText);
         aDrawOutliner.AddText(*pNextLinkWholeText);
         OutlinerParaObject *pNewText = aDrawOutliner.CreateParaObject();
@@ -2030,9 +2019,8 @@ void SdrTextObj::onUnderflowStatusEvent( )
         if (pEdtOutl != NULL)
             pEdtOutl->SetText(*pNewText);
 
-        const_cast<SdrTextObj*>(this)->NbcSetOutlinerParaObject(pNewText);
+        //const_cast<SdrTextObj*>(this)->NbcSetOutlinerParaObject(pNewText);
     }
-
 }
 
 /** returns the currently active text. */
@@ -2128,13 +2116,13 @@ bool SdrTextObj::GetPreventChainable() const
     return pClone;
  }
 
-IMPL_LINK_NOARG(SdrTextObj,ImpDecomposeChainedText)
+void SdrTextObj::onChainingEvent()
 {
     if (!IsChainable() || GetNextLinkInChain() == NULL)
-        return 0;
+        return;
 
     if (!pEdtOutl)
-        return 0;
+        return;
 
     bool bIsPageOverflow = pEdtOutl->IsPageOverflow();
 
@@ -2148,7 +2136,7 @@ IMPL_LINK_NOARG(SdrTextObj,ImpDecomposeChainedText)
     } else {
         onUnderflowStatusEvent();
     }
-    return 0;
+    return;
 }
 
 

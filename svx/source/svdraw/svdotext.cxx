@@ -2004,10 +2004,12 @@ void SdrTextObj::onUnderflowStatusEvent( )
     {
         // possibly coming from an overflow
         if (pEdtOutl) {
+            GetTextChain()->SetLinkHandlingUnderflow(this, false);
+            GetTextChain()->SetNilChainingEvent(this, true);
             OutlinerParaObject *pPObj = GetOutlinerParaObject();
             pEdtOutl->SetText(*pPObj);
         }
-        GetTextChain()->SetLinkHandlingUnderflow(this, false);
+
         return;
     }
 
@@ -2146,6 +2148,11 @@ void SdrTextObj::onChainingEvent()
 
     if (!pEdtOutl)
         return;
+
+    if (GetTextChain()->GetNilChainingEvent(this)) {
+        GetTextChain()->SetNilChainingEvent(this, false);
+        return;
+    }
 
     bool bIsPageOverflow;
 
